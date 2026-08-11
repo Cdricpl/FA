@@ -20,7 +20,7 @@ jobs:
       - name: Installer Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Installer les dépendances
         run: npm install --no-audit --no-fund
@@ -50,7 +50,7 @@ jobs:
           body: |
             ## Installation
 
-            1. Téléchargez **Gestion-des-dossiers-${{ steps.version.outputs.v }}-nsis.exe**
+            1. Téléchargez **Gestion-des-dossiers-${{ steps.version.outputs.v }}-installateur.exe**
             2. Double-cliquez dessus et suivez l'assistant.
             3. Le programme s'installe pour votre compte utilisateur : **aucun droit
                administrateur n'est nécessaire**. Un raccourci est créé sur le bureau

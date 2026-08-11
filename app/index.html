@@ -337,7 +337,7 @@ const NATIF = !!(window.programme && window.programme.natif);
 const FS = {
   natif: NATIF,
   dispo: NATIF || typeof window.showDirectoryPicker === "function",
-  dossier:null, enAttente:null, nom:"", chemin:"", dernier:null, erreur:"",
+  dossier:null, enAttente:null, nom:"", chemin:"", fichier:"", dernier:null, erreur:"",
   enCours:false, aRefaire:false, dernierBackup:0
 };
 
@@ -381,9 +381,7 @@ const nomDeChemin = c => String(c||"").replace(/[\\/]+$/,"").split(/[\\/]/).pop(
 
 async function natifDemarrer(){
   const r = await window.programme.lire();
-  FS.chemin = r.dossier || "";
-  FS.nom = nomDeChemin(FS.chemin);
-  FS.dossier = FS.chemin;
+  natifRetenir(r);
   if(!r.ok){
     FS.erreur = r.erreur || "lecture impossible";
   }else if(r.contenu){
@@ -398,11 +396,16 @@ async function natifDemarrer(){
   }
   rendre();
 }
+function natifRetenir(r){
+  if(!r) return;
+  FS.chemin  = r.dossier || FS.chemin;
+  FS.fichier = r.fichier || FS.fichier;
+  FS.nom     = nomDeChemin(FS.chemin);
+  FS.dossier = FS.chemin;
+}
 async function natifChangerDossier(){
   const r = await window.programme.changerDossier();
-  FS.chemin = r.dossier || "";
-  FS.nom = nomDeChemin(FS.chemin);
-  FS.dossier = FS.chemin;
+  natifRetenir(r);
   if(r.ok) await fsEcrire();   // on dépose les données dans le nouveau dossier
   rendre();
 }
@@ -497,7 +500,7 @@ async function fsEcrire(){
     if(r.ok){
       FS.dernier = new Date(r.heure);
       FS.erreur = "";
-      FS.chemin = r.dossier; FS.nom = nomDeChemin(r.dossier); FS.dossier = r.dossier;
+      natifRetenir(r);
     }else{
       FS.erreur = r.erreur || "écriture impossible";
     }
@@ -1283,7 +1286,7 @@ function blocStockage(){
     return `<div class="encadre ok">
       <div class="titre">✓ Enregistrement automatique</div>
       Chaque modification est écrite immédiatement dans :<br>
-      <code>${ech(FS.chemin)}\\${NOM_FICHIER}</code><br>
+      <code>${ech(FS.fichier)}</code><br>
       ${FS.dernier ? "Dernier enregistrement à " + heureCourte(FS.dernier) + "."
                    : "Aucune modification depuis l'ouverture."}
       Une copie datée est déposée chaque jour dans <code>${DOSSIER_SAUV}</code>

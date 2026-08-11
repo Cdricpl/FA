@@ -162,10 +162,10 @@ ipcMain.handle("app:infos", () => ({
 ipcMain.handle("donnees:lire", async () => {
   try{
     const contenu = await fsp.readFile(fichierDonnees(), "utf8");
-    return { ok:true, contenu, dossier:dossierDonnees() };
+    return { ok:true, contenu, dossier:dossierDonnees(), fichier:fichierDonnees() };
   }catch(e){
-    if(e.code === "ENOENT") return { ok:true, contenu:null, dossier:dossierDonnees() };
-    return { ok:false, erreur:e.message, dossier:dossierDonnees() };
+    if(e.code === "ENOENT") return { ok:true, contenu:null, dossier:dossierDonnees(), fichier:fichierDonnees() };
+    return { ok:false, erreur:e.message, dossier:dossierDonnees(), fichier:fichierDonnees() };
   }
 });
 
@@ -174,7 +174,7 @@ ipcMain.handle("donnees:ecrire", async (ev, contenu) => {
     await fsp.mkdir(dossierDonnees(), { recursive:true });
     await ecrireAtomique(fichierDonnees(), contenu);
     await sauvegardeDuJour(contenu);
-    return { ok:true, dossier:dossierDonnees(), heure:Date.now() };
+    return { ok:true, dossier:dossierDonnees(), fichier:fichierDonnees(), heure:Date.now() };
   }catch(e){ return { ok:false, erreur:e.message }; }
 });
 
@@ -185,7 +185,7 @@ ipcMain.handle("donnees:sauvegarder", async (ev, contenu) => {
 
 ipcMain.handle("donnees:changerDossier", async () => {
   const d = await changerDossier();
-  return { ok:!!d, dossier:dossierDonnees() };
+  return { ok:!!d, dossier:dossierDonnees(), fichier:fichierDonnees() };
 });
 
 ipcMain.handle("donnees:ouvrirDossier", async () => {

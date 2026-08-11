@@ -29,11 +29,20 @@
     ],
     "win": {
       "target": [
-        { "target": "nsis", "arch": ["x64"] },
-        { "target": "portable", "arch": ["x64"] }
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
-      "icon": "build/icone.ico",
-      "artifactName": "Gestion-des-dossiers-${version}-${target}.${ext}"
+      "icon": "build/icone.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -42,13 +51,19 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Gestion des dossiers",
-      "installerLanguages": ["fr_FR"],
+      "installerLanguages": [
+        "fr_FR"
+      ],
       "language": "1036",
       "deleteAppDataOnUninstall": false,
-      "uninstallDisplayName": "Gestion des dossiers"
+      "uninstallDisplayName": "Gestion des dossiers",
+      "artifactName": "Gestion-des-dossiers-${version}-installateur.${ext}"
     },
     "portable": {
       "artifactName": "Gestion-des-dossiers-${version}-portable.${ext}"
     }
+  },
+  "author": {
+    "name": "Gestion des dossiers"
   }
 }

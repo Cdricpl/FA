@@ -12,7 +12,7 @@ internet, aucun compte, aucune donnée envoyée où que ce soit.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.0.0-nsis.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.0.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
