@@ -244,6 +244,59 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .rencontre .d{min-width:96px;font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;white-space:nowrap}
 .rencontre .n{flex:1;white-space:pre-wrap;font-size:13.5px}
 
+/* ---------- Droits de visite ---------- */
+.deux-tiers,.un-tiers{min-width:0}
+@media(min-width:1100px){
+  .grille.dv{grid-template-columns:2fr 1fr}
+}
+.bandeau-enfants{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 8px}
+.carte-enfant{flex:none;width:212px;border:1px solid var(--bord);border-radius:12px;padding:13px 14px;
+  background:var(--vert-f);border-color:rgba(31,138,76,.35)}
+.carte-enfant.suspendu{background:var(--rouge-f);border-color:rgba(192,43,43,.35)}
+.ce-haut{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.ce-nom{font-weight:700;font-size:15px;line-height:1.1}
+.ce-nom-famille{font-size:11.5px;color:var(--doux);text-transform:uppercase;letter-spacing:.03em}
+.ce-ligne{font-size:12.5px;color:var(--doux);line-height:1.6}
+.ce-ligne b{color:var(--texte)}
+.ce-etat{font-size:12.5px;font-weight:600;margin-top:8px}
+.ce-fin{font-size:12px;color:var(--doux);margin-top:2px}
+.ce-actions{display:flex;gap:5px;margin-top:10px}
+
+.schema{display:grid;gap:10px;grid-template-columns:1fr}
+@media(min-width:620px){.schema{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.schema{grid-template-columns:repeat(4,1fr)}}
+.sem{border:1px solid var(--bord);border-radius:12px;overflow:hidden;background:var(--carte)}
+.sem-tete{background:var(--marine);color:#fff;font-weight:600;font-size:13.5px;padding:9px 12px;text-align:center}
+.sem-corps{padding:10px;display:flex;flex-direction:column;gap:9px;min-height:70px}
+.sem-vide{color:var(--doux);font-size:12.5px;text-align:center;padding:12px 0}
+.creneau{border-radius:10px;padding:10px 11px;border:1px solid transparent}
+.creneau.papa{background:var(--accent-doux);border-color:rgba(47,111,176,.3)}
+.creneau.maman{background:#fdeaf0;border-color:rgba(176,58,91,.28)}
+.creneau.fratrie{background:var(--violet-f);border-color:rgba(113,67,184,.28)}
+.creneau.autre{background:var(--gris-f);border-color:var(--bord)}
+@media (prefers-color-scheme: dark){
+  .creneau.maman{background:#3a2029;border-color:rgba(240,138,138,.3)}
+  .carte-enfant{background:rgba(31,138,76,.14)}
+  .carte-enfant.suspendu{background:rgba(192,43,43,.16)}
+}
+.creneau.barre{opacity:.72}
+.cr-haut{display:flex;align-items:center;gap:7px}
+.cr-nom{font-weight:700;font-size:13.5px}
+.cr-h{font-size:13px;font-variant-numeric:tabular-nums;margin:3px 0 1px}
+.cr-bas{font-size:12px;color:var(--doux);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cr-susp{color:var(--rouge);font-weight:600}
+
+.proch{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid var(--bord)}
+.proch:first-of-type{border-top:0}
+.pastille-date{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:46px;flex:none;background:var(--fond);border:1px solid var(--bord);border-radius:9px;padding:5px 0}
+.pastille-date .j{font-size:9.5px;letter-spacing:.05em;color:var(--doux);font-weight:700}
+.pastille-date .n{font-size:17px;font-weight:700;line-height:1.1}
+.pastille-date .m{font-size:9.5px;letter-spacing:.05em;color:var(--doux);font-weight:700}
+.proch-txt{flex:1;min-width:0}
+.proch-nom{font-weight:600;font-size:13.5px}
+.proch-det{font-size:12px;color:var(--doux)}
+
 /* ---------- Rencontres ---------- */
 .separateur-mois{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--doux);
   font-weight:600;margin:18px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--bord)}
@@ -399,7 +452,7 @@ function pluriel(n, mot, plur){ return n + " " + (Math.abs(n) > 1 ? (plur || mot
 const CLE = "fa-dossiers-v2";
 let DB = null;
 let onglet = "accueil";
-let etat = { recherche:"", tri:"date", tachesFaites:false, anneeRapports:0,
+let etat = { recherche:"", tri:"nom", tachesFaites:false, anneeRapports:0,
              filtreNotif:"tout", filtreVisite:"tout", listeComplete:false };
 
 function baseVide(){
@@ -424,6 +477,7 @@ function normaliser(d){
     if(e.notifRecue === undefined) e.notifRecue = true;
     e.visites.forEach(v => {
       v.rencontres = Array.isArray(v.rencontres) ? v.rencontres : [];
+      v.creneaux   = Array.isArray(v.creneaux)   ? v.creneaux   : [];
       v.rencontres.forEach(r => { if(!r.presence) r.presence = "venu"; });
     });
   });
@@ -989,7 +1043,8 @@ function vueAccueil(){
   const carteEnfants = `
     <div class="carte">
       <div class="tete">${ic("enfants",18)}<h2>Enfants suivis</h2>
-        <button class="b mini" data-action="enfant-nouveau">${ic("plus",14)} Ajouter</button></div>
+        <span class="et info">${DB.enfants.length}</span>
+        <button class="b mini pousse" data-action="enfant-nouveau">${ic("plus",14)} Ajouter</button></div>
       ${DB.enfants.length ? '<ul class="liste">' + DB.enfants.slice().sort(parNom).slice(0,5).map(e => `<li>
         ${avatar(e, 36)}
         <span style="flex:1"><b>${ech(nomComplet(e))}</b>
@@ -1306,153 +1361,243 @@ function vueRapports(){
    12. VUE — Droits de visite
    ========================================================================= */
 
+/* --- Catégorie du parent : donne sa couleur et son pictogramme au planning --- */
+const CATEGORIES = {
+  papa:    { label:"Papa",    icone:"personne", classe:"papa"    },
+  maman:   { label:"Maman",   icone:"personne", classe:"maman"   },
+  fratrie: { label:"Fratrie", icone:"enfants",  classe:"fratrie" },
+  autre:   { label:"Autre",   icone:"personne", classe:"autre"   }
+};
+function categorieParent(v){
+  const t = (v.parent || "").toLowerCase();
+  if(/papa|p[eè]re/.test(t))            return "papa";
+  if(/maman|m[eè]re/.test(t))           return "maman";
+  if(/fratrie|fr[eè]re|s(oe|œ)ur/.test(t)) return "fratrie";
+  return "autre";
+}
+
+/** État d'une rencontre dans le suivi : prévu, terminé, à compléter, suspendu. */
+function statutRencontre(v, r){
+  if(v.suspendu && (!estISO(v.suspenduDepuis) || r.date >= v.suspenduDepuis))
+    return { code:"rouge", label:"Suspendu" };
+  if(r.presence === "annulee") return { code:"gris",   label:"Annulée" };
+  if(r.presence !== "prevue")  return { code:"vert",   label:"Terminé" };
+  if(estISO(r.date) && r.date < aujourdHui()) return { code:"orange", label:"À compléter" };
+  return { code:"info", label:"Prévu" };
+}
+
+/** Pastille de date « MAR / 20 / MAI ». */
+function pastilleDate(iso){
+  const d = parseISO(iso);
+  return '<span class="pastille-date"><span class="j">' +
+    JOURS[(d.getDay()+6)%7].slice(0,3).toUpperCase() + '</span><span class="n">' +
+    d.getDate() + '</span><span class="m">' + MOIS[d.getMonth()].slice(0,3).toUpperCase() +
+    "</span></span>";
+}
+
 function vueVisites(){
-  const q = etat.recherche.trim().toLowerCase();
   const auj = aujourdHui();
-
-  let liste = toutesRencontres();
-  if(q) liste = liste.filter(o => (nomComplet(o.enfant) + " " + libelleParent(o.visite) + " " +
-                                   (o.rencontre.note || "")).toLowerCase().includes(q));
-  const f = etat.filtreVisite;
-  if(f === "avenir")    liste = liste.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue");
-  if(f === "completer") liste = liste.filter(o => aCompleter(o.rencontre));
-  if(f === "venu")      liste = liste.filter(o => o.rencontre.presence === "venu");
-  if(f === "absent")    liste = liste.filter(o => o.rencontre.presence === "absent");
-
-  const toutes = toutesRencontres();
-  const compte = {
-    tout:      toutes.length,
-    avenir:    toutes.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue").length,
-    completer: toutes.filter(o => aCompleter(o.rencontre)).length,
-    venu:      toutes.filter(o => o.rencontre.presence === "venu").length,
-    absent:    toutes.filter(o => o.rencontre.presence === "absent").length
-  };
-
-  const aVenir = liste.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue")
-    .sort((a,b) => a.rencontre.date.localeCompare(b.rencontre.date) ||
-                   String(a.rencontre.debut||"").localeCompare(String(b.rencontre.debut||"")));
-  const passees = liste.filter(o => !(o.rencontre.date >= auj && o.rencontre.presence === "prevue"))
-    .sort((a,b) => b.rencontre.date.localeCompare(a.rencontre.date));
-
-  const limite = etat.listeComplete ? passees.length : 20;
-
-  const filtre = (id, texte, n) =>
-    '<button data-action="filtre-visite" data-f="' + id + '" class="' +
-    (f === id ? "actif" : "") + '">' + texte + " " + n + "</button>";
-
-  /* --- séparateur de mois, pour repérer les périodes d'un coup d'œil --- */
-  function avecMois(l){
-    let dernier = "", sortie = "";
-    l.forEach(o => {
-      const m = fmtMoisAnnee(o.rencontre.date);
-      if(m !== dernier){ dernier = m; sortie += '<div class="separateur-mois">' + ech(m) + "</div>"; }
-      sortie += carteRencontre(o);
-    });
-    return sortie;
-  }
+  const q = etat.recherche.trim().toLowerCase();
 
   const droits = [];
   DB.enfants.slice().sort(parNom).forEach(e => (e.visites||[]).forEach(v => droits.push({ e, v })));
 
+  /* ------------------------------------------------ 1. enfants concernés */
+  const cartesEnfants = droits.map(({e,v}) => {
+    const s = statutVisite(v);
+    const suspendu = !!v.suspendu;
+    return `<div class="carte-enfant ${suspendu ? "suspendu" : "actif"}">
+      <div class="ce-haut">${avatar(e, 40)}
+        <div><div class="ce-nom">${ech(e.prenom || nomComplet(e))}</div>
+          <div class="ce-nom-famille">${ech(e.nom)}</div></div></div>
+      <div class="ce-ligne">Fréquence : <b>${ech(v.frequence || "—")}</b></div>
+      <div class="ce-ligne">Avec : <b>${ech(libelleParent(v))}</b></div>
+      <div class="ce-etat"><span class="puce ${suspendu ? "rouge" : "vert"}"></span>
+        ${suspendu ? "Suspendu" : "Actif"}</div>
+      <div class="ce-fin">${suspendu
+        ? "Depuis : " + ech(fmtFR(v.suspenduDepuis))
+        : "Fin : " + ech(fmtFR(v.dateFin))}</div>
+      <div class="ce-actions">
+        <button class="b mini" data-action="visite-modifier" data-id="${e.id}" data-vid="${v.id}">Modifier</button>
+        <button class="b mini danger" data-action="visite-supprimer" data-id="${e.id}" data-vid="${v.id}">✕</button>
+      </div>
+    </div>`;
+  }).join("");
+
+  /* --------------------------------------- 2. schéma de récurrence mensuel */
+  const semaines = [1,2,3,4].map(n => {
+    const items = [];
+    droits.forEach(({e,v}) => (v.creneaux||[]).forEach(c => {
+      if(c.semaine === n) items.push({ e, v, c });
+    }));
+    items.sort((a,b) => String(a.c.debut||"").localeCompare(String(b.c.debut||"")));
+    return { n, items };
+  });
+  const sansSchema = droits.filter(({v}) => !(v.creneaux||[]).length);
+
+  const colonnes = semaines.map(({n, items}) => `
+    <div class="sem">
+      <div class="sem-tete">Semaine ${n}</div>
+      <div class="sem-corps">
+        ${items.length ? items.map(({e,v,c}) => {
+          const cat = categorieParent(v);
+          return `<div class="creneau ${CATEGORIES[cat].classe}${v.suspendu ? " barre" : ""}">
+            <div class="cr-haut">${ic(CATEGORIES[cat].icone, 15)}
+              <span class="cr-nom">${ech(e.prenom || nomComplet(e))}</span></div>
+            <div class="cr-h">${ech((c.debut || "?") + " – " + (c.fin || "?"))}</div>
+            <div class="cr-bas">${ech(libelleParent(v))}
+              ${v.suspendu ? '<span class="cr-susp">⚠ Suspendu</span>' : ""}</div>
+          </div>`;
+        }).join("") : '<div class="sem-vide">—</div>'}
+      </div>
+    </div>`).join("");
+
+  const legende = `<div class="legende">
+    ${Object.keys(CATEGORIES).filter(k => k !== "autre").map(k =>
+      '<span>' + ic(CATEGORIES[k].icone, 15) + " " + CATEGORIES[k].label + "</span>").join("")}
+    <span style="color:var(--rouge)">⚠ Droit de visite suspendu</span>
+  </div>`;
+
+  /* ------------------------------------------------ 3. prochaines rencontres */
+  const prochaines = toutesRencontres()
+    .filter(o => estISO(o.rencontre.date) && o.rencontre.date >= auj)
+    .sort((a,b) => a.rencontre.date.localeCompare(b.rencontre.date) ||
+                   String(a.rencontre.debut||"").localeCompare(String(b.rencontre.debut||"")))
+    .slice(0, 6);
+
+  const listeProchaines = prochaines.length ? prochaines.map(o => {
+    const st = statutRencontre(o.visite, o.rencontre);
+    return `<div class="proch">
+      ${pastilleDate(o.rencontre.date)}
+      <div class="proch-txt">
+        <div class="proch-nom">${ech(nomComplet(o.enfant))}</div>
+        <div class="proch-det">${heuresDe(o.rencontre) || "heure à préciser"}</div>
+        <div class="proch-det">${ech(libelleParent(o.visite))}</div>
+      </div>
+      <span class="et ${st.code}">${ech(st.label)}</span>
+    </div>`;
+  }).join("") : '<p class="rien">Aucune rencontre programmée.</p>';
+
+  /* --------------------------------------------------- 4. suivi des rencontres */
+  let suivi = toutesRencontres();
+  if(q) suivi = suivi.filter(o => (nomComplet(o.enfant) + " " + libelleParent(o.visite) + " " +
+                                   (o.rencontre.note||"")).toLowerCase().includes(q));
+  const f = etat.filtreVisite;
+  if(f === "avenir")    suivi = suivi.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue");
+  if(f === "completer") suivi = suivi.filter(o => aCompleter(o.rencontre));
+  if(f === "venu")      suivi = suivi.filter(o => o.rencontre.presence === "venu");
+  if(f === "absent")    suivi = suivi.filter(o => o.rencontre.presence === "absent");
+  suivi.sort((a,b) => b.rencontre.date.localeCompare(a.rencontre.date) ||
+                      String(b.rencontre.debut||"").localeCompare(String(a.rencontre.debut||"")));
+
+  const total = toutesRencontres();
+  const compte = {
+    tout:      total.length,
+    avenir:    total.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue").length,
+    completer: total.filter(o => aCompleter(o.rencontre)).length,
+    venu:      total.filter(o => o.rencontre.presence === "venu").length,
+    absent:    total.filter(o => o.rencontre.presence === "absent").length
+  };
+  const filtre = (id, texte, n) =>
+    '<button data-action="filtre-visite" data-f="' + id + '" class="' +
+    (f === id ? "actif" : "") + '">' + texte + " " + n + "</button>";
+
+  const limite = etat.listeComplete ? suivi.length : 25;
+  const lignes = suivi.slice(0, limite).map(o => {
+    const r = o.rencontre, v = o.visite, e = o.enfant;
+    const st = statutRencontre(v, r);
+    const euLieu = r.presence === "venu";
+    const decide = r.presence === "venu" || r.presence === "absent";
+    return `<tr>
+      <td class="num nowrap">${ech(fmtFR(r.date))}</td>
+      <td><div style="display:flex;align-items:center;gap:8px">${avatar(e,28)}
+        <b>${ech(nomComplet(e))}</b></div></td>
+      <td>${ech(libelleParent(v))}</td>
+      <td><span class="et gris">DV</span></td>
+      <td class="num">${ech(r.debut || "—")}</td>
+      <td class="num">${ech(r.fin || "—")}</td>
+      <td><span class="et ${st.code}">${ech(st.label)}</span></td>
+      <td style="text-align:center">
+        <input type="checkbox" data-action="rencontre-eulieu" data-id="${e.id}" data-vid="${v.id}"
+               data-rid="${r.id}" ${euLieu ? "checked" : ""} style="width:auto"
+               title="${decide ? (euLieu ? "A eu lieu" : "N'a pas eu lieu") : "À renseigner"}"
+               aria-label="La rencontre a-t-elle eu lieu ?">
+        ${(!decide) ? '<br><span class="doux" style="font-size:11px">à dire</span>' : ""}
+      </td>
+      <td class="pt" style="min-width:200px;white-space:pre-wrap">${r.note ? ech(r.note)
+        : '<span class="doux">—</span>'}</td>
+      <td><div class="actions">
+        <button class="b mini" data-action="rencontre-modifier" data-id="${e.id}"
+                data-vid="${v.id}" data-rid="${r.id}" title="Modifier">✎</button>
+        <button class="b mini danger" data-action="rencontre-supprimer" data-id="${e.id}"
+                data-vid="${v.id}" data-rid="${r.id}" title="Supprimer">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join("");
+
+  /* --------------------------------------------------------------- assemblage */
   return `
   <div class="carte">
-    <div class="barre">
-      <button class="b primaire" data-action="rencontre-rapide">${ic("plus",15)} Nouvelle rencontre</button>
-      <button class="b" data-action="visite-nouvelle">${ic("plus",15)} Droit de visite</button>
-      <button class="b" data-action="word">${ic("rapports",15)} Notes en Word</button>
-      <input type="search" id="recherche" placeholder="Rechercher un enfant, un parent, une note…"
-             style="max-width:280px" value="${ech(etat.recherche)}">
-      <button class="b pousse" onclick="window.print()">Imprimer</button>
+    <div class="tete">${ic("enfants",18)}<h2>Enfants concernés</h2>
+      <span class="et info">${droits.length}</span>
+      <button class="b mini pousse" data-action="visite-nouvelle">${ic("plus",14)} Droit de visite</button></div>
+    ${droits.length ? '<div class="bandeau-enfants">' + cartesEnfants + "</div>"
+                    : '<p class="rien">Aucun droit de visite encodé.</p>'}
+  </div>
+
+  <div class="grille dv">
+    <div class="deux-tiers">
+      <div class="carte">
+        <div class="tete">${ic("visites",18)}<h2>Schéma de récurrence (mensuel)</h2></div>
+        <div class="schema">${colonnes}</div>
+        ${legende}
+        ${sansSchema.length ? '<p class="aide">Sans créneau encodé : ' +
+          sansSchema.map(({e,v}) => ech(nomComplet(e)) + " (" + ech(libelleParent(v)) + ")").join(", ") +
+          ". Ouvrez « Modifier » sur la carte de l'enfant pour indiquer les semaines et les heures.</p>" : ""}
+      </div>
     </div>
-    <div class="filtres" style="margin-bottom:16px">
-      ${filtre("tout","Toutes", compte.tout)}${filtre("avenir","À venir", compte.avenir)}
-      ${filtre("completer","À compléter", compte.completer)}
-      ${filtre("venu","Parent venu", compte.venu)}${filtre("absent","Parent absent", compte.absent)}
+    <div class="un-tiers">
+      <div class="carte">
+        <div class="tete">${ic("horloge",18)}<h2>Prochaines rencontres</h2></div>
+        ${listeProchaines}
+        <button class="b" style="width:100%;justify-content:center;margin-top:12px"
+                data-action="rencontre-rapide">${ic("plus",15)} Programmer une rencontre</button>
+      </div>
     </div>
-
-    ${aVenir.length ? '<h3>Rencontres à venir</h3>' + avecMois(aVenir) : ""}
-
-    ${passees.length ? '<h3 style="margin-top:' + (aVenir.length ? "22px" : "0") + '">' +
-      (f === "tout" ? "Rencontres passées" : "Rencontres") + "</h3>" +
-      avecMois(passees.slice(0, limite)) +
-      (passees.length > limite
-        ? '<button class="b" data-action="voir-toutes-rencontres">Afficher les ' +
-          passees.length + " rencontres</button>"
-        : (etat.listeComplete && passees.length > 20
-          ? '<button class="b" data-action="voir-toutes-rencontres">Réduire la liste</button>' : ""))
-      : ""}
-
-    ${(!aVenir.length && !passees.length)
-      ? '<p class="vide">' + (toutes.length
-          ? "Aucune rencontre ne correspond à ce filtre."
-          : "Aucune rencontre encodée. Cliquez sur « Nouvelle rencontre » pour commencer.") + "</p>"
-      : ""}
   </div>
 
   <div class="carte">
-    <div class="tete">${ic("visites",18)}<h2>Droits de visite en cours</h2>
-      <span class="doux pt">${pluriel(droits.length,"droit")} · fréquence et échéance</span></div>
+    <div class="tete">${ic("taches",18)}<h2>Suivi des rencontres</h2>
+      <input type="search" id="recherche" placeholder="Rechercher…" style="max-width:220px;margin-left:auto"
+             value="${ech(etat.recherche)}">
+      <button class="b mini" data-action="word">${ic("rapports",14)} Notes en Word</button>
+      <button class="b mini" onclick="window.print()">Imprimer</button></div>
+    <div class="filtres" style="margin-bottom:14px">
+      ${filtre("tout","Toutes", compte.tout)}${filtre("avenir","À venir", compte.avenir)}
+      ${filtre("completer","À compléter", compte.completer)}
+      ${filtre("venu","A eu lieu", compte.venu)}${filtre("absent","N'a pas eu lieu", compte.absent)}
+    </div>
     <div class="tableau-enveloppe">
       <table>
-        <thead><tr><th>Enfant</th><th>Rencontre avec</th><th>Fréquence</th>
-          <th class="num">Fin du droit</th><th>Statut</th><th class="num">Rencontres</th><th></th></tr></thead>
-        <tbody>${droits.length ? droits.map(({e,v}) => {
-          const s = statutVisite(v);
-          return `<tr>
-            <td><div style="display:flex;align-items:center;gap:9px">${avatar(e,30)}
-              <b>${ech(nomComplet(e))}</b></div></td>
-            <td>${ech(libelleParent(v))}</td>
-            <td>${ech(v.frequence || "—")}${v.lieu ? '<br><span class="doux pt">' + ech(v.lieu) + "</span>" : ""}</td>
-            <td class="num">${v.suspendu ? "—" : ech(fmtFR(v.dateFin))}</td>
-            <td><span class="et ${s.code}">${ech(s.label)}</span></td>
-            <td class="num">${(v.rencontres||[]).length}</td>
-            <td><div class="actions">
-              <button class="b mini primaire" data-action="rencontre-nouvelle" data-id="${e.id}"
-                      data-vid="${v.id}">${ic("plus",13)} Rencontre</button>
-              <button class="b mini" data-action="visite-modifier" data-id="${e.id}" data-vid="${v.id}">Modifier</button>
-              <button class="b mini danger" data-action="visite-supprimer" data-id="${e.id}" data-vid="${v.id}">✕</button>
-            </div></td>
-          </tr>`;
-        }).join("") : '<tr><td colspan="7" class="vide">Aucun droit de visite encodé.</td></tr>'}</tbody>
+        <thead><tr>
+          <th class="num">Date</th><th>Enfant</th><th>Intervenant</th><th>Type</th>
+          <th class="num">Heure début</th><th class="num">Heure fin</th><th>Statut</th>
+          <th style="text-align:center">A eu lieu ?</th><th>Note</th><th></th>
+        </tr></thead>
+        <tbody>${lignes || '<tr><td colspan="10" class="vide">Aucune rencontre à afficher.</td></tr>'}</tbody>
       </table>
     </div>
-    <p class="aide">Un droit de visite par parent : si l'enfant voit son papa et sa maman séparément,
-      encodez-en deux.</p>
-  </div>`;
-}
-
-/** Une rencontre, présentée en clair : qui, quand, venu ou non, et la note. */
-function carteRencontre(o){
-  const e = o.enfant, v = o.visite, r = o.rencontre;
-  const p = presenceDe(r);
-  const manque = aCompleter(r);
-  const code = manque ? "orange" : p.code;
-  const SYMBOLES = { venu:"✓", absent:"✕", annulee:"—", prevue:"•" };
-  const symbole = manque ? "!" : (SYMBOLES[r.presence] || "•");
-  const texte = manque ? "À compléter" : p.court;
-
-  return `<div class="rdv ${code}">
-    <div class="rdv-haut">
-      ${avatar(e, 42)}
-      <div class="rdv-qui">
-        <div class="rdv-nom">${ech(nomComplet(e))}</div>
-        <div class="rdv-parent">avec <b>${ech(libelleParent(v))}</b>${
-          v.frequence ? ' <span class="doux">· ' + ech(v.frequence) + "</span>" : ""}</div>
-      </div>
-      <div class="rdv-date">
-        <div class="j">${ech(fmtLong(r.date))}</div>
-        ${heuresDe(r) ? '<div class="h">' + ic("horloge",13) + " " + ech(heuresDe(r)) + "</div>" : ""}
-      </div>
-      <span class="badge ${code}"><span class="sym">${symbole}</span>${ech(texte)}</span>
-    </div>
-    <div class="rdv-note">${r.note ? ech(r.note)
-      : '<span class="doux">' + (manque ? "Rencontre passée : indiquez si le parent est venu et ajoutez votre note."
-        : (r.presence === "prevue" ? "Rencontre à venir." : "Pas de note.")) + "</span>"}</div>
-    <div class="rdv-actions">
-      <button class="b mini" data-action="rencontre-modifier" data-id="${e.id}"
-              data-vid="${v.id}" data-rid="${r.id}">Modifier</button>
-      <button class="b mini danger" data-action="rencontre-supprimer" data-id="${e.id}"
-              data-vid="${v.id}" data-rid="${r.id}">Supprimer</button>
+    <div class="barre" style="margin:14px 0 0">
+      <span class="doux pt">Total : ${pluriel(total.length,"rencontre")}</span>
+      ${suivi.length > limite
+        ? '<button class="b mini" data-action="voir-toutes-rencontres">Afficher les ' +
+          suivi.length + " lignes</button>"
+        : (etat.listeComplete && suivi.length > 25
+          ? '<button class="b mini" data-action="voir-toutes-rencontres">Réduire</button>' : "")}
+      <span class="legende pousse" style="margin:0">
+        <span><span class="et vert">✓</span> Oui, a eu lieu</span>
+        <span><span class="et rouge">✕</span> Non, n'a pas eu lieu</span>
+      </span>
     </div>
   </div>`;
 }
@@ -1533,7 +1678,14 @@ function formNotifRecue(e){
 
 function formVisite(e, v){
   const neuf = !v;
-  v = v || { id:null, parent:"", frequence:"", dateFin:"", suspendu:false, suspenduDepuis:"", lieu:"" };
+  v = v || { id:null, parent:"", frequence:"", dateFin:"", suspendu:false, suspenduDepuis:"",
+             lieu:"", creneaux:[] };
+  const creneauDe = n => (v.creneaux||[]).find(c => c.semaine === n) || { debut:"", fin:"" };
+  const rangees = [1,2,3,4].map(n => `
+    <tr><td style="padding:5px 8px 5px 0"><b>Semaine ${n}</b></td>
+      <td style="padding:5px 6px"><input type="time" name="d${n}" value="${ech(creneauDe(n).debut)}"></td>
+      <td style="padding:5px 0"><input type="time" name="f${n}" value="${ech(creneauDe(n).fin)}"></td>
+    </tr>`).join("");
   const choixEnfant = e ? "" : `
     <label class="champ"><span>Enfant</span>
       <select name="enfantId" required><option value="">— choisir —</option>${DB.enfants.slice()
@@ -1559,12 +1711,22 @@ function formVisite(e, v){
     </div>
     <label class="champ" style="display:flex;gap:8px;align-items:center">
       <input type="checkbox" name="suspendu" style="width:auto"${v.suspendu?" checked":""}>
-      <span style="margin:0">Droit de visite actuellement suspendu</span></label>`;
+      <span style="margin:0">Droit de visite actuellement suspendu</span></label>
+    <label class="champ"><span>Schéma de récurrence dans le mois</span>
+      <table style="width:100%;max-width:340px"><tbody>${rangees}</tbody></table>
+      <p class="aide">Laissez vide une semaine sans rencontre. Ces horaires alimentent le
+        schéma mensuel de l'onglet Droits de visite.</p></label>`;
   ouvrirModale(neuf ? "Nouveau droit de visite" : "Modifier le droit de visite", corps, f => {
     const c = e || enfantParId(val(f,"enfantId"));
     if(!c){ alert("Choisissez l'enfant concerné."); return false; }
+    const creneaux = [];
+    [1,2,3,4].forEach(n => {
+      const deb = val(f,"d"+n), fin = val(f,"f"+n);
+      if(deb || fin) creneaux.push({ semaine:n, debut:deb, fin:fin });
+    });
     const d = { parent:val(f,"parent"), frequence:val(f,"frequence"), dateFin:val(f,"dateFin"),
-                lieu:val(f,"lieu"), suspendu:coche(f,"suspendu"), suspenduDepuis:val(f,"suspenduDepuis") };
+                lieu:val(f,"lieu"), suspendu:coche(f,"suspendu"), suspenduDepuis:val(f,"suspenduDepuis"),
+                creneaux };
     if(neuf) c.visites.push(Object.assign({ id:uid(), rencontres:[] }, d));
     else Object.assign(c.visites.find(x => x.id === v.id), d);
     maj();
@@ -2137,6 +2299,12 @@ function actionner(b){
         maj();
       }
       break;
+    case "rencontre-eulieu": {
+      const r = (v.rencontres||[]).find(x => x.id === rid);
+      if(r) r.presence = (r.presence === "venu") ? "absent" : "venu";
+      maj();
+      break;
+    }
     case "filtre-visite":
       etat.filtreVisite = b.dataset.f; etat.listeComplete = false; rendre(); break;
     case "voir-toutes-rencontres":
@@ -2250,33 +2418,36 @@ function donneesInitiales(){
     ["Eléonore","HOUEE-WAUTIER","SAJ","2027-04-27",[]],
     ["Théa","NEUFORGE","SAJ","2027-05-06",[]]
   ];
-  // droits de visite du premier tableau : le parent reste à préciser
+  // droits de visite du premier tableau : parent, fréquence, fin, suspension,
+  // puis les créneaux du mois repris du planning « Semaine 1 à 4 »
   const visites = {
     "Sofia INFANTINO":     [["", "2h/vacances",        "2026-05-08", false, ""]],
-    "Malone BIHAIN":       [["", "1h/mois",            "2026-06-03", false, ""]],
-    "Eléana PEIXOTO":      [["", "1h/mois",            "2026-06-24", false, ""]],
+    "Malone BIHAIN":       [["", "1h/mois",            "2026-06-03", false, "", [[1,"12:45","13:45"]]]],
+    "Eléana PEIXOTO":      [["", "1h/mois",            "2026-06-24", false, "", [[2,"14:00","15:00"]]]],
     "Lucas THEISMANN":     [["", "2x 1h/mois",         "2026-08-18", false, ""]],
     "Célia THEISMANN":     [["", "2x 1h/mois",         "2026-08-18", false, ""]],
     "Théo DE BRUYN":       [["", "Pendant les congés", "",           false, ""]],
-    "Timi LEMET":          [["", "1h/mois",            "",           true,  "2026-05-20"]],
-    "David LEMET":         [["", "1h/mois",            "",           true,  "2026-05-20"]],
+    "Timi LEMET":          [["", "1h/mois",            "",           true,  "2026-05-20", [[4,"14:00","15:00"]]]],
+    "David LEMET":         [["", "1h/mois",            "",           true,  "2026-05-20", [[4,"14:00","15:00"]]]],
     "Alessandro MAKA":     [["", "4h/mois",            "2040-01-01", false, ""]],
     "Océanna MAKA":        [["", "4h/mois",            "2040-01-01", false, ""]],
     "Lionel MAKA":         [["", "4h/mois",            "2040-01-01", false, ""]],
     "Dyana GASPAR":        [["", "2x 1h/mois",         "2040-01-01", false, ""]],
-    "Joackim BRUGNEROTTO": [["", "2x 1h/mois",         "2026-08-19", false, ""]],
-    "Tellyoh DESBESSEL":   [["", "2x 1h/mois",         "2026-08-26", false, ""]],
-    "Mélina LEFEVRE":      [["", "2x 1h/mois",         "2026-08-19", false, ""]]
+    "Joackim BRUGNEROTTO": [["", "2x 1h/mois",         "2026-08-19", false, "", [[1,"09:30","10:30"],[3,"13:30","14:30"]]]],
+    "Tellyoh DESBESSEL":   [["", "2x 1h/mois",         "2026-08-26", false, "", [[1,"15:00","16:00"],[3,"15:00","16:00"]]]],
+    "Mélina LEFEVRE":      [["", "2x 1h/mois",         "2026-08-19", false, "", [[2,"15:00","16:00"],[4,"15:00","16:00"]]]]
   };
 
   const enfants = source.map(([prenom, nom, service, notifFin, relances]) => ({
     id: uid(), prenom, nom, service, naissance:"", notifFin,
     notifRecue: true, notifRecueLe: "",
     relances: relances.slice(), historique: [],
-    visites: (visites[prenom + " " + nom] || []).map(([parent, frequence, dateFin, suspendu, depuis]) => ({
-      id: uid(), parent, frequence, dateFin, suspendu,
-      suspenduDepuis: depuis, lieu:"", rencontres:[]
-    }))
+    visites: (visites[prenom + " " + nom] || [])
+      .map(([parent, frequence, dateFin, suspendu, depuis, creneaux]) => ({
+        id: uid(), parent, frequence, dateFin, suspendu,
+        suspenduDepuis: depuis, lieu:"", rencontres:[],
+        creneaux: (creneaux || []).map(([semaine, debut, fin]) => ({ semaine, debut, fin }))
+      }))
   }));
 
   return {

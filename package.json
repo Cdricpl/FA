@@ -1,6 +1,6 @@
 {
   "name": "gestion-dossiers",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "productName": "Gestion des dossiers",
   "description": "Suivi des dossiers d'enfants : notifications de prise en charge, rapports semestriels et annuels, droits de visite et notes de rencontres.",
   "main": "electron/main.js",

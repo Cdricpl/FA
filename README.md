@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.3.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.4.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -80,32 +80,22 @@ Le calendrier des douze prochains mois, dans la présentation de votre tableau E
 Boutons pour reculer ou avancer de douze mois.
 
 ### Droits de visite
-L'écran s'ouvre sur le **journal des rencontres**, une carte par rencontre : l'enfant,
-avec qui, la date et l'heure, un grand repère coloré **✓ Venu / ✕ Absent / • Prévue /
-! À compléter**, et la note de synthèse en dessous. Les rencontres sont séparées en
-« à venir » et « passées », regroupées par mois, avec des filtres.
+Quatre blocs :
 
-Une rencontre encodée à une date future apparaît sur l'**Accueil** ; une fois la date
-passée sans compte rendu, elle se marque **À compléter** en orange.
+1. **Enfants concernés** — une carte par droit de visite : l'enfant, la fréquence,
+   avec qui, l'état (● Actif ou ● Suspendu) et la date de fin.
+2. **Schéma de récurrence (mensuel)** — les quatre semaines du mois côte à côte, avec
+   les créneaux de chaque enfant, colorés selon l'intervenant : Papa en bleu, Maman en
+   rose, Fratrie en violet. Un droit suspendu porte un ⚠. Les créneaux s'encodent dans
+   « Modifier » sur la carte de l'enfant.
+3. **Prochaines rencontres** — les rendez-vous à venir, avec leur pastille de date.
+4. **Suivi des rencontres** — le tableau : date, enfant, intervenant, type, heure de
+   début et de fin, statut (Prévu, Terminé, À compléter, Suspendu), une case
+   **A eu lieu ?** à cocher, la note de synthèse, et les boutons modifier / supprimer.
+   Filtres comptés et recherche portant aussi sur le texte des notes.
 
-En bas, le tableau **Droits de visite en cours** : un droit **par parent** (si l'enfant voit
-son papa et sa maman séparément, encodez-en deux), avec la **fréquence** (`2x 1h/mois`,
-`4h/mois`, `2h/vacances`…), la date de fin, une éventuelle suspension et le lieu.
-
-Bouton **Exporter les notes en Word** : un `.docx` structuré, un chapitre par enfant,
-filtrable par période, prêt à être repris dans vos rapports.
-
-```
-Notes de visites
-Document généré le mardi 11 août 2026 — période du 01/01/2026 au 30/06/2026
-
-Sofia INFANTINO — SPJ
-  Rencontres avec Maman  (1x 2h/mois)
-  2 rencontres : 1 honorée(s), 1 manquée(s)
-
-  Mercredi 10 juin 2026 — Parent venu
-      Rencontre calme. Sofia s'est montrée à l'aise, échanges autour de l'école.
-```
+Bouton **Notes en Word** : un `.docx` structuré, un chapitre par enfant, filtrable par
+période, prêt à être repris dans vos rapports.
 
 ---
 
