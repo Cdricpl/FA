@@ -32,18 +32,21 @@
 body{margin:0;background:var(--fond);color:var(--texte);
   font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
 h1,h2,h3{margin:0 0 .4em;line-height:1.25}
-h1{font-size:19px}
+h1{font-size:20px}
 h2{font-size:17px}
-h3{font-size:14px;text-transform:uppercase;letter-spacing:.04em;color:var(--doux)}
-a{color:var(--accent)}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux);margin-top:0}
 
 /* ---------- En-tête ---------- */
 header{background:var(--carte);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:40}
 .bandeau{max-width:1280px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .logo{font-weight:700;font-size:17px;white-space:nowrap}
 .logo span{color:var(--accent)}
-.info-jour{margin-left:auto;font-size:13px;color:var(--doux);text-align:right}
+.droite{margin-left:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end}
+.info-jour{font-size:13px;color:var(--doux);text-align:right}
 .info-jour b{color:var(--texte)}
+.stockage{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--doux);
+  padding:5px 11px;border:1px solid var(--bord);border-radius:20px;background:var(--fond)}
+.stockage b{color:var(--texte);font-weight:600}
 nav{max-width:1280px;margin:0 auto;padding:0 12px;display:flex;gap:2px;overflow-x:auto}
 nav button{background:none;border:0;border-bottom:2px solid transparent;padding:9px 13px;
   font:inherit;font-size:14px;color:var(--doux);cursor:pointer;white-space:nowrap;border-radius:6px 6px 0 0}
@@ -72,14 +75,16 @@ main{max-width:1280px;margin:0 auto;padding:18px}
 .tableau-enveloppe{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;font-size:14px}
 th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux);
-  padding:8px 10px;border-bottom:1px solid var(--bord);white-space:nowrap;background:var(--carte);position:sticky;top:0}
+  padding:8px 10px;border-bottom:1px solid var(--bord);white-space:nowrap;background:var(--carte)}
 td{padding:8px 10px;border-bottom:1px solid var(--bord);vertical-align:top}
 tbody tr:hover{background:var(--accent-doux)}
 tbody tr:last-child td{border-bottom:0}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .vide{padding:26px 10px;text-align:center;color:var(--doux);font-style:italic}
+.cliquable{cursor:pointer}
+.cliquable b{color:var(--accent)}
 
-/* ---------- Étiquettes de statut ---------- */
+/* ---------- Étiquettes ---------- */
 .et{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
 .et.vert{background:var(--vert-f);color:var(--vert)}
 .et.orange{background:var(--orange-f);color:var(--orange)}
@@ -90,7 +95,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:now
 tr.l-rouge td:first-child{box-shadow:inset 3px 0 var(--rouge)}
 tr.l-orange td:first-child{box-shadow:inset 3px 0 var(--orange)}
 tr.l-vert td:first-child{box-shadow:inset 3px 0 var(--vert)}
+tr.l-gris td:first-child{box-shadow:inset 3px 0 var(--gris)}
 tr.l-suspendu td:first-child{box-shadow:inset 3px 0 var(--violet)}
+.puce{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.puce.vert{background:var(--vert)} .puce.orange{background:var(--orange)}
+.puce.rouge{background:var(--rouge)} .puce.gris{background:var(--gris)} .puce.suspendu{background:var(--violet)}
 
 /* ---------- Boutons ---------- */
 button.b,a.b{display:inline-flex;align-items:center;gap:6px;background:var(--carte);color:var(--texte);
@@ -99,7 +108,7 @@ button.b,a.b{display:inline-flex;align-items:center;gap:6px;background:var(--car
 button.b:hover,a.b:hover{background:var(--accent-doux);border-color:var(--accent)}
 button.b.primaire{background:var(--accent);border-color:var(--accent);color:#fff}
 button.b.primaire:hover{filter:brightness(1.08)}
-button.b.danger{color:var(--rouge);border-color:var(--bord)}
+button.b.danger{color:var(--rouge)}
 button.b.danger:hover{background:var(--rouge-f);border-color:var(--rouge)}
 button.b.mini{padding:3px 8px;font-size:12.5px}
 .actions{display:flex;gap:6px;flex-wrap:wrap}
@@ -107,18 +116,19 @@ button.b.mini{padding:3px 8px;font-size:12.5px}
 .barre-outils .pousse{margin-left:auto}
 
 /* ---------- Formulaires ---------- */
-input[type=text],input[type=date],input[type=time],input[type=number],input[type=search],select,textarea{
+input[type=text],input[type=date],input[type=number],input[type=search],select,textarea{
   font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--bord);border-radius:8px;
   background:var(--carte);color:var(--texte);width:100%}
+textarea{resize:vertical}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
 label.champ{display:block;margin-bottom:11px}
 label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:4px}
 .ligne{display:grid;gap:11px}
 @media(min-width:560px){.ligne.c2{grid-template-columns:1fr 1fr}.ligne.c3{grid-template-columns:1fr 1fr 1fr}}
-.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:2px;
-  max-height:190px;overflow:auto;border:1px solid var(--bord);border-radius:8px;padding:8px}
-.cases label{display:flex;gap:7px;align-items:center;font-size:13.5px}
-.cases input{width:auto}
+.radios{display:flex;gap:8px;flex-wrap:wrap}
+.radios label{display:flex;align-items:center;gap:6px;border:1px solid var(--bord);border-radius:8px;
+  padding:7px 12px;cursor:pointer;font-size:13.5px}
+.radios input{width:auto;margin:0}
 .aide{font-size:12.5px;color:var(--doux);margin:4px 0 0}
 
 /* ---------- Modale ---------- */
@@ -130,10 +140,32 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .modale .corps{padding:14px 18px}
 .modale .pied{padding:14px 18px;border-top:1px solid var(--bord);display:flex;gap:8px;justify-content:flex-end}
 
+/* ---------- Fiche enfant ---------- */
+.entete-fiche{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.entete-fiche .nom{font-size:22px;font-weight:700}
+.bloc{border:1px solid var(--bord);border-radius:var(--r);padding:13px 15px;margin-bottom:11px;background:var(--fond)}
+.bloc .chapeau{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.bloc .chapeau .t{font-weight:700}
+.rencontre{display:flex;gap:11px;padding:9px 0;border-top:1px solid var(--bord);align-items:flex-start}
+.rencontre .d{min-width:104px;font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;white-space:nowrap}
+.rencontre .n{flex:1;white-space:pre-wrap}
+.deux-col{display:grid;gap:11px}
+@media(min-width:780px){.deux-col{grid-template-columns:1fr 1fr}}
+
+/* ---------- Calendrier des rapports ---------- */
+.mois-grille{display:grid;gap:11px}
+@media(min-width:700px){.mois-grille{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1050px){.mois-grille{grid-template-columns:repeat(3,1fr)}}
+.mois{border:1px solid var(--bord);border-radius:var(--r);background:var(--carte);overflow:hidden}
+.mois>.tete{padding:7px 12px;background:var(--gris-f);font-weight:700;font-size:13.5px;
+  display:flex;justify-content:space-between;align-items:baseline}
+.mois>.tete.courant{background:var(--accent-doux);color:var(--accent)}
+.mois .part{padding:8px 12px;border-top:1px solid var(--bord)}
+.mois .part .lib{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux);margin-bottom:3px}
+.mois .part .item{font-size:13px;padding:1px 0}
+.mois .rien{padding:9px 12px;color:var(--doux);font-size:12.5px;font-style:italic}
+
 /* ---------- Divers ---------- */
-.puce{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.puce.vert{background:var(--vert)} .puce.orange{background:var(--orange)}
-.puce.rouge{background:var(--rouge)} .puce.gris{background:var(--gris)} .puce.suspendu{background:var(--violet)}
 .doux{color:var(--doux)}
 .pt{font-size:12.5px}
 .nowrap{white-space:nowrap}
@@ -141,23 +173,20 @@ ul.liste{list-style:none;margin:0;padding:0}
 ul.liste li{padding:8px 0;border-bottom:1px solid var(--bord);display:flex;gap:10px;align-items:flex-start}
 ul.liste li:last-child{border-bottom:0}
 .tache-faite{text-decoration:line-through;color:var(--doux)}
-.jour{border:1px solid var(--bord);border-radius:var(--r);overflow:hidden;background:var(--carte)}
-.jour>.tete{padding:7px 11px;background:var(--gris-f);font-size:12.5px;font-weight:600;
-  display:flex;justify-content:space-between;align-items:baseline}
-.jour>.tete.auj{background:var(--accent-doux);color:var(--accent)}
-.jour .creneau{padding:8px 11px;border-top:1px solid var(--bord);display:flex;gap:10px;align-items:baseline}
-.jour .creneau .h{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;font-size:13px}
-.jour .rien{padding:9px 11px;color:var(--doux);font-size:12.5px;font-style:italic}
-.semaine{display:grid;gap:9px}
-@media(min-width:800px){.semaine{grid-template-columns:repeat(7,1fr)}}
 .legende{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--doux);margin-top:10px}
+.encadre{border:1px solid var(--bord);border-radius:var(--r);padding:12px 14px;background:var(--fond);margin-bottom:12px}
+.encadre.ok{border-color:var(--vert);background:var(--vert-f)}
+.encadre.attention{border-color:var(--orange);background:var(--orange-f)}
+.encadre.souci{border-color:var(--rouge);background:var(--rouge-f)}
+.encadre .titre{font-weight:600;margin-bottom:3px}
+code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px}
 footer{max-width:1280px;margin:0 auto;padding:6px 18px 34px;font-size:12.5px;color:var(--doux)}
 
 @media print{
   header,nav,.barre-outils,footer,.actions,button{display:none !important}
   body{background:#fff}
   main{max-width:none;padding:0}
-  .carte{break-inside:avoid;box-shadow:none;border-color:#bbb;margin-bottom:10px}
+  .carte,.mois,.bloc{break-inside:avoid;box-shadow:none;border-color:#bbb;margin-bottom:10px}
   .et{border:1px solid #999}
 }
 </style>
@@ -167,16 +196,16 @@ footer{max-width:1280px;margin:0 auto;padding:6px 18px 34px;font-size:12.5px;col
 <header>
   <div class="bandeau">
     <div class="logo">Gestion de mes <span>dossiers</span></div>
-    <div class="info-jour" id="info-jour"></div>
+    <div class="droite">
+      <div class="stockage" id="etat-stockage"></div>
+      <div class="info-jour" id="info-jour"></div>
+    </div>
   </div>
   <nav id="nav"></nav>
 </header>
 
 <main id="vue"></main>
-<footer>
-  Données enregistrées uniquement sur cet ordinateur (stockage local du navigateur) — pensez à faire
-  une sauvegarde régulière depuis l'onglet <b>Données</b>.
-</footer>
+<footer id="pied"></footer>
 
 <div id="zone-modale"></div>
 <input type="file" id="fichier-import" accept="application/json,.json" hidden>
@@ -192,7 +221,7 @@ const JOURS = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"
 const MOIS  = ["janvier","février","mars","avril","mai","juin","juillet","août",
                "septembre","octobre","novembre","décembre"];
 
-const uid = () => Math.random().toString(36).slice(2, 10);
+const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
 
 function ech(v){
   return String(v == null ? "" : v)
@@ -200,7 +229,7 @@ function ech(v){
     .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 }
 
-/* --- Dates : on manipule des chaînes ISO "AAAA-MM-JJ" en heure locale --- */
+/* --- Dates : chaînes ISO "AAAA-MM-JJ", calculs en heure locale --- */
 function dISO(d){
   const p = n => String(n).padStart(2,"0");
   return d.getFullYear() + "-" + p(d.getMonth()+1) + "-" + p(d.getDate());
@@ -210,218 +239,413 @@ function parseISO(s){
   return new Date(a, m-1, j);
 }
 const aujourdHui = () => dISO(new Date());
+const estISO = s => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ""));
 
 function fmtFR(s){
-  if(!s) return "—";
-  const [a,m,j] = String(s).split("-");
+  if(!estISO(s)) return "—";
+  const [a,m,j] = s.split("-");
   return j + "/" + m + "/" + a;
 }
-function fmtLong(d){
+function fmtLong(s){
+  if(!estISO(s)) return "—";
+  const d = parseISO(s);
   return JOURS[(d.getDay()+6)%7] + " " + d.getDate() + " " + MOIS[d.getMonth()] + " " + d.getFullYear();
 }
-function ajJours(d, n){ const r = new Date(d); r.setDate(r.getDate()+n); return r; }
-function joursEntre(a, b){
-  return Math.round((parseISO(b) - parseISO(a)) / 86400000);
+function fmtMoisAnnee(s){
+  const d = parseISO(s);
+  return MOIS[d.getMonth()] + " " + d.getFullYear();
 }
-function lundiDe(d){ return ajJours(d, -(((d.getDay()+6)%7))); }
-function numJour(d){ return ((d.getDay()+6)%7) + 1; }   // 1 = lundi … 7 = dimanche
+function joursEntre(a,b){ return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
 
-/** n-ième « jour » (1=lundi) du mois ; null si ce mois ne l'a pas. */
-function niemeJourDuMois(annee, mois, jour, n){
-  const premier = new Date(annee, mois, 1);
-  const decal = ((jour - 1) - ((premier.getDay()+6)%7) + 7) % 7;
-  const d = new Date(annee, mois, 1 + decal + (n-1)*7);
-  return d.getMonth() === mois ? d : null;
+/** Décale une date de n mois, en ramenant au dernier jour du mois si besoin. */
+function decalerMois(iso, n){
+  const d = parseISO(iso);
+  const jour = d.getDate();
+  const cible = new Date(d.getFullYear(), d.getMonth() + n, 1);
+  const dernier = new Date(cible.getFullYear(), cible.getMonth()+1, 0).getDate();
+  cible.setDate(Math.min(jour, dernier));
+  return dISO(cible);
 }
+const decalerAns = (iso, n) => decalerMois(iso, 12*n);
+function decalerJours(iso, n){ const d = parseISO(iso); d.setDate(d.getDate()+n); return dISO(d); }
 function pluriel(n, mot, plur){ return n + " " + (Math.abs(n) > 1 ? (plur || mot+"s") : mot); }
 
 /* =========================================================================
    2. DONNÉES
    ========================================================================= */
 
-const CLE = "fa-dossiers-v1";
+const CLE = "fa-dossiers-v2";
 let DB = null;
 let onglet = "tableau";
-let etat = { recherche:"", tri:"date", tachesFaites:false, semaineOffset:0, vuePlanning:"semaine" };
+let etat = { recherche:"", tri:"date", ficheId:null, tachesFaites:false, anneeRapports:0 };
 
 function baseVide(){
   return {
-    version: 1,
-    parametres: { seuilAlerteJours: 30, debutCycle: "2026-01-05" },
-    enfants: [], droits: [], taches: []
+    version: 2,
+    parametres: { seuilAlerteJours:30, seuilRapportJours:45 },
+    enfants: [], taches: []
   };
+}
+function normaliser(d){
+  const r = Object.assign(baseVide(), d || {});
+  r.parametres = Object.assign(baseVide().parametres, (d && d.parametres) || {});
+  r.enfants = Array.isArray(r.enfants) ? r.enfants : [];
+  r.taches  = Array.isArray(r.taches)  ? r.taches  : [];
+  r.enfants.forEach(e => {
+    e.relances   = Array.isArray(e.relances)   ? e.relances   : [];
+    e.historique = Array.isArray(e.historique) ? e.historique : [];
+    e.rapports   = Array.isArray(e.rapports)   ? e.rapports   : [];
+    e.visites    = Array.isArray(e.visites)    ? e.visites    : [];
+    e.visites.forEach(v => { v.rencontres = Array.isArray(v.rencontres) ? v.rencontres : []; });
+  });
+  return r;
 }
 
 function charger(){
   try{
     const brut = localStorage.getItem(CLE);
-    if(brut){
-      const d = JSON.parse(brut);
-      DB = Object.assign(baseVide(), d);
-      DB.parametres = Object.assign(baseVide().parametres, d.parametres || {});
-      return;
-    }
+    if(brut){ DB = normaliser(JSON.parse(brut)); return; }
   }catch(e){ console.warn("Lecture impossible :", e); }
   DB = donneesInitiales();
   sauver();
 }
 function sauver(){
+  DB.modifieLe = new Date().toISOString();
   try{ localStorage.setItem(CLE, JSON.stringify(DB)); }
-  catch(e){ alert("Impossible d'enregistrer les données : " + e.message); }
+  catch(e){ console.warn("Copie navigateur impossible :", e); }
+  fsPlanifierEcriture();
 }
-function maj(){ sauver(); rendre(); }
+function maj(){ DB.initial = false; sauver(); rendre(); }
 
 const enfantParId = id => DB.enfants.find(e => e.id === id);
-const nomComplet  = e => e ? ((e.prenom || "") + " " + (e.nom || "")).trim() : "";
-function nomsEnfants(ids){
-  return (ids || []).map(i => nomComplet(enfantParId(i))).filter(Boolean).join(", ");
+const nomComplet  = e => e ? ((e.prenom||"") + " " + (e.nom||"")).trim() : "";
+const parNom = (a,b) => nomComplet(a).localeCompare(nomComplet(b), "fr");
+
+/* =========================================================================
+   3. ENREGISTREMENT DANS UN VRAI FICHIER SUR LE DISQUE
+   ========================================================================= */
+
+const NOM_FICHIER    = "donnees-dossiers.json";
+const DOSSIER_SAUV   = "sauvegardes";
+const NB_SAUVEGARDES = 60;
+
+const FS = {
+  dispo: typeof window.showDirectoryPicker === "function",
+  dossier:null, enAttente:null, nom:"", dernier:null, erreur:"",
+  enCours:false, aRefaire:false, dernierBackup:0
+};
+
+function idbOuvrir(){
+  return new Promise((res, rej) => {
+    const q = indexedDB.open("fa-dossiers-config", 1);
+    q.onupgradeneeded = () => q.result.createObjectStore("cfg");
+    q.onsuccess = () => res(q.result);
+    q.onerror = () => rej(q.error);
+  });
+}
+function idbEcrire(cle, valeur){
+  return idbOuvrir().then(d => new Promise((res, rej) => {
+    const t = d.transaction("cfg","readwrite");
+    t.objectStore("cfg").put(valeur, cle);
+    t.oncomplete = () => { d.close(); res(); };
+    t.onerror = () => { d.close(); rej(t.error); };
+  }));
+}
+function idbLire(cle){
+  return idbOuvrir().then(d => new Promise((res, rej) => {
+    const t = d.transaction("cfg","readonly");
+    const q = t.objectStore("cfg").get(cle);
+    q.onsuccess = () => { d.close(); res(q.result || null); };
+    q.onerror = () => { d.close(); rej(q.error); };
+  }));
+}
+function idbEffacer(cle){
+  return idbOuvrir().then(d => new Promise(res => {
+    const t = d.transaction("cfg","readwrite");
+    t.objectStore("cfg").delete(cle);
+    t.oncomplete = () => { d.close(); res(); };
+    t.onerror = () => { d.close(); res(); };
+  }));
+}
+
+const heureCourte = d => String(d.getHours()).padStart(2,"0") + "h" + String(d.getMinutes()).padStart(2,"0");
+
+async function fsReconnecter(silencieux){
+  if(!FS.dispo) return;
+  let h = null;
+  try{ h = await idbLire("dossier"); }catch(e){ return; }
+  if(!h) return;
+  FS.nom = h.name;
+  let droit = "prompt";
+  try{
+    droit = silencieux ? await h.queryPermission({ mode:"readwrite" })
+                       : await h.requestPermission({ mode:"readwrite" });
+  }catch(e){ droit = "prompt"; }
+  if(droit === "granted"){
+    FS.dossier = h; FS.enAttente = null; FS.erreur = "";
+    await fsLire();
+  }else{
+    FS.enAttente = h;
+  }
+  majEtatStockage();
+}
+
+async function fsChoisir(){
+  if(!FS.dispo) return;
+  let h;
+  try{ h = await window.showDirectoryPicker({ id:"dossiers-fa", mode:"readwrite", startIn:"documents" }); }
+  catch(e){ return; }
+  FS.dossier = h; FS.enAttente = null; FS.nom = h.name; FS.erreur = "";
+  try{ await idbEcrire("dossier", h); }catch(e){}
+  const trouve = await fsLire();
+  if(!trouve) await fsEcrire();
+  majEtatStockage();
+  alert(trouve
+    ? "Dossier connecté. Les données du fichier « " + NOM_FICHIER + " » ont été chargées."
+    : "Dossier connecté. Vos données sont enregistrées dans « " + NOM_FICHIER +
+      " », automatiquement, à chaque modification.");
+}
+
+async function fsLire(){
+  if(!FS.dossier) return false;
+  let fh;
+  try{ fh = await FS.dossier.getFileHandle(NOM_FICHIER); }catch(e){ return false; }
+  try{
+    const d = JSON.parse(await (await fh.getFile()).text());
+    if(!d || !Array.isArray(d.enfants)) throw new Error("contenu inattendu");
+    const localPlusRecent = DB && !DB.initial && DB.modifieLe &&
+                            (!d.modifieLe || DB.modifieLe > d.modifieLe);
+    if(localPlusRecent){
+      await fsEcrire();
+    }else{
+      DB = normaliser(d);
+      try{ localStorage.setItem(CLE, JSON.stringify(DB)); }catch(e){}
+      rendre();
+    }
+    return true;
+  }catch(e){
+    FS.erreur = "Fichier illisible (" + e.message + ")";
+    return true;
+  }
+}
+
+let minuteurEcriture = null;
+function fsPlanifierEcriture(){
+  if(!FS.dossier) return;
+  clearTimeout(minuteurEcriture);
+  minuteurEcriture = setTimeout(fsEcrire, 300);
+}
+async function fsEcrire(){
+  if(!FS.dossier) return;
+  if(FS.enCours){ FS.aRefaire = true; return; }
+  FS.enCours = true;
+  const contenu = JSON.stringify(DB, null, 2);
+  try{
+    const fh = await FS.dossier.getFileHandle(NOM_FICHIER, { create:true });
+    const flux = await fh.createWritable();
+    await flux.write(contenu);
+    await flux.close();
+    FS.dernier = new Date();
+    FS.erreur = "";
+    await fsSauvegardeDuJour(contenu);
+  }catch(e){ FS.erreur = e.message || "écriture impossible"; }
+  FS.enCours = false;
+  majEtatStockage();
+  if(FS.aRefaire){ FS.aRefaire = false; fsPlanifierEcriture(); }
+}
+async function fsSauvegardeDuJour(contenu, forcer){
+  if(!forcer && Date.now() - FS.dernierBackup < 120000) return;
+  FS.dernierBackup = Date.now();
+  try{
+    const dir = await FS.dossier.getDirectoryHandle(DOSSIER_SAUV, { create:true });
+    const fh = await dir.getFileHandle("donnees-" + aujourdHui() + ".json", { create:true });
+    const flux = await fh.createWritable();
+    await flux.write(contenu);
+    await flux.close();
+    const noms = [];
+    for await (const nom of dir.keys()){
+      if(/^donnees-\d{4}-\d{2}-\d{2}\.json$/.test(nom)) noms.push(nom);
+    }
+    noms.sort();
+    for(const n of noms.slice(0, Math.max(0, noms.length - NB_SAUVEGARDES))) await dir.removeEntry(n);
+  }catch(e){ /* la copie de secours ne bloque jamais l'enregistrement principal */ }
+}
+
+function majEtatStockage(){
+  const n = document.getElementById("etat-stockage");
+  if(!n) return;
+  let couleur, texte, bouton = "";
+  if(!FS.dispo){
+    couleur = "orange"; texte = "Enregistré dans le navigateur";
+    bouton = '<button class="b mini" data-fs="aide">Pourquoi ?</button>';
+  }else if(FS.erreur){
+    couleur = "rouge"; texte = "Enregistrement bloqué";
+    bouton = '<button class="b mini" data-fs="choisir">Corriger</button>';
+  }else if(FS.dossier){
+    couleur = "vert";
+    texte = "<b>" + ech(FS.nom) + "</b>" + (FS.dernier ? " · enregistré à " + heureCourte(FS.dernier) : "");
+  }else if(FS.enAttente){
+    couleur = "orange"; texte = "<b>" + ech(FS.nom) + "</b> à reconnecter";
+    bouton = '<button class="b mini" data-fs="reconnecter">Reconnecter</button>';
+  }else{
+    couleur = "orange"; texte = "Pas encore de fichier sur le disque";
+    bouton = '<button class="b mini" data-fs="choisir">Choisir un dossier</button>';
+  }
+  n.innerHTML = '<span class="puce ' + couleur + '"></span><span>' + texte + "</span>" + bouton;
 }
 
 /* =========================================================================
-   3. STATUTS ET ALERTES
+   4. ÉCHÉANCES : notifications, rapports, droits de visite
    ========================================================================= */
 
-/** Statut d'une échéance : rouge = dépassée, orange = proche, vert = ok. */
-function statutEcheance(dateFin){
-  if(!dateFin) return { code:"gris", label:"Date à encoder", jours:null };
-  const j = joursEntre(aujourdHui(), dateFin);
-  if(j < 0)  return { code:"rouge",  label:"Dépassée depuis " + pluriel(-j,"jour"), jours:j };
-  if(j === 0) return { code:"orange", label:"Échéance aujourd'hui", jours:0 };
-  if(j <= DB.parametres.seuilAlerteJours) return { code:"orange", label:"Dans " + pluriel(j,"jour"), jours:j };
-  return { code:"vert", label:"Dans " + pluriel(j,"jour"), jours:j };
-}
-function statutDroit(dr){
-  if(dr.suspendu){
-    return { code:"suspendu",
-             label:"Suspendu" + (dr.suspenduDepuis ? " depuis le " + fmtFR(dr.suspenduDepuis) : ""),
-             jours:null };
-  }
-  return statutEcheance(dr.dateFin);
-}
 const ORDRE_STATUT = { rouge:0, orange:1, suspendu:2, gris:3, vert:4 };
 
+function statutEcheance(date, seuil){
+  if(!estISO(date)) return { code:"gris", label:"Date à encoder", jours:null };
+  const s = seuil == null ? DB.parametres.seuilAlerteJours : seuil;
+  const j = joursEntre(aujourdHui(), date);
+  if(j < 0)   return { code:"rouge",  label:"En retard de " + pluriel(-j,"jour"), jours:j };
+  if(j === 0) return { code:"orange", label:"Aujourd'hui", jours:0 };
+  if(j <= s)  return { code:"orange", label:"Dans " + pluriel(j,"jour"), jours:j };
+  return { code:"vert", label:"Dans " + pluriel(j,"jour"), jours:j };
+}
+
+/* --- Notification de prise en charge --- */
+const statutNotif = e => statutEcheance(e.notifFin);
+
+/* --- Rapports : l'annuel tombe à la date de formalisation,
+       le semestriel exactement six mois plus tôt. --- */
+function dateBaseRapport(e, type){
+  if(!estISO(e.notifFin)) return null;
+  return type === "annuel" ? e.notifFin : decalerMois(e.notifFin, -6);
+}
+const rapportEnvoye = (e, type, echeance) =>
+  (e.rapports || []).some(r => r.type === type && r.echeance === echeance && r.envoyeLe);
+
+/** Nombre de jours pendant lesquels un rapport dépassé reste signalé. */
+const RATTRAPAGE_RAPPORT = 60;
+
+/** Prochaine échéance non encore envoyée, en gardant les retards récents. */
+function echeanceRapport(e, type){
+  const base = dateBaseRapport(e, type);
+  if(!base) return null;
+  let d = base;
+  const limite = decalerJours(aujourdHui(), -RATTRAPAGE_RAPPORT);
+  let garde = 0;
+  while(d < limite && garde++ < 50) d = decalerAns(d, 1);   // les cycles révolus sont passés
+  garde = 0;
+  while(rapportEnvoye(e, type, d) && garde++ < 20) d = decalerAns(d, 1);
+  return d;
+}
+function statutRapport(e, type){
+  const d = echeanceRapport(e, type);
+  if(!d) return { code:"gris", label:"Sans date de formalisation", date:null };
+  const st = statutEcheance(d, DB.parametres.seuilRapportJours);
+  st.date = d;
+  return st;
+}
+
+/* --- Droits de visite (un bloc par parent) --- */
+function statutVisite(v){
+  if(v.suspendu) return { code:"suspendu",
+    label:"Suspendu" + (estISO(v.suspenduDepuis) ? " depuis le " + fmtFR(v.suspenduDepuis) : "") };
+  if(!estISO(v.dateFin)) return { code:"gris", label:"Sans date de fin" };
+  return statutEcheance(v.dateFin);
+}
+function toutesVisites(){
+  const l = [];
+  DB.enfants.forEach(e => (e.visites||[]).forEach(v => l.push({ enfant:e, visite:v })));
+  return l;
+}
+function toutesRencontres(){
+  const l = [];
+  DB.enfants.forEach(e => (e.visites||[]).forEach(v => (v.rencontres||[]).forEach(r =>
+    l.push({ enfant:e, visite:v, rencontre:r }))));
+  l.sort((a,b) => String(b.rencontre.date).localeCompare(String(a.rencontre.date)));
+  return l;
+}
+const libelleParent = v => v.parent && v.parent.trim() ? v.parent.trim() : "Parent à préciser";
+const PRESENCES = {
+  venu:    { label:"Parent venu",       court:"Venu",     code:"vert"   },
+  absent:  { label:"Parent absent",     court:"Absent",   code:"rouge"  },
+  annulee: { label:"Rencontre annulée", court:"Annulée",  code:"gris"   }
+};
+const presenceDe = r => PRESENCES[r.presence] || PRESENCES.venu;
+
+/* --- Alertes globales --- */
 function alertes(){
-  const rapports = DB.enfants
-    .map(e => ({ enfant:e, st:statutEcheance(e.notifFin) }))
-    .filter(o => o.st.code === "rouge" || o.st.code === "orange" || o.st.code === "gris")
-    .sort((a,b) => ORDRE_STATUT[a.st.code] - ORDRE_STATUT[b.st.code] ||
-                   String(a.enfant.notifFin).localeCompare(String(b.enfant.notifFin)));
-  const droits = DB.droits
-    .map(d => ({ droit:d, st:statutDroit(d) }))
+  const notifs = DB.enfants
+    .map(e => ({ enfant:e, st:statutNotif(e) }))
     .filter(o => o.st.code !== "vert")
     .sort((a,b) => ORDRE_STATUT[a.st.code] - ORDRE_STATUT[b.st.code] ||
-                   String(a.droit.dateFin).localeCompare(String(b.droit.dateFin)));
-  return { rapports, droits };
+                   String(a.enfant.notifFin||"9").localeCompare(String(b.enfant.notifFin||"9")));
+
+  const rapports = [];
+  DB.enfants.forEach(e => ["semestriel","annuel"].forEach(t => {
+    const st = statutRapport(e, t);
+    if(st.code === "rouge" || st.code === "orange") rapports.push({ enfant:e, type:t, st });
+  }));
+  rapports.sort((a,b) => String(a.st.date).localeCompare(String(b.st.date)));
+
+  const visites = toutesVisites()
+    .map(o => Object.assign({ st:statutVisite(o.visite) }, o))
+    .filter(o => o.st.code !== "vert")
+    .sort((a,b) => ORDRE_STATUT[a.st.code] - ORDRE_STATUT[b.st.code] ||
+                   String(a.visite.dateFin||"9").localeCompare(String(b.visite.dateFin||"9")));
+
+  return { notifs, rapports, visites };
 }
 function tachesEnCours(){
   const auj = aujourdHui();
-  return DB.taches.filter(t => !t.fait).sort((a,b) => {
-    const ea = a.echeance || "9999", eb = b.echeance || "9999";
-    return ea.localeCompare(eb) || String(a.texte).localeCompare(String(b.texte));
-  }).map(t => Object.assign({}, t, {
-    enRetard: !!t.echeance && t.echeance < auj,
-    pourAuj:  t.echeance === auj
-  }));
+  return DB.taches.filter(t => !t.fait)
+    .sort((a,b) => String(a.echeance||"9999").localeCompare(String(b.echeance||"9999")) ||
+                   String(a.texte).localeCompare(String(b.texte)))
+    .map(t => Object.assign({}, t, {
+      enRetard: estISO(t.echeance) && t.echeance < auj,
+      pourAuj:  t.echeance === auj
+    }));
 }
 
 /* =========================================================================
-   4. PLANNING DES VISITES
-   ========================================================================= */
-
-/** Numéro (1..4) de la semaine dans le cycle, pour le lundi donné. */
-function semaineDuCycle(lundiISO){
-  const debut = lundiDe(parseISO(DB.parametres.debutCycle || "2026-01-05"));
-  const ecart = Math.round((parseISO(lundiISO) - debut) / (7*86400000));
-  return ((ecart % 4) + 4) % 4 + 1;
-}
-
-function libelleCreneau(c){
-  if(c.type === "hebdo")    return "Chaque semaine, " + (c.jour ? JOURS[c.jour-1] : "jour à préciser");
-  if(c.type === "cycle4")   return "Semaine " + c.semaine + (c.jour ? ", " + JOURS[c.jour-1] : ", jour à préciser");
-  if(c.type === "mensuel")  return (c.jour ? JOURS[c.jour-1] : "Jour à préciser") + " " + (c.occurrence||1) + " du mois";
-  if(c.type === "vacances") return "Pendant les congés / vacances";
-  if(c.type === "ponctuel") return "Le " + fmtFR(c.date);
-  return "—";
-}
-const heuresCreneau = c => (c.debut || "?") + " – " + (c.fin || "?");
-
-/** Toutes les occurrences de visite d'une semaine (lundi → dimanche). */
-function occurrencesSemaine(lundiISO){
-  const lundi = parseISO(lundiISO);
-  const dimanche = ajJours(lundi, 6);
-  const sem = semaineDuCycle(lundiISO);
-  const res = [], aPreciser = [], vacances = [];
-
-  DB.droits.forEach(dr => (dr.creneaux || []).forEach(c => {
-    const base = { droit:dr, creneau:c };
-
-    if(c.type === "vacances"){ vacances.push(base); return; }
-
-    if(c.type === "ponctuel"){
-      if(c.date){
-        const d = parseISO(c.date);
-        if(d >= lundi && d <= dimanche) res.push(Object.assign({ date:c.date }, base));
-      }
-      return;
-    }
-    if(c.type === "cycle4" && c.semaine !== sem) return;
-
-    if(c.type === "mensuel"){
-      if(!c.jour){ aPreciser.push(base); return; }
-      const vus = new Set();
-      [lundi, dimanche].forEach(ref => {
-        const cle = ref.getFullYear() + "-" + ref.getMonth();
-        if(vus.has(cle)) return;
-        vus.add(cle);
-        const d = niemeJourDuMois(ref.getFullYear(), ref.getMonth(), c.jour, c.occurrence || 1);
-        if(d && d >= lundi && d <= dimanche) res.push(Object.assign({ date:dISO(d) }, base));
-      });
-      return;
-    }
-    // hebdo et cycle4
-    if(!c.jour){ aPreciser.push(base); return; }
-    res.push(Object.assign({ date: dISO(ajJours(lundi, c.jour - 1)) }, base));
-  }));
-
-  res.sort((a,b) => a.date.localeCompare(b.date) || String(a.creneau.debut).localeCompare(String(b.creneau.debut)));
-  return { occurrences:res, aPreciser, vacances, semaineCycle:sem };
-}
-
-/* =========================================================================
-   5. RENDU — squelette
+   5. SQUELETTE
    ========================================================================= */
 
 const ONGLETS = [
   { id:"tableau",  titre:"Tableau de bord" },
-  { id:"dossiers", titre:"Dossiers / rapports" },
-  { id:"droits",   titre:"Droits de visite" },
-  { id:"planning", titre:"Planning" },
+  { id:"enfants",  titre:"Enfants" },
+  { id:"rapports", titre:"Rapports" },
+  { id:"visites",  titre:"Visites" },
   { id:"taches",   titre:"À faire" },
   { id:"donnees",  titre:"Données" }
 ];
 
 function rendre(){
   const al = alertes();
-  const nbUrgent = al.rapports.filter(o => o.st.code === "rouge").length +
-                   al.droits.filter(o => o.st.code === "rouge").length;
+  const urgent = al.notifs.filter(o => o.st.code === "rouge").length +
+                 al.rapports.filter(o => o.st.code === "rouge").length +
+                 al.visites.filter(o => o.st.code === "rouge").length;
   const nbTaches = tachesEnCours().filter(t => t.enRetard || t.pourAuj).length;
 
-  const maintenant = new Date();
   document.getElementById("info-jour").innerHTML =
-    "<b>" + ech(fmtLong(maintenant)) + "</b><br>Semaine <b>" +
-    semaineDuCycle(dISO(lundiDe(maintenant))) + "</b> du cycle";
+    "<b>" + ech(fmtLong(aujourdHui())) + "</b>";
 
+  const actif = onglet === "fiche" ? "enfants" : onglet;
   document.getElementById("nav").innerHTML = ONGLETS.map(o => {
     let p = "";
-    if(o.id === "tableau" && nbUrgent) p = '<span class="pastille">' + nbUrgent + "</span>";
-    if(o.id === "taches" && nbTaches)  p = '<span class="pastille">' + nbTaches + "</span>";
-    return '<button data-onglet="' + o.id + '" class="' + (onglet === o.id ? "actif" : "") + '">' +
+    if(o.id === "tableau" && urgent)   p = '<span class="pastille">' + urgent + "</span>";
+    if(o.id === "taches"  && nbTaches) p = '<span class="pastille">' + nbTaches + "</span>";
+    return '<button data-onglet="' + o.id + '" class="' + (actif === o.id ? "actif" : "") + '">' +
            ech(o.titre) + p + "</button>";
   }).join("");
 
-  const vues = { tableau:vueTableau, dossiers:vueDossiers, droits:vueDroits,
-                 planning:vuePlanning, taches:vueTaches, donnees:vueDonnees };
+  const vues = { tableau:vueTableau, enfants:vueEnfants, fiche:vueFiche, rapports:vueRapports,
+                 visites:vueVisites, taches:vueTaches, donnees:vueDonnees };
   document.getElementById("vue").innerHTML = (vues[onglet] || vueTableau)();
+  document.getElementById("pied").innerHTML = FS.dossier
+    ? "Données enregistrées automatiquement dans le dossier <b>" + ech(FS.nom) + "</b>."
+    : "Données enregistrées dans ce navigateur — connectez un dossier depuis l'onglet <b>Données</b> " +
+      "pour les conserver dans un vrai fichier.";
+  majEtatStockage();
   window.scrollTo({ top:0 });
 }
 
@@ -429,148 +653,139 @@ function rendre(){
    6. VUE — Tableau de bord
    ========================================================================= */
 
+function lienEnfant(e){
+  return '<b class="cliquable" data-action="fiche" data-id="' + e.id + '">' + ech(nomComplet(e)) + "</b>";
+}
+
 function vueTableau(){
   const al = alertes();
   const taches = tachesEnCours();
-  const rouges = al.rapports.filter(o => o.st.code === "rouge").length +
-                 al.droits.filter(o => o.st.code === "rouge").length;
-  const oranges = al.rapports.filter(o => o.st.code === "orange").length +
-                  al.droits.filter(o => o.st.code === "orange").length;
-
-  const lundiISO = dISO(lundiDe(new Date()));
-  const sem = occurrencesSemaine(lundiISO);
+  const rouges = al.notifs.filter(o => o.st.code === "rouge").length +
+                 al.rapports.filter(o => o.st.code === "rouge").length +
+                 al.visites.filter(o => o.st.code === "rouge").length;
 
   const kpis = `
     <div class="kpis">
       <div class="kpi accent"><div class="n">${DB.enfants.length}</div><div class="l">Enfants suivis</div></div>
-      <div class="kpi rouge"><div class="n">${rouges}</div><div class="l">Échéance dépassée</div></div>
-      <div class="kpi orange"><div class="n">${oranges}</div><div class="l">À traiter sous ${DB.parametres.seuilAlerteJours} j</div></div>
-      <div class="kpi ${taches.filter(t=>t.enRetard||t.pourAuj).length?"orange":"vert"}">
-        <div class="n">${taches.length}</div><div class="l">Tâches à faire</div></div>
+      <div class="kpi ${rouges?"rouge":"vert"}"><div class="n">${rouges}</div><div class="l">En retard</div></div>
+      <div class="kpi ${al.rapports.length?"orange":"vert"}"><div class="n">${al.rapports.length}</div>
+        <div class="l">Rapports à préparer</div></div>
+      <div class="kpi ${taches.length?"orange":"vert"}"><div class="n">${taches.length}</div>
+        <div class="l">Tâches à faire</div></div>
     </div>`;
 
-  const ligneAlerteRapport = o => `
-    <li>
-      <span class="puce ${o.st.code}"></span>
-      <div style="flex:1">
-        <b>${ech(nomComplet(o.enfant))}</b>
-        <span class="doux pt">${o.enfant.service ? " · " + ech(o.enfant.service) : ""}</span><br>
-        <span class="pt doux">Notification de prise en charge : ${ech(fmtFR(o.enfant.notifFin))} — ${ech(o.st.label)}
-        ${o.enfant.relances && o.enfant.relances.length
-            ? " · dernière relance le " + ech(fmtFR(o.enfant.relances[o.enfant.relances.length-1])) : ""}</span>
-      </div>
-      <div class="actions">
-        <button class="b mini" data-action="relance" data-id="${o.enfant.id}">Relance</button>
-        <button class="b mini" data-action="tache-rapport" data-id="${o.enfant.id}">+ tâche</button>
-      </div>
-    </li>`;
-
-  const ligneAlerteDroit = o => `
-    <li>
-      <span class="puce ${o.st.code}"></span>
-      <div style="flex:1">
-        <b>${ech(o.droit.libelle)}</b>
-        <span class="doux pt">${o.droit.rythme ? " · " + ech(o.droit.rythme) : ""}</span><br>
-        <span class="pt doux">${(o.droit.suspendu || !o.droit.dateFin) ? ech(o.st.label)
-            : "Fin du droit : " + ech(fmtFR(o.droit.dateFin)) + " — " + ech(o.st.label)}</span>
-      </div>
-      <div class="actions">
-        <button class="b mini" data-action="tache-droit" data-id="${o.droit.id}">+ tâche</button>
-      </div>
-    </li>`;
+  const blocNotifs = `
+    <div class="carte">
+      <h2>Notifications de prise en charge
+        <span class="et ${al.notifs.length?"orange":"vert"}">${al.notifs.length} à surveiller</span></h2>
+      ${al.notifs.length ? '<ul class="liste">' + al.notifs.map(o => `
+        <li>
+          <span class="puce ${o.st.code}"></span>
+          <div style="flex:1">
+            ${lienEnfant(o.enfant)} <span class="doux pt">${o.enfant.service ? "· " + ech(o.enfant.service) : ""}</span><br>
+            <span class="pt doux">${estISO(o.enfant.notifFin)
+              ? "Échéance le " + ech(fmtFR(o.enfant.notifFin)) + " — " + ech(o.st.label)
+              : "Aucune notification encodée"}
+            ${(o.enfant.relances||[]).length
+              ? " · dernière relance le " + ech(fmtFR(o.enfant.relances[o.enfant.relances.length-1])) : ""}</span>
+          </div>
+          <div class="actions">
+            <button class="b mini" data-action="relance" data-id="${o.enfant.id}">Relance</button>
+            <button class="b mini" data-action="reconduire" data-id="${o.enfant.id}">Reconduire 1 an</button>
+          </div>
+        </li>`).join("") + "</ul>"
+      : '<p class="doux">Toutes les notifications sont en ordre.</p>'}
+    </div>`;
 
   const blocRapports = `
     <div class="carte">
-      <h2>Rapports — notifications de prise en charge
-        <span class="et ${al.rapports.length ? "orange" : "vert"}">${al.rapports.length} à surveiller</span></h2>
-      ${al.rapports.length
-        ? '<ul class="liste">' + al.rapports.map(ligneAlerteRapport).join("") + "</ul>"
-        : '<p class="doux">Aucune échéance proche. Tout est en ordre.</p>'}
+      <h2>Rapports à préparer
+        <span class="et info">dans les ${DB.parametres.seuilRapportJours} jours</span></h2>
+      ${al.rapports.length ? '<ul class="liste">' + al.rapports.map(o => `
+        <li>
+          <span class="puce ${o.st.code}"></span>
+          <div style="flex:1">
+            ${lienEnfant(o.enfant)}
+            <span class="et ${o.type==="annuel"?"info":"gris"}">${o.type === "annuel" ? "Annuel" : "Semestriel"}</span><br>
+            <span class="pt doux">À rendre pour le ${ech(fmtFR(o.st.date))} — ${ech(o.st.label)}</span>
+          </div>
+          <div class="actions">
+            <button class="b mini" data-action="rapport-envoye" data-id="${o.enfant.id}"
+                    data-type="${o.type}">Envoyé</button>
+          </div>
+        </li>`).join("") + "</ul>"
+      : '<p class="doux">Aucun rapport à rendre dans les semaines qui viennent.</p>'}
     </div>`;
 
-  const blocDroits = `
+  const blocVisites = `
     <div class="carte">
       <h2>Droits de visite à renouveler
-        <span class="et ${al.droits.length ? "orange" : "vert"}">${al.droits.length} à surveiller</span></h2>
-      ${al.droits.length
-        ? '<ul class="liste">' + al.droits.map(ligneAlerteDroit).join("") + "</ul>"
-        : '<p class="doux">Tous les droits de visite sont en ordre.</p>'}
+        <span class="et ${al.visites.length?"orange":"vert"}">${al.visites.length} à surveiller</span></h2>
+      ${al.visites.length ? '<ul class="liste">' + al.visites.map(o => `
+        <li>
+          <span class="puce ${o.st.code}"></span>
+          <div style="flex:1">
+            ${lienEnfant(o.enfant)} <span class="doux pt">· ${ech(libelleParent(o.visite))}
+              ${o.visite.frequence ? "· " + ech(o.visite.frequence) : ""}</span><br>
+            <span class="pt doux">${(o.visite.suspendu || !estISO(o.visite.dateFin))
+              ? ech(o.st.label)
+              : "Fin du droit le " + ech(fmtFR(o.visite.dateFin)) + " — " + ech(o.st.label)}</span>
+          </div>
+        </li>`).join("") + "</ul>"
+      : '<p class="doux">Tous les droits de visite sont en ordre.</p>'}
     </div>`;
 
-  const tachesJour = taches.filter(t => t.enRetard || t.pourAuj || !t.echeance).slice(0, 12);
+  const jour = taches.filter(t => t.enRetard || t.pourAuj || !estISO(t.echeance)).slice(0,12);
   const blocTaches = `
     <div class="carte">
-      <h2>To do quotidienne
-        <button class="b mini" data-action="tache-nouvelle">+ Ajouter</button></h2>
-      ${tachesJour.length ? '<ul class="liste">' + tachesJour.map(ligneTache).join("") + "</ul>"
-                          : '<p class="doux">Rien de prévu pour aujourd\'hui.</p>'}
+      <h2>To do quotidienne <button class="b mini" data-action="tache-nouvelle">+ Ajouter</button></h2>
+      ${jour.length ? '<ul class="liste">' + jour.map(ligneTache).join("") + "</ul>"
+                    : '<p class="doux">Rien de prévu pour aujourd\'hui.</p>'}
     </div>`;
 
-  const blocSemaine = `
-    <div class="carte">
-      <h2>Visites de la semaine <span class="et info">Semaine ${sem.semaineCycle} du cycle</span></h2>
-      ${sem.occurrences.length
-        ? '<ul class="liste">' + sem.occurrences.map(o => `
-            <li>
-              <span class="nowrap" style="font-weight:600;min-width:130px">
-                ${ech(JOURS[numJour(parseISO(o.date))-1])} ${ech(fmtFR(o.date).slice(0,5))}</span>
-              <span class="nowrap" style="min-width:110px">${ech(heuresCreneau(o.creneau))}</span>
-              <span style="flex:1">${ech(o.droit.libelle)}
-                ${o.creneau.lieu ? '<span class="doux pt"> · ' + ech(o.creneau.lieu) + "</span>" : ""}</span>
-            </li>`).join("") + "</ul>"
-        : '<p class="doux">Aucune visite planifiée cette semaine.</p>'}
-      ${sem.aPreciser.length ? '<p class="aide">⚠︎ ' + sem.aPreciser.length +
-        " créneau(x) sans jour de semaine encodé — à compléter dans l'onglet Droits de visite.</p>" : ""}
-    </div>`;
-
-  return kpis + blocRapports + blocDroits +
-         '<div class="grille g2">' + blocSemaine + blocTaches + "</div>";
+  return kpis + blocNotifs + blocRapports + '<div class="grille g2">' + blocVisites + blocTaches + "</div>";
 }
 
 /* =========================================================================
-   7. VUE — Dossiers / rapports
+   7. VUE — Liste des enfants
    ========================================================================= */
 
-function vueDossiers(){
+function vueEnfants(){
   const q = etat.recherche.trim().toLowerCase();
   let liste = DB.enfants.slice();
   if(q) liste = liste.filter(e =>
     (nomComplet(e) + " " + (e.service||"") + " " + (e.notes||"")).toLowerCase().includes(q));
 
   liste.sort((a,b) => {
-    if(etat.tri === "nom") return nomComplet(a).localeCompare(nomComplet(b), "fr");
+    if(etat.tri === "nom") return parNom(a,b);
     if(etat.tri === "statut"){
-      const sa = statutEcheance(a.notifFin), sb = statutEcheance(b.notifFin);
+      const sa = statutNotif(a), sb = statutNotif(b);
       return ORDRE_STATUT[sa.code] - ORDRE_STATUT[sb.code] ||
-             String(a.notifFin||"9999").localeCompare(String(b.notifFin||"9999"));
+             String(a.notifFin||"9").localeCompare(String(b.notifFin||"9"));
     }
-    return String(a.notifFin||"9999").localeCompare(String(b.notifFin||"9999"));
+    return String(a.notifFin||"9").localeCompare(String(b.notifFin||"9"));
   });
 
-  const droitsDe = id => DB.droits.filter(d => (d.enfantIds||[]).includes(id));
-
   const lignes = liste.map(e => {
-    const st = statutEcheance(e.notifFin);
-    const ds = droitsDe(e.id);
+    const st = statutNotif(e);
+    const sem = statutRapport(e,"semestriel"), an = statutRapport(e,"annuel");
+    const vis = (e.visites||[]);
     return `<tr class="l-${st.code}">
-      <td><b>${ech(nomComplet(e))}</b>${e.naissance ? '<br><span class="pt doux">né(e) le ' + ech(fmtFR(e.naissance)) + "</span>" : ""}</td>
+      <td>${lienEnfant(e)}${e.naissance ? '<br><span class="pt doux">né(e) le ' + ech(fmtFR(e.naissance)) + "</span>" : ""}</td>
       <td>${e.service ? '<span class="et info">' + ech(e.service) + "</span>" : '<span class="doux">—</span>'}</td>
       <td class="num">${ech(fmtFR(e.notifFin))}</td>
       <td><span class="et ${st.code}">${ech(st.label)}</span></td>
       <td class="pt">${(e.relances||[]).length
-            ? (e.relances||[]).map(r => ech(fmtFR(r))).join("<br>")
-            : '<span class="doux">—</span>'}</td>
-      <td class="pt">${ds.length
-            ? ds.map(d => { const s = statutDroit(d);
-                return '<span class="puce ' + s.code + '"></span>' + ech(d.rythme || d.libelle); }).join("<br>")
-            : '<span class="doux">—</span>'}</td>
-      <td>
-        <div class="actions">
-          <button class="b mini" data-action="relance" data-id="${e.id}">Relance</button>
-          <button class="b mini" data-action="enfant-modifier" data-id="${e.id}">Modifier</button>
-          <button class="b mini danger" data-action="enfant-supprimer" data-id="${e.id}">✕</button>
-        </div>
-      </td>
+          ? (e.relances||[]).slice(-2).map(r => ech(fmtFR(r))).join("<br>") : '<span class="doux">—</span>'}</td>
+      <td class="pt nowrap"><span class="puce ${sem.code}"></span>${ech(fmtFR(sem.date))}</td>
+      <td class="pt nowrap"><span class="puce ${an.code}"></span>${ech(fmtFR(an.date))}</td>
+      <td class="pt">${vis.length
+          ? vis.map(v => '<span class="puce ' + statutVisite(v).code + '"></span>' +
+                          ech(libelleParent(v)) + (v.frequence ? " · " + ech(v.frequence) : "")).join("<br>")
+          : '<span class="doux">—</span>'}</td>
+      <td><div class="actions">
+        <button class="b mini" data-action="fiche" data-id="${e.id}">Ouvrir</button>
+      </div></td>
     </tr>`;
   }).join("");
 
@@ -582,231 +797,363 @@ function vueDossiers(){
              value="${ech(etat.recherche)}">
       <label class="nowrap pt doux">Trier par
         <select id="tri" style="width:auto;margin-left:5px">
-          <option value="date"${etat.tri==="date"?" selected":""}>date d'échéance</option>
+          <option value="date"${etat.tri==="date"?" selected":""}>date de notification</option>
           <option value="statut"${etat.tri==="statut"?" selected":""}>urgence</option>
           <option value="nom"${etat.tri==="nom"?" selected":""}>nom</option>
-        </select>
-      </label>
-      <span class="pousse doux pt">${pluriel(liste.length,"enfant")} affiché(s) sur ${DB.enfants.length}</span>
+        </select></label>
+      <span class="pousse doux pt">${pluriel(liste.length,"enfant")} sur ${DB.enfants.length}</span>
       <button class="b" onclick="window.print()">Imprimer</button>
     </div>
     <div class="tableau-enveloppe">
       <table>
         <thead><tr>
-          <th>Enfant</th><th>Service</th><th class="num">Fin notif. prise en charge</th>
-          <th>Statut</th><th>Relances SAJ / SPJ</th><th>Droit de visite</th><th></th>
+          <th>Enfant</th><th>Service</th><th class="num">Notification</th><th>Statut</th>
+          <th>Relances</th><th>Rapport semestriel</th><th>Rapport annuel</th><th>Droits de visite</th><th></th>
         </tr></thead>
-        <tbody>${lignes || '<tr><td colspan="7" class="vide">Aucun dossier à afficher.</td></tr>'}</tbody>
+        <tbody>${lignes || '<tr><td colspan="9" class="vide">Aucun dossier.</td></tr>'}</tbody>
       </table>
     </div>
     <div class="legende">
-      <span><span class="puce rouge"></span>échéance dépassée</span>
-      <span><span class="puce orange"></span>moins de ${DB.parametres.seuilAlerteJours} jours</span>
+      <span><span class="puce rouge"></span>en retard</span>
+      <span><span class="puce orange"></span>échéance proche</span>
       <span><span class="puce vert"></span>en ordre</span>
       <span><span class="puce gris"></span>date manquante</span>
+      <span><span class="puce suspendu"></span>droit suspendu</span>
     </div>
   </div>`;
 }
 
 /* =========================================================================
-   8. VUE — Droits de visite
+   8. VUE — Fiche d'un enfant
    ========================================================================= */
 
-function vueDroits(){
-  const liste = DB.droits.slice().sort((a,b) => {
-    const sa = statutDroit(a), sb = statutDroit(b);
-    return ORDRE_STATUT[sa.code] - ORDRE_STATUT[sb.code] ||
-           String(a.dateFin||"9999").localeCompare(String(b.dateFin||"9999"));
-  });
+function vueFiche(){
+  const e = enfantParId(etat.ficheId);
+  if(!e){ onglet = "enfants"; return vueEnfants(); }
+  const st = statutNotif(e);
+  const sem = statutRapport(e,"semestriel"), an = statutRapport(e,"annuel");
 
-  const lignes = liste.map(d => {
-    const st = statutDroit(d);
-    const cr = (d.creneaux||[]).map(c =>
-      '<div>' + ech(libelleCreneau(c)) +
-      (c.type === "vacances" ? "" : " · <b>" + ech(heuresCreneau(c)) + "</b>") +
-      (c.lieu ? ' <span class="doux">(' + ech(c.lieu) + ")</span>" : "") + "</div>").join("");
-    return `<tr class="l-${st.code}">
-      <td><b>${ech(d.libelle)}</b>
-        ${(d.enfantIds||[]).length ? '<br><span class="pt doux">' + ech(nomsEnfants(d.enfantIds)) + "</span>" : ""}</td>
-      <td>${ech(d.rythme || "—")}</td>
-      <td class="num">${d.suspendu ? '<span class="doux">—</span>' : ech(fmtFR(d.dateFin))}</td>
-      <td><span class="et ${st.code}">${ech(st.label)}</span></td>
-      <td class="pt">${cr || '<span class="doux">Aucun créneau encodé</span>'}</td>
-      <td>
-        <div class="actions">
-          <button class="b mini" data-action="droit-modifier" data-id="${d.id}">Modifier</button>
-          <button class="b mini danger" data-action="droit-supprimer" data-id="${d.id}">✕</button>
+  const envoyes = (e.rapports||[]).filter(r => r.envoyeLe)
+    .sort((a,b) => String(b.envoyeLe).localeCompare(String(a.envoyeLe)));
+
+  const blocNotif = `
+    <div class="carte">
+      <h2>Notification de prise en charge
+        <span class="et ${st.code}">${ech(st.label)}</span></h2>
+      <div class="bloc">
+        <div class="chapeau">
+          <span class="t">Échéance : ${ech(fmtFR(e.notifFin))}</span>
+          <span class="doux pt">${e.service ? "Service : " + ech(e.service) : "Service à préciser"}</span>
         </div>
-      </td>
-    </tr>`;
-  }).join("");
+        <p class="pt doux" style="margin:0 0 8px">
+          La notification est en principe reconduite d'un an. Si le ${ech(e.service || "SAJ / SPJ")}
+          ne l'envoie pas, notez vos relances ici.</p>
+        <div class="actions">
+          <button class="b primaire" data-action="reconduire" data-id="${e.id}">Reconduire d'un an</button>
+          <button class="b" data-action="relance" data-id="${e.id}">Noter une relance aujourd'hui</button>
+          <button class="b" data-action="enfant-modifier" data-id="${e.id}">Modifier la date</button>
+        </div>
+        ${(e.relances||[]).length ? `
+          <div style="margin-top:10px"><h3>Relances</h3>
+          <ul class="liste">${e.relances.slice().reverse().map(r => `<li>
+            <span style="flex:1">${ech(fmtLong(r))}</span>
+            <button class="b mini danger" data-action="relance-suppr" data-id="${e.id}"
+                    data-date="${ech(r)}">✕</button></li>`).join("")}</ul></div>` : ""}
+        ${(e.historique||[]).length ? `
+          <p class="aide">Échéances précédentes : ${e.historique.map(h => ech(fmtFR(h))).join(" · ")}</p>` : ""}
+      </div>
+    </div>`;
+
+  const carteRapport = (type, s) => `
+    <div class="bloc">
+      <div class="chapeau">
+        <span class="t">Rapport ${type === "annuel" ? "annuel" : "semestriel"}</span>
+        <span class="et ${s.code}">${ech(s.label)}</span>
+      </div>
+      <div class="pt">À rendre pour le <b>${ech(fmtFR(s.date))}</b>
+        ${s.date ? '<span class="doux">(' + ech(fmtMoisAnnee(s.date)) + ")</span>" : ""}</div>
+      <p class="aide">${type === "annuel"
+        ? "Tombe à la date de formalisation."
+        : "Tombe six mois avant la formalisation."}</p>
+      ${s.date ? `<div class="actions" style="margin-top:8px">
+        <button class="b" data-action="rapport-envoye" data-id="${e.id}" data-type="${type}">
+          Marquer comme envoyé</button></div>` : ""}
+    </div>`;
+
+  const blocRapports = `
+    <div class="carte">
+      <h2>Rapports d'évolution</h2>
+      <div class="deux-col">${carteRapport("semestriel", sem)}${carteRapport("annuel", an)}</div>
+      ${envoyes.length ? `<h3 style="margin-top:12px">Rapports déjà envoyés</h3>
+        <ul class="liste">${envoyes.map(r => `<li>
+          <span style="flex:1"><b>${r.type === "annuel" ? "Annuel" : "Semestriel"}</b>
+            <span class="doux pt">· échéance ${ech(fmtFR(r.echeance))} · envoyé le ${ech(fmtFR(r.envoyeLe))}</span></span>
+          <button class="b mini danger" data-action="rapport-annuler" data-id="${e.id}"
+                  data-rid="${r.id}">Annuler</button></li>`).join("")}</ul>` : ""}
+    </div>`;
+
+  const blocVisites = `
+    <div class="carte">
+      <h2>Droits de visite et rencontres
+        <button class="b mini" data-action="visite-nouvelle" data-id="${e.id}">+ Ajouter un droit de visite</button>
+        ${(e.visites||[]).length ? '<button class="b mini" data-action="word-enfant" data-id="' + e.id +
+          '">Exporter les notes en Word</button>' : ""}</h2>
+      ${(e.visites||[]).length ? e.visites.map(v => blocUneVisite(e,v)).join("")
+        : `<p class="doux">Aucun droit de visite encodé. Ajoutez-en un par parent :
+           un pour le papa, un pour la maman, s'ils voient l'enfant séparément.</p>`}
+    </div>`;
 
   return `
   <div class="carte">
     <div class="barre-outils">
-      <button class="b primaire" data-action="droit-nouveau">+ Nouveau droit de visite</button>
-      <span class="pousse doux pt">${pluriel(DB.droits.length,"droit")} encodé(s)</span>
+      <button class="b" data-action="retour-enfants">← Tous les enfants</button>
+      <span class="pousse"></span>
+      <button class="b" data-action="enfant-modifier" data-id="${e.id}">Modifier la fiche</button>
+      <button class="b danger" data-action="enfant-supprimer" data-id="${e.id}">Supprimer</button>
       <button class="b" onclick="window.print()">Imprimer</button>
     </div>
-    <div class="tableau-enveloppe">
-      <table>
-        <thead><tr>
-          <th>Concerne</th><th>Rythme</th><th class="num">Date de fin</th>
-          <th>Statut</th><th>Créneaux</th><th></th>
-        </tr></thead>
-        <tbody>${lignes || '<tr><td colspan="6" class="vide">Aucun droit de visite encodé.</td></tr>'}</tbody>
-      </table>
+    <div class="entete-fiche">
+      <div>
+        <div class="nom">${ech(nomComplet(e))}</div>
+        <div class="doux pt">
+          ${e.service ? ech(e.service) : "Service à préciser"}
+          ${estISO(e.naissance) ? " · né(e) le " + ech(fmtFR(e.naissance)) : ""}
+        </div>
+      </div>
     </div>
-    <div class="legende">
-      <span><span class="puce rouge"></span>plus de droit valable, à remettre</span>
-      <span><span class="puce orange"></span>à remettre bientôt</span>
-      <span><span class="puce vert"></span>en ordre</span>
-      <span><span class="puce suspendu"></span>suspendu</span>
+    ${e.notes ? '<p class="pt" style="margin:10px 0 0;white-space:pre-wrap">' + ech(e.notes) + "</p>" : ""}
+  </div>
+  ${blocNotif}${blocRapports}${blocVisites}`;
+}
+
+function blocUneVisite(e, v){
+  const s = statutVisite(v);
+  const renc = (v.rencontres||[]).slice().sort((a,b) => String(b.date).localeCompare(String(a.date)));
+  const venus = renc.filter(r => r.presence === "venu").length;
+  const absents = renc.filter(r => r.presence === "absent").length;
+  const annulees = renc.filter(r => r.presence === "annulee").length;
+
+  return `<div class="bloc">
+    <div class="chapeau">
+      <span class="t">${ech(libelleParent(v))}</span>
+      ${v.frequence ? '<span class="et info">' + ech(v.frequence) + "</span>" : ""}
+      <span class="et ${s.code}">${ech(s.label)}</span>
+      <span class="pousse" style="margin-left:auto"></span>
+      <span class="actions">
+        <button class="b mini" data-action="rencontre-nouvelle" data-id="${e.id}" data-vid="${v.id}">+ Rencontre</button>
+        <button class="b mini" data-action="visite-modifier" data-id="${e.id}" data-vid="${v.id}">Modifier</button>
+        <button class="b mini danger" data-action="visite-supprimer" data-id="${e.id}" data-vid="${v.id}">✕</button>
+      </span>
     </div>
+    <div class="pt doux">
+      ${estISO(v.dateFin) ? "Droit valable jusqu'au " + ech(fmtFR(v.dateFin)) + " · " : ""}
+      ${renc.length ? pluriel(renc.length,"rencontre") + " encodée(s) : " +
+        venus + " honorée(s), " + absents + " manquée(s)" + (annulees ? ", " + annulees + " annulée(s)" : "")
+        : "aucune rencontre encodée"}
+      ${v.lieu ? " · lieu : " + ech(v.lieu) : ""}
+    </div>
+    ${v.notes ? '<p class="pt" style="margin:6px 0 0;white-space:pre-wrap">' + ech(v.notes) + "</p>" : ""}
+    ${renc.length ? '<div style="margin-top:8px">' + renc.map(r => {
+      const p = presenceDe(r);
+      return `<div class="rencontre">
+        <span class="d">${ech(fmtFR(r.date))}</span>
+        <span class="et ${p.code}" style="min-width:76px;text-align:center">${ech(p.court)}</span>
+        <span class="n">${r.note ? ech(r.note) : '<span class="doux">Pas de note</span>'}</span>
+        <span class="actions">
+          <button class="b mini" data-action="rencontre-modifier" data-id="${e.id}" data-vid="${v.id}"
+                  data-rid="${r.id}">Modifier</button>
+          <button class="b mini danger" data-action="rencontre-supprimer" data-id="${e.id}" data-vid="${v.id}"
+                  data-rid="${r.id}">✕</button>
+        </span></div>`;
+    }).join("") + "</div>" : ""}
   </div>`;
 }
 
 /* =========================================================================
-   9. VUE — Planning
+   9. VUE — Rapports (calendrier des douze prochains mois)
    ========================================================================= */
 
-function vuePlanning(){
-  return etat.vuePlanning === "cycle" ? planningCycle() : planningSemaine();
-}
+function vueRapports(){
+  const dep = new Date();
+  const debut = new Date(dep.getFullYear(), dep.getMonth() + etat.anneeRapports*12, 1);
 
-function planningSemaine(){
-  const lundi = ajJours(lundiDe(new Date()), etat.semaineOffset * 7);
-  const lundiISO = dISO(lundi);
-  const sem = occurrencesSemaine(lundiISO);
-  const auj = aujourdHui();
+  const mois = [];
+  for(let i = 0; i < 12; i++){
+    const d = new Date(debut.getFullYear(), debut.getMonth()+i, 1);
+    mois.push({ annee:d.getFullYear(), mois:d.getMonth(), annuels:[], semestriels:[] });
+  }
+  const place = (type, e, date) => {
+    if(!date) return;
+    const d = parseISO(date);
+    const c = mois.find(m => m.annee === d.getFullYear() && m.mois === d.getMonth());
+    if(c) c[type].push({ enfant:e, date });
+  };
+  DB.enfants.forEach(e => {
+    place("annuels",     e, echeanceRapport(e,"annuel"));
+    place("semestriels", e, echeanceRapport(e,"semestriel"));
+  });
 
-  const cases = JOURS.map((nom, i) => {
-    const d = ajJours(lundi, i);
-    const dISOj = dISO(d);
-    const items = sem.occurrences.filter(o => o.date === dISOj);
-    return `<div class="jour">
-      <div class="tete ${dISOj === auj ? "auj" : ""}">
-        <span>${ech(nom)}</span><span>${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}</span>
+  const item = o => {
+    const st = statutEcheance(o.date, DB.parametres.seuilRapportJours);
+    return '<div class="item"><span class="puce ' + st.code + '"></span>' +
+      '<span class="cliquable" data-action="fiche" data-id="' + o.enfant.id + '">' +
+      ech(nomComplet(o.enfant)) + "</span>" +
+      (o.enfant.service ? ' <span class="doux">· ' + ech(o.enfant.service) + "</span>" : "") +
+      ' <span class="doux">· ' + ech(fmtFR(o.date).slice(0,5)) + "</span></div>";
+  };
+
+  const auj = new Date();
+  const cases = mois.map(m => {
+    const courant = m.annee === auj.getFullYear() && m.mois === auj.getMonth();
+    const tri = l => l.sort((a,b) => a.date.localeCompare(b.date));
+    tri(m.annuels); tri(m.semestriels);
+    return `<div class="mois">
+      <div class="tete ${courant?"courant":""}">
+        <span>${MOIS[m.mois].charAt(0).toUpperCase() + MOIS[m.mois].slice(1)}</span>
+        <span class="doux">${m.annee}</span>
       </div>
-      ${items.length ? items.map(o => `
-        <div class="creneau">
-          <span class="h">${ech(o.creneau.debut || "?")}</span>
-          <span>${ech(o.droit.libelle)}<br>
-            <span class="pt doux">${ech(heuresCreneau(o.creneau))}${o.creneau.lieu ? " · " + ech(o.creneau.lieu) : ""}</span>
-          </span>
-        </div>`).join("") : '<div class="rien">—</div>'}
+      ${m.annuels.length ? '<div class="part"><div class="lib">Formalisations — rapport annuel</div>' +
+        m.annuels.map(item).join("") + "</div>" : ""}
+      ${m.semestriels.length ? '<div class="part"><div class="lib">Rapports d\'évolution — semestriel</div>' +
+        m.semestriels.map(item).join("") + "</div>" : ""}
+      ${(!m.annuels.length && !m.semestriels.length) ? '<div class="rien">Rien de prévu</div>' : ""}
     </div>`;
   }).join("");
 
-  const titre = etat.semaineOffset === 0 ? "Cette semaine"
-    : (etat.semaineOffset === 1 ? "Semaine prochaine"
-    : (etat.semaineOffset === -1 ? "Semaine dernière"
-    : "Semaine du " + fmtFR(lundiISO)));
+  const al = alertes().rapports;
+  const aPreparer = al.length ? `
+    <div class="carte">
+      <h2>À préparer maintenant <span class="et orange">${al.length}</span></h2>
+      <div class="tableau-enveloppe"><table>
+        <thead><tr><th>Enfant</th><th>Service</th><th>Type</th><th class="num">Échéance</th><th>Statut</th><th></th></tr></thead>
+        <tbody>${al.map(o => `<tr class="l-${o.st.code}">
+          <td>${lienEnfant(o.enfant)}</td>
+          <td>${o.enfant.service ? '<span class="et info">' + ech(o.enfant.service) + "</span>" : "—"}</td>
+          <td>${o.type === "annuel" ? "Annuel" : "Semestriel"}</td>
+          <td class="num">${ech(fmtFR(o.st.date))}</td>
+          <td><span class="et ${o.st.code}">${ech(o.st.label)}</span></td>
+          <td><button class="b mini" data-action="rapport-envoye" data-id="${o.enfant.id}"
+                      data-type="${o.type}">Marquer envoyé</button></td>
+        </tr>`).join("")}</tbody>
+      </table></div>
+    </div>` : "";
 
-  const extra = [];
-  if(sem.vacances.length) extra.push(`
-    <div class="carte">
-      <h3>Congés / vacances scolaires</h3>
-      <ul class="liste">${sem.vacances.map(o => `<li><span style="flex:1"><b>${ech(o.droit.libelle)}</b>
-        <span class="doux pt"> · ${ech(o.droit.rythme || "")}${o.creneau.lieu ? " · " + ech(o.creneau.lieu) : ""}</span></span></li>`).join("")}</ul>
-    </div>`);
-  if(sem.aPreciser.length) extra.push(`
-    <div class="carte">
-      <h3>Créneaux sans jour encodé</h3>
-      <ul class="liste">${sem.aPreciser.map(o => `<li><span style="flex:1"><b>${ech(o.droit.libelle)}</b>
-        <span class="doux pt"> · ${ech(libelleCreneau(o.creneau))} · ${ech(heuresCreneau(o.creneau))}</span></span>
-        <button class="b mini" data-action="droit-modifier" data-id="${o.droit.id}">Compléter</button></li>`).join("")}</ul>
-    </div>`);
+  const sansDate = DB.enfants.filter(e => !estISO(e.notifFin));
 
   return `
   <div class="carte">
     <div class="barre-outils">
-      <button class="b" data-action="sem" data-delta="-1">←</button>
-      <button class="b" data-action="sem" data-delta="0">Aujourd'hui</button>
-      <button class="b" data-action="sem" data-delta="1">→</button>
-      <b style="margin-left:6px">${ech(titre)}</b>
-      <span class="et info">du ${ech(fmtFR(lundiISO))} au ${ech(fmtFR(dISO(ajJours(lundi,6))))}</span>
-      <span class="et info">Semaine ${sem.semaineCycle} du cycle</span>
+      <button class="b" data-action="annee" data-delta="-1">← 12 mois avant</button>
+      <button class="b" data-action="annee" data-delta="0">Aujourd'hui</button>
+      <button class="b" data-action="annee" data-delta="1">12 mois après →</button>
+      <b style="margin-left:6px">De ${ech(MOIS[debut.getMonth()])} ${debut.getFullYear()}
+         à ${ech(MOIS[mois[11].mois])} ${mois[11].annee}</b>
       <span class="pousse"></span>
-      <button class="b" data-action="vue-planning" data-v="cycle">Voir le cycle de 4 semaines</button>
       <button class="b" onclick="window.print()">Imprimer</button>
     </div>
-    <div class="semaine">${cases}</div>
-  </div>` + extra.join("");
+    <p class="pt doux" style="margin:-4px 0 12px">
+      Le <b>rapport annuel</b> tombe à la date de formalisation, le <b>rapport d'évolution semestriel</b>
+      six mois plus tôt. Les deux sont recalculés automatiquement à chaque reconduction.</p>
+    <div class="mois-grille">${cases}</div>
+    ${sansDate.length ? '<div class="encadre attention" style="margin-top:14px">' +
+      '<div class="titre">' + pluriel(sansDate.length,"enfant") + " sans date de formalisation</div>" +
+      "Impossible de calculer leurs rapports : " +
+      sansDate.map(e => '<span class="cliquable" data-action="fiche" data-id="' + e.id + '">' +
+        ech(nomComplet(e)) + "</span>").join(", ") + ".</div>" : ""}
+  </div>
+  ${aPreparer}`;
 }
 
-function planningCycle(){
-  const blocs = [1,2,3,4].map(n => {
-    const items = [];
-    DB.droits.forEach(d => (d.creneaux||[]).forEach(c => {
-      if(c.type === "cycle4" && c.semaine === n) items.push({ d, c });
-      if(c.type === "hebdo") items.push({ d, c });
-    }));
-    items.sort((a,b) => String(a.c.debut).localeCompare(String(b.c.debut)));
-    return `<tr>
-      <td><b>Semaine ${n}</b></td>
-      <td>${items.length ? items.map(({d,c}) =>
-        (c.jour ? ech(JOURS[c.jour-1]) + " " : '<span class="doux">(jour ?)</span> ') +
-        "<b>" + ech(heuresCreneau(c)) + "</b> — " + ech(d.libelle)).join("<br>")
+/* =========================================================================
+   10. VUE — Visites
+   ========================================================================= */
+
+function vueVisites(){
+  const liste = toutesVisites().sort((a,b) => {
+    const sa = statutVisite(a.visite), sb = statutVisite(b.visite);
+    return ORDRE_STATUT[sa.code] - ORDRE_STATUT[sb.code] || parNom(a.enfant, b.enfant);
+  });
+
+  const lignes = liste.map(o => {
+    const s = statutVisite(o.visite);
+    const renc = (o.visite.rencontres||[]).slice().sort((a,b) => String(b.date).localeCompare(String(a.date)));
+    const derniere = renc[0];
+    return `<tr class="l-${s.code}">
+      <td>${lienEnfant(o.enfant)}</td>
+      <td>${ech(libelleParent(o.visite))}</td>
+      <td>${ech(o.visite.frequence || "—")}</td>
+      <td class="num">${o.visite.suspendu ? "—" : ech(fmtFR(o.visite.dateFin))}</td>
+      <td><span class="et ${s.code}">${ech(s.label)}</span></td>
+      <td class="num">${renc.length}</td>
+      <td class="pt">${derniere
+        ? ech(fmtFR(derniere.date)) + ' <span class="et ' + presenceDe(derniere).code + '">' +
+          ech(presenceDe(derniere).court) + "</span>"
         : '<span class="doux">—</span>'}</td>
+      <td><div class="actions">
+        <button class="b mini primaire" data-action="rencontre-nouvelle" data-id="${o.enfant.id}"
+                data-vid="${o.visite.id}">+ Rencontre</button>
+      </div></td>
     </tr>`;
   }).join("");
 
-  const mensuels = [];
-  DB.droits.forEach(d => (d.creneaux||[]).forEach(c => {
-    if(c.type === "mensuel") mensuels.push({ d, c });
-  }));
-  mensuels.sort((a,b) => (a.c.occurrence||1) - (b.c.occurrence||1) ||
-                          String(a.c.debut).localeCompare(String(b.c.debut)));
-
-  const vac = [];
-  DB.droits.forEach(d => (d.creneaux||[]).forEach(c => { if(c.type === "vacances") vac.push({ d, c }); }));
+  const recentes = toutesRencontres().slice(0, 25);
 
   return `
   <div class="carte">
     <div class="barre-outils">
-      <button class="b" data-action="vue-planning" data-v="semaine">← Vue semaine</button>
-      <span class="pousse doux pt">Cycle démarré le ${ech(fmtFR(DB.parametres.debutCycle))} (modifiable dans Données)</span>
+      <button class="b primaire" data-action="word-tous">Exporter les notes en Word</button>
+      <span class="pousse doux pt">${pluriel(liste.length,"droit")} de visite ·
+        ${pluriel(toutesRencontres().length,"rencontre")} encodée(s)</span>
       <button class="b" onclick="window.print()">Imprimer</button>
     </div>
-    <h2>Cycle de 4 semaines</h2>
+    <p class="pt doux" style="margin:-4px 0 12px">
+      Un droit de visite par parent : si l'enfant voit son papa et sa maman séparément, encodez-en deux.</p>
     <div class="tableau-enveloppe">
-      <table><thead><tr><th style="width:130px">Semaine</th><th>Visites</th></tr></thead>
-      <tbody>${blocs}</tbody></table>
+      <table>
+        <thead><tr>
+          <th>Enfant</th><th>Rencontre avec</th><th>Fréquence</th><th class="num">Fin du droit</th>
+          <th>Statut</th><th class="num">Rencontres</th><th>Dernière</th><th></th>
+        </tr></thead>
+        <tbody>${lignes || '<tr><td colspan="8" class="vide">Aucun droit de visite encodé.</td></tr>'}</tbody>
+      </table>
     </div>
-    <h2 style="margin-top:20px">Rendez-vous mensuels</h2>
-    <div class="tableau-enveloppe">
-      <table><thead><tr><th style="width:200px">Quand</th><th>Visites</th></tr></thead><tbody>
-        ${mensuels.length ? mensuels.map(({d,c}) => `<tr>
-          <td><b>${ech(libelleCreneau(c))}</b></td>
-          <td>${ech(heuresCreneau(c))} — ${ech(d.libelle)}</td></tr>`).join("")
-          : '<tr><td colspan="2" class="vide">Aucun.</td></tr>'}
-      </tbody></table>
-    </div>
-    <h2 style="margin-top:20px">Congés / vacances</h2>
-    ${vac.length ? '<ul class="liste">' + vac.map(({d,c}) =>
-        "<li><span style=\"flex:1\"><b>" + ech(d.libelle) + "</b><span class=\"doux pt\"> · " +
-        ech(d.rythme || "") + (c.lieu ? " · " + ech(c.lieu) : "") + "</span></span></li>").join("") + "</ul>"
-      : '<p class="doux">Aucun droit de visite prévu pendant les congés.</p>'}
+  </div>
+
+  <div class="carte">
+    <h2>Dernières rencontres</h2>
+    ${recentes.length ? '<ul class="liste">' + recentes.map(o => {
+      const p = presenceDe(o.rencontre);
+      return `<li>
+        <span class="d nowrap" style="min-width:104px;font-weight:600;font-size:13px">${ech(fmtFR(o.rencontre.date))}</span>
+        <span class="et ${p.code}" style="min-width:76px;text-align:center">${ech(p.court)}</span>
+        <span style="flex:1">
+          ${lienEnfant(o.enfant)} <span class="doux pt">· ${ech(libelleParent(o.visite))}</span>
+          ${o.rencontre.note ? '<br><span class="pt" style="white-space:pre-wrap">' + ech(o.rencontre.note) + "</span>"
+                             : '<br><span class="pt doux">Pas de note</span>'}
+        </span>
+        <button class="b mini" data-action="rencontre-modifier" data-id="${o.enfant.id}"
+                data-vid="${o.visite.id}" data-rid="${o.rencontre.id}">Modifier</button>
+      </li>`;
+    }).join("") + "</ul>" : '<p class="doux">Aucune rencontre encodée pour le moment.</p>'}
   </div>`;
 }
 
 /* =========================================================================
-   10. VUE — Tâches
+   11. VUE — Tâches
    ========================================================================= */
 
 function ligneTache(t){
   const cls = t.enRetard ? "rouge" : (t.pourAuj ? "orange" : "gris");
   return `<li>
-    <input type="checkbox" data-action="tache-bascule" data-id="${t.id}" ${t.fait ? "checked" : ""}
+    <input type="checkbox" data-action="tache-bascule" data-id="${t.id}" ${t.fait?"checked":""}
            style="width:auto;margin-top:3px" aria-label="Terminer">
     <div style="flex:1">
-      <span class="${t.fait ? "tache-faite" : ""}">${ech(t.texte)}</span>
-      ${t.enfantId ? '<span class="doux pt"> · ' + ech(nomComplet(enfantParId(t.enfantId))) + "</span>" : ""}
-      ${t.echeance && !t.fait
+      <span class="${t.fait?"tache-faite":""}">${ech(t.texte)}</span>
+      ${t.enfantId && enfantParId(t.enfantId)
+        ? '<span class="doux pt"> · ' + ech(nomComplet(enfantParId(t.enfantId))) + "</span>" : ""}
+      ${estISO(t.echeance) && !t.fait
         ? '<br><span class="et ' + cls + '">' +
-          (t.enRetard ? "En retard — " : (t.pourAuj ? "Aujourd'hui — " : "")) + ech(fmtFR(t.echeance)) + "</span>"
-        : ""}
+          (t.enRetard ? "En retard — " : (t.pourAuj ? "Aujourd'hui — " : "")) + ech(fmtFR(t.echeance)) + "</span>" : ""}
     </div>
     <div class="actions">
       <button class="b mini" data-action="tache-modifier" data-id="${t.id}">Modifier</button>
@@ -819,26 +1166,24 @@ function vueTaches(){
   const enCours = tachesEnCours();
   const faites = DB.taches.filter(t => t.fait)
     .sort((a,b) => String(b.faitLe||"").localeCompare(String(a.faitLe||"")));
-
   const groupes = [
     ["En retard",   enCours.filter(t => t.enRetard)],
     ["Aujourd'hui", enCours.filter(t => t.pourAuj)],
-    ["À venir",     enCours.filter(t => t.echeance && t.echeance > aujourdHui())],
-    ["Sans date",   enCours.filter(t => !t.echeance)]
+    ["À venir",     enCours.filter(t => estISO(t.echeance) && t.echeance > aujourdHui())],
+    ["Sans date",   enCours.filter(t => !estISO(t.echeance))]
   ];
-
   return `
   <div class="carte">
     <div class="barre-outils">
       <button class="b primaire" data-action="tache-nouvelle">+ Nouvelle tâche</button>
       <span class="pousse doux pt">${pluriel(enCours.length,"tâche")} en cours · ${faites.length} terminée(s)</span>
-      <button class="b" data-action="taches-basculer-faites">${etat.tachesFaites ? "Masquer" : "Afficher"} les tâches faites</button>
+      <button class="b" data-action="taches-basculer-faites">${etat.tachesFaites?"Masquer":"Afficher"} les tâches faites</button>
       <button class="b" onclick="window.print()">Imprimer</button>
     </div>
-    ${groupes.map(([titre, l]) => l.length
-      ? '<h3 style="margin-top:14px">' + titre + " (" + l.length + ')</h3><ul class="liste">' +
-        l.map(ligneTache).join("") + "</ul>"
-      : "").join("") || '<p class="doux">Aucune tâche en cours. 🎉</p>'}
+    ${groupes.map(([t,l]) => l.length
+      ? '<h3 style="margin-top:14px">' + t + " (" + l.length + ')</h3><ul class="liste">' +
+        l.map(ligneTache).join("") + "</ul>" : "").join("")
+      || '<p class="doux">Aucune tâche en cours.</p>'}
     ${etat.tachesFaites && faites.length
       ? '<h3 style="margin-top:18px">Terminées</h3><ul class="liste">' + faites.map(ligneTache).join("") +
         '</ul><button class="b danger" style="margin-top:10px" data-action="taches-purger">Supprimer les tâches terminées</button>'
@@ -847,77 +1192,117 @@ function vueTaches(){
 }
 
 /* =========================================================================
-   11. VUE — Données / paramètres
+   12. VUE — Données
    ========================================================================= */
+
+function blocStockage(){
+  if(!FS.dispo) return `<div class="encadre attention">
+    <div class="titre">Ce navigateur n'écrit pas sur le disque</div>
+    Vos données sont conservées dans le navigateur uniquement. Pour un enregistrement dans un vrai
+    fichier, ouvrez ce programme avec <b>Google Chrome</b> ou <b>Microsoft Edge</b>. En attendant,
+    exportez une sauvegarde régulièrement.</div>`;
+  if(FS.erreur) return `<div class="encadre souci">
+    <div class="titre">L'enregistrement dans le fichier ne fonctionne plus</div>
+    ${ech(FS.erreur)}<br>Le dossier a peut-être été déplacé, renommé ou supprimé. Vos données sont
+    toujours dans le navigateur : choisissez à nouveau un dossier.
+    <div class="actions" style="margin-top:10px">
+      <button class="b primaire" data-action="fs-choisir">Choisir un dossier</button></div></div>`;
+  if(FS.dossier) return `<div class="encadre ok">
+    <div class="titre">✓ Enregistrement automatique sur le disque</div>
+    Dossier : <b>${ech(FS.nom)}</b> · fichier <code>${NOM_FICHIER}</code><br>
+    ${FS.dernier ? "Dernier enregistrement à " + heureCourte(FS.dernier) + "."
+                 : "Aucune modification depuis l'ouverture."}
+    Une copie datée est déposée chaque jour dans le sous-dossier <code>${DOSSIER_SAUV}</code>
+    (${NB_SAUVEGARDES} derniers jours conservés).
+    <div class="actions" style="margin-top:10px">
+      <button class="b" data-action="fs-maintenant">Enregistrer maintenant</button>
+      <button class="b" data-action="fs-relire">Recharger depuis le fichier</button>
+      <button class="b" data-action="fs-choisir">Changer de dossier</button>
+      <button class="b" data-action="fs-oublier">Se déconnecter</button>
+    </div></div>`;
+  if(FS.enAttente) return `<div class="encadre attention">
+    <div class="titre">Dossier à reconnecter</div>
+    Le dossier <b>${ech(FS.nom)}</b> a déjà été utilisé. Pour des raisons de sécurité, le navigateur
+    demande votre accord à chaque nouvelle ouverture.
+    <div class="actions" style="margin-top:10px">
+      <button class="b primaire" data-action="fs-reconnecter">Reconnecter ce dossier</button>
+      <button class="b" data-action="fs-choisir">Choisir un autre dossier</button></div></div>`;
+  return `<div class="encadre attention">
+    <div class="titre">Vos données ne sont pas encore enregistrées sur le disque</div>
+    Choisissez un dossier de votre ordinateur (par exemple dans <i>Documents</i>) : le programme y créera
+    le fichier <code>${NOM_FICHIER}</code> et le mettra à jour tout seul à chaque modification, avec une
+    copie de sauvegarde par jour.
+    <div class="actions" style="margin-top:10px">
+      <button class="b primaire" data-action="fs-choisir">Choisir mon dossier de données</button></div></div>`;
+}
 
 function vueDonnees(){
   return `
+  <div class="carte">
+    <h2>Où sont enregistrées mes données ?</h2>
+    ${blocStockage()}
+  </div>
   <div class="grille g2">
     <div class="carte">
       <h2>Paramètres</h2>
-      <label class="champ">
-        <span>Alerte orange combien de jours avant l'échéance ?</span>
-        <input type="number" id="p-seuil" min="1" max="365" value="${DB.parametres.seuilAlerteJours}">
-      </label>
-      <label class="champ">
-        <span>Lundi de départ du cycle « Semaine 1 »</span>
-        <input type="date" id="p-cycle" value="${ech(DB.parametres.debutCycle)}">
-        <p class="aide">Sert à savoir si la semaine en cours est la 1, 2, 3 ou 4 du cycle des visites.
-           Actuellement : semaine <b>${semaineDuCycle(dISO(lundiDe(new Date())))}</b>.</p>
-      </label>
+      <label class="champ"><span>Alerte orange pour les notifications (jours avant l'échéance)</span>
+        <input type="number" id="p-seuil" min="1" max="365" value="${DB.parametres.seuilAlerteJours}"></label>
+      <label class="champ"><span>Anticipation des rapports (jours avant l'échéance)</span>
+        <input type="number" id="p-rapport" min="1" max="365" value="${DB.parametres.seuilRapportJours}">
+        <p class="aide">Délai à partir duquel un rapport apparaît dans « à préparer ».</p></label>
       <button class="b primaire" data-action="params-enregistrer">Enregistrer</button>
     </div>
-
     <div class="carte">
-      <h2>Sauvegarde</h2>
-      <p class="doux pt">Les données sont conservées dans ce navigateur, sur cet ordinateur uniquement.
-         Elles ne sont envoyées nulle part. Faites une copie régulièrement.</p>
+      <h2>Copies et exports</h2>
+      <p class="doux pt">Rien n'est envoyé sur internet. Ces boutons servent à emporter une copie
+         ailleurs ou à réutiliser les données.</p>
       <div class="actions" style="margin-top:12px">
-        <button class="b primaire" data-action="export-json">⬇ Exporter (fichier de sauvegarde)</button>
+        <button class="b primaire" data-action="export-json">⬇ Exporter une sauvegarde</button>
         <button class="b" data-action="import-json">⬆ Restaurer une sauvegarde</button>
       </div>
       <div class="actions" style="margin-top:10px">
-        <button class="b" data-action="export-csv-enfants">Exporter les dossiers (CSV / Excel)</button>
-        <button class="b" data-action="export-csv-droits">Exporter les droits (CSV / Excel)</button>
+        <button class="b" data-action="word-tous">Notes de visites en Word</button>
+        <button class="b" data-action="export-csv-enfants">Dossiers en CSV (Excel)</button>
+        <button class="b" data-action="export-csv-rapports">Calendrier des rapports en CSV</button>
       </div>
       <hr style="border:0;border-top:1px solid var(--bord);margin:16px 0">
       <div class="actions">
         <button class="b danger" data-action="tout-effacer">Tout effacer</button>
         <button class="b" data-action="recharger-exemple">Recharger les données de départ</button>
       </div>
-      <p class="aide">Contenu actuel : ${pluriel(DB.enfants.length,"enfant")},
-         ${pluriel(DB.droits.length,"droit")} de visite, ${pluriel(DB.taches.length,"tâche")}.</p>
+      <p class="aide">Contenu : ${pluriel(DB.enfants.length,"enfant")},
+        ${pluriel(toutesVisites().length,"droit")} de visite,
+        ${pluriel(toutesRencontres().length,"rencontre")}, ${pluriel(DB.taches.length,"tâche")}.</p>
     </div>
   </div>
-
   <div class="carte">
-    <h2>Mode d'emploi rapide</h2>
-    <ul class="pt" style="padding-left:20px;line-height:1.7">
-      <li><b>Tableau de bord</b> : ce qu'il faut traiter aujourd'hui — notifications de prise en charge
-          dépassées ou proches, droits de visite à remettre, visites de la semaine et to do.</li>
-      <li><b>Dossiers / rapports</b> : la liste des enfants, la date de fin de la notification de prise en
-          charge et les relances SAJ / SPJ. Le bouton <i>Relance</i> ajoute la date du jour en un clic.</li>
-      <li><b>Droits de visite</b> : rythme, date de fin, suspension et créneaux (semaine 1 à 4 du cycle,
-          n-ième jour du mois, chaque semaine, congés ou date unique).</li>
-      <li><b>Planning</b> : la semaine réelle calculée à partir des créneaux, et la vue du cycle complet.</li>
-      <li>Chaque tableau est <b>imprimable</b> (bouton Imprimer) pour être glissé dans un dossier papier.</li>
+    <h2>Comment ça marche</h2>
+    <ul class="pt" style="padding-left:20px;line-height:1.75">
+      <li><b>Notification de prise en charge</b> : une par enfant, reconduite d'un an. Le bouton
+        <i>Reconduire d'un an</i> décale l'échéance et garde l'ancienne en historique. Si le service
+        oublie de l'envoyer, l'échéance passe en rouge et vous notez vos relances.</li>
+      <li><b>Rapports</b> : le rapport annuel tombe à la date de formalisation, le rapport d'évolution
+        semestriel six mois plus tôt. Le calendrier des douze prochains mois est calculé tout seul.</li>
+      <li><b>Visites</b> : un droit de visite par parent, avec sa fréquence. Pour chaque rencontre,
+        cochez si le parent est venu et ajoutez votre note de synthèse.</li>
+      <li><b>Word</b> : les notes de visite s'exportent dans un document Word, prêt à être repris
+        dans vos rapports.</li>
     </ul>
   </div>`;
 }
 
 /* =========================================================================
-   12. MODALE
+   13. MODALE
    ========================================================================= */
 
-let soumission = null;   // fonction appelée à la validation du formulaire
-let annulation = null;   // fonction appelée si l'utilisateur ferme la modale
+let soumission = null, annulation = null;
 
 function ouvrirModale(titre, corps, onValider, largeur, onAnnuler){
   soumission = onValider;
   annulation = onAnnuler || null;
   document.getElementById("zone-modale").innerHTML = `
     <div class="voile" data-fermer="1">
-      <form class="modale" id="form-modale" ${largeur ? 'style="max-width:' + largeur + 'px"' : ""}>
+      <form class="modale" id="form-modale" ${largeur ? 'style="max-width:'+largeur+'px"' : ""}>
         <header><h2>${ech(titre)}</h2></header>
         <div class="corps">${corps}</div>
         <div class="pied">
@@ -936,30 +1321,17 @@ function ouvrirModale(titre, corps, onValider, largeur, onAnnuler){
 }
 function fermerModale(){
   const retour = annulation;
-  soumission = null;
-  annulation = null;
+  soumission = null; annulation = null;
   document.getElementById("zone-modale").innerHTML = "";
   if(retour) retour();
 }
-
-const val = (f, n) => { const e = f.elements[n]; return e ? String(e.value).trim() : ""; };
-const coche = (f, n) => { const e = f.elements[n]; return !!(e && e.checked); };
-
-function champsEnfants(selection){
-  const sel = new Set(selection || []);
-  if(!DB.enfants.length) return '<p class="doux pt">Aucun enfant encodé pour le moment.</p>';
-  return '<div class="cases">' + DB.enfants.slice()
-    .sort((a,b) => nomComplet(a).localeCompare(nomComplet(b), "fr"))
-    .map(e => '<label><input type="checkbox" name="enf" value="' + e.id + '"' +
-              (sel.has(e.id) ? " checked" : "") + "> " + ech(nomComplet(e)) + "</label>").join("") + "</div>";
-}
-function lus(f, nom){
-  return Array.from(f.querySelectorAll('input[name="' + nom + '"]:checked')).map(i => i.value);
-}
+const val = (f,n) => { const e = f.elements[n]; return e ? String(e.value).trim() : ""; };
+const coche = (f,n) => { const e = f.elements[n]; return !!(e && e.checked); };
 
 /* --- Enfant --- */
 function formEnfant(e){
-  e = e || { id:null, prenom:"", nom:"", service:"", naissance:"", notifFin:"", relances:[], notes:"" };
+  const neuf = !e;
+  e = e || { id:null, prenom:"", nom:"", service:"", naissance:"", notifFin:"", notes:"" };
   const corps = `
     <div class="ligne c2">
       <label class="champ"><span>Prénom</span><input type="text" name="prenom" required value="${ech(e.prenom)}"></label>
@@ -967,243 +1339,330 @@ function formEnfant(e){
     </div>
     <div class="ligne c2">
       <label class="champ"><span>Service</span>
-        <select name="service">
-          ${["","SAJ","SPJ","TJ","Autre"].map(s =>
-            '<option value="' + s + '"' + (e.service === s ? " selected" : "") + ">" + (s || "—") + "</option>").join("")}
-        </select></label>
-      <label class="champ"><span>Date de naissance</span><input type="date" name="naissance" value="${ech(e.naissance)}"></label>
+        <select name="service">${["","SAJ","SPJ","TJ","Autre"].map(s =>
+          '<option value="'+s+'"'+(e.service===s?" selected":"")+">"+(s||"—")+"</option>").join("")}</select></label>
+      <label class="champ"><span>Date de naissance</span>
+        <input type="date" name="naissance" value="${ech(e.naissance)}"></label>
     </div>
-    <label class="champ"><span>Fin de la notification de prise en charge</span>
+    <label class="champ"><span>Date de formalisation / fin de la notification de prise en charge</span>
       <input type="date" name="notifFin" value="${ech(e.notifFin)}">
-      <p class="aide">Rouge dès que la date est passée, orange ${DB.parametres.seuilAlerteJours} jours avant.</p>
-    </label>
-    <label class="champ"><span>Dates de relance SAJ / SPJ (une par ligne, format JJ/MM/AAAA)</span>
-      <textarea name="relances" rows="3">${ech((e.relances||[]).map(fmtFR).join("\n"))}</textarea></label>
-    <label class="champ"><span>Notes</span><textarea name="notes" rows="3">${ech(e.notes)}</textarea></label>`;
-
-  ouvrirModale(e.id ? "Modifier le dossier" : "Nouvel enfant", corps, f => {
-    const relances = val(f,"relances").split("\n").map(s => s.trim()).filter(Boolean)
-      .map(s => {
-        const m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
-        if(m){
-          let a = m[3]; if(a.length === 2) a = (Number(a) > 60 ? "19" : "20") + a;
-          return a + "-" + m[2].padStart(2,"0") + "-" + m[1].padStart(2,"0");
-        }
-        return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : null;
-      }).filter(Boolean).sort();
-    const donnee = {
-      id: e.id || uid(),
-      prenom: val(f,"prenom"), nom: val(f,"nom"), service: val(f,"service"),
-      naissance: val(f,"naissance"), notifFin: val(f,"notifFin"),
-      relances, notes: val(f,"notes")
-    };
-    if(e.id) Object.assign(enfantParId(e.id), donnee);
-    else DB.enfants.push(donnee);
+      <p class="aide">Cette date pilote tout : l'alerte sur la notification, le rapport annuel
+         (à cette date) et le rapport semestriel (six mois plus tôt).</p></label>
+    <label class="champ"><span>Notes sur le dossier</span>
+      <textarea name="notes" rows="3">${ech(e.notes)}</textarea></label>`;
+  ouvrirModale(neuf ? "Nouvel enfant" : "Modifier la fiche", corps, f => {
+    const d = { prenom:val(f,"prenom"), nom:val(f,"nom"), service:val(f,"service"),
+                naissance:val(f,"naissance"), notifFin:val(f,"notifFin"), notes:val(f,"notes") };
+    if(neuf){
+      DB.enfants.push(Object.assign({ id:uid(), relances:[], historique:[], rapports:[], visites:[] }, d));
+    }else{
+      Object.assign(enfantParId(e.id), d);
+    }
     maj();
   });
 }
 
 /* --- Droit de visite --- */
-function formDroit(d){
-  d = d || { id:null, libelle:"", enfantIds:[], rythme:"", dateFin:"",
-             suspendu:false, suspenduDepuis:"", notes:"", creneaux:[] };
-  const brouillon = JSON.parse(JSON.stringify(d));
-
-  function corps(){
-    return `
+function formVisite(e, v){
+  const neuf = !v;
+  v = v || { id:null, parent:"", frequence:"", dateFin:"", suspendu:false, suspenduDepuis:"", lieu:"", notes:"" };
+  const suggestions = ["Papa","Maman","Les deux parents","Grands-parents"];
+  const corps = `
+    <label class="champ"><span>Rencontre avec</span>
+      <input type="text" name="parent" list="l-parents" required value="${ech(v.parent)}"
+             placeholder="Papa, Maman, les deux parents…">
+      <datalist id="l-parents">${suggestions.map(s => '<option value="'+s+'">').join("")}</datalist>
+      <p class="aide">Si l'enfant voit son papa et sa maman séparément, créez deux droits de visite.</p></label>
     <div class="ligne c2">
-      <label class="champ"><span>Concerne (enfant ou fratrie)</span>
-        <input type="text" name="libelle" required value="${ech(brouillon.libelle)}" placeholder="Ex. Theismann"></label>
-      <label class="champ"><span>Rythme</span>
-        <input type="text" name="rythme" value="${ech(brouillon.rythme)}" placeholder="Ex. 2x 1h/mois"></label>
+      <label class="champ"><span>Fréquence des rencontres</span>
+        <input type="text" name="frequence" value="${ech(v.frequence)}" placeholder="Ex. 2x 1h/mois"></label>
+      <label class="champ"><span>Fin du droit de visite</span>
+        <input type="date" name="dateFin" value="${ech(v.dateFin)}"></label>
     </div>
     <div class="ligne c2">
-      <label class="champ"><span>Date de fin du droit</span>
-        <input type="date" name="dateFin" value="${ech(brouillon.dateFin)}"></label>
+      <label class="champ"><span>Lieu habituel</span>
+        <input type="text" name="lieu" value="${ech(v.lieu)}" placeholder="Ex. au service, au domicile…"></label>
       <label class="champ"><span>Suspendu depuis le</span>
-        <input type="date" name="suspenduDepuis" value="${ech(brouillon.suspenduDepuis)}"></label>
+        <input type="date" name="suspenduDepuis" value="${ech(v.suspenduDepuis)}"></label>
     </div>
     <label class="champ" style="display:flex;gap:8px;align-items:center">
-      <input type="checkbox" name="suspendu" style="width:auto"${brouillon.suspendu ? " checked" : ""}>
+      <input type="checkbox" name="suspendu" style="width:auto"${v.suspendu?" checked":""}>
       <span style="margin:0">Droit de visite actuellement suspendu</span></label>
-    <label class="champ"><span>Enfants concernés</span>${champsEnfants(brouillon.enfantIds)}</label>
-    <label class="champ"><span>Notes</span><textarea name="notes" rows="2">${ech(brouillon.notes)}</textarea></label>
-
-    <h3 style="margin-top:14px">Créneaux de visite</h3>
-    <div id="liste-creneaux">${brouillon.creneaux.map(ligneCreneau).join("") ||
-      '<p class="doux pt">Aucun créneau. Ajoutez-en un ci-dessous.</p>'}</div>
-    <button type="button" class="b" data-c="ajouter" style="margin-top:8px">+ Ajouter un créneau</button>`;
-  }
-
-  function ligneCreneau(c){
-    return `<div style="border:1px solid var(--bord);border-radius:8px;padding:9px;margin-bottom:7px">
-      <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
-        <div style="flex:1"><b>${ech(libelleCreneau(c))}</b>
-          ${c.type === "vacances" ? "" : '<br><span class="pt doux">' + ech(heuresCreneau(c)) + "</span>"}
-          ${c.lieu ? '<span class="pt doux"> · ' + ech(c.lieu) + "</span>" : ""}</div>
-        <div class="actions">
-          <button type="button" class="b mini" data-c="editer" data-cid="${c.id}">Modifier</button>
-          <button type="button" class="b mini danger" data-c="suppr" data-cid="${c.id}">✕</button>
-        </div>
-      </div></div>`;
-  }
-
-  /** Recopie la saisie en cours dans le brouillon (avant de redessiner ou d'ouvrir une sous-fenêtre). */
-  function memoriser(){
-    const f = document.getElementById("form-modale");
-    if(!f) return;
-    brouillon.libelle = val(f,"libelle"); brouillon.rythme = val(f,"rythme");
-    brouillon.dateFin = val(f,"dateFin"); brouillon.suspenduDepuis = val(f,"suspenduDepuis");
-    brouillon.suspendu = coche(f,"suspendu"); brouillon.notes = val(f,"notes");
-    brouillon.enfantIds = lus(f,"enf");
-  }
-  function rafraichir(){
-    memoriser();
-    document.getElementById("form-modale").querySelector(".corps").innerHTML = corps();
-  }
-
-  ouvrirModale(d.id ? "Modifier le droit de visite" : "Nouveau droit de visite", corps(), f => {
-    const donnee = {
-      id: d.id || uid(),
-      libelle: val(f,"libelle"), rythme: val(f,"rythme"), dateFin: val(f,"dateFin"),
-      suspendu: coche(f,"suspendu"), suspenduDepuis: val(f,"suspenduDepuis"),
-      notes: val(f,"notes"), enfantIds: lus(f,"enf"), creneaux: brouillon.creneaux
-    };
-    if(d.id) Object.assign(DB.droits.find(x => x.id === d.id), donnee);
-    else DB.droits.push(donnee);
+    <label class="champ"><span>Remarques</span>
+      <textarea name="notes" rows="2">${ech(v.notes)}</textarea></label>`;
+  ouvrirModale(neuf ? "Nouveau droit de visite" : "Modifier le droit de visite", corps, f => {
+    const d = { parent:val(f,"parent"), frequence:val(f,"frequence"), dateFin:val(f,"dateFin"),
+                lieu:val(f,"lieu"), suspendu:coche(f,"suspendu"), suspenduDepuis:val(f,"suspenduDepuis"),
+                notes:val(f,"notes") };
+    const cible = enfantParId(e.id);
+    if(neuf) cible.visites.push(Object.assign({ id:uid(), rencontres:[] }, d));
+    else Object.assign(cible.visites.find(x => x.id === v.id), d);
     maj();
-  }, 700);
-
-  document.getElementById("form-modale").addEventListener("click", ev => {
-    const b = ev.target.closest("[data-c]");
-    if(!b) return;
-    ev.preventDefault();
-    const act = b.dataset.c;
-    const cid = b.dataset.cid;
-
-    if(act === "suppr"){
-      brouillon.creneaux = brouillon.creneaux.filter(x => x.id !== cid);
-      rafraichir();
-      return;
-    }
-    memoriser();   // la sous-fenêtre remplace l'affichage : on garde la saisie en cours
-    if(act === "ajouter"){
-      formCreneau(null,
-        c => { brouillon.creneaux.push(c); formDroit(brouillon); },
-        () => formDroit(brouillon));
-    }else if(act === "editer"){
-      formCreneau(brouillon.creneaux.find(x => x.id === cid),
-        mod => {
-          const cible = brouillon.creneaux.find(x => x.id === cid);
-          if(cible) Object.assign(cible, mod);
-          formDroit(brouillon);
-        },
-        () => formDroit(brouillon));
-    }
   });
 }
 
-/* --- Créneau : sous-fenêtre ; à la sortie on ré-ouvre le droit de visite --- */
-function formCreneau(c, retour, annuler){
-  c = c || { id:uid(), type:"cycle4", semaine:1, occurrence:1, jour:null, date:"",
-             debut:"14:00", fin:"15:00", lieu:"" };
-
+/* --- Rencontre --- */
+function formRencontre(e, v, r){
+  const neuf = !r;
+  r = r || { id:null, date:aujourdHui(), presence:"venu", note:"" };
   const corps = `
-    <label class="champ"><span>Type de créneau</span>
-      <select name="type">
-        <option value="cycle4"${c.type==="cycle4"?" selected":""}>Semaine du cycle (1 à 4)</option>
-        <option value="mensuel"${c.type==="mensuel"?" selected":""}>N-ième jour du mois (ex. 1er mardi)</option>
-        <option value="hebdo"${c.type==="hebdo"?" selected":""}>Toutes les semaines</option>
-        <option value="vacances"${c.type==="vacances"?" selected":""}>Congés / vacances scolaires</option>
-        <option value="ponctuel"${c.type==="ponctuel"?" selected":""}>Date unique</option>
-      </select></label>
-    <div class="ligne c3">
-      <label class="champ"><span>Semaine du cycle</span>
-        <select name="semaine">${[1,2,3,4].map(n =>
-          '<option value="' + n + '"' + (c.semaine === n ? " selected" : "") + ">Semaine " + n + "</option>").join("")}</select></label>
-      <label class="champ"><span>Occurrence dans le mois</span>
-        <select name="occurrence">${[1,2,3,4,5].map(n =>
-          '<option value="' + n + '"' + ((c.occurrence||1) === n ? " selected" : "") + ">" +
-          (n === 1 ? "1er" : n + "e") + " du mois</option>").join("")}</select></label>
-      <label class="champ"><span>Jour</span>
-        <select name="jour"><option value="">— à préciser —</option>${JOURS.map((j,i) =>
-          '<option value="' + (i+1) + '"' + (c.jour === i+1 ? " selected" : "") + ">" + j + "</option>").join("")}</select></label>
-    </div>
-    <label class="champ"><span>Date</span><input type="date" name="date" value="${ech(c.date)}"></label>
-    <div class="ligne c3">
-      <label class="champ"><span>Heure de début</span><input type="time" name="debut" value="${ech(c.debut)}"></label>
-      <label class="champ"><span>Heure de fin</span><input type="time" name="fin" value="${ech(c.fin)}"></label>
-      <label class="champ"><span>Lieu</span><input type="text" name="lieu" value="${ech(c.lieu)}"></label>
-    </div>`;
-
-  ouvrirModale("Créneau de visite", corps, f => {
-    const t = val(f,"type");
-    const res = {
-      id: c.id, type: t,
-      semaine: Number(val(f,"semaine")) || 1,
-      occurrence: Number(val(f,"occurrence")) || 1,
-      jour: val(f,"jour") ? Number(val(f,"jour")) : null,
-      date: val(f,"date"),
-      debut: val(f,"debut"), fin: val(f,"fin"), lieu: val(f,"lieu")
-    };
-    if(t === "ponctuel" && !res.date){ alert("Indiquez la date du rendez-vous."); return false; }
-    annulation = null;      // la validation ne doit pas déclencher le retour « annulation »
-    retour(res);            // ré-ouvre la fenêtre du droit de visite
-    return false;
-  }, 560, annuler);
-
-  // adapte l'affichage des champs au type choisi
-  const f = document.getElementById("form-modale");
-  const adapter = () => {
-    const t = f.elements.type.value;
-    const aff = (nom, ok) => {
-      const el = f.elements[nom];
-      if(el && el.closest("label.champ")) el.closest("label.champ").style.display = ok ? "" : "none";
-    };
-    aff("semaine",    t === "cycle4");
-    aff("occurrence", t === "mensuel");
-    aff("jour",       t === "cycle4" || t === "mensuel" || t === "hebdo");
-    aff("date",       t === "ponctuel");
-    aff("debut",      t !== "vacances");
-    aff("fin",        t !== "vacances");
-  };
-  f.elements.type.addEventListener("change", adapter);
-  adapter();
+    <p class="pt doux" style="margin-top:0">${ech(nomComplet(e))} — rencontre avec
+       <b>${ech(libelleParent(v))}</b>${v.frequence ? " (" + ech(v.frequence) + ")" : ""}</p>
+    <label class="champ"><span>Date de la rencontre</span>
+      <input type="date" name="date" required value="${ech(r.date)}"></label>
+    <label class="champ"><span>Le parent est-il venu ?</span>
+      <span class="radios">${Object.keys(PRESENCES).map(k =>
+        '<label><input type="radio" name="presence" value="'+k+'"'+(r.presence===k?" checked":"")+">" +
+        PRESENCES[k].label + "</label>").join("")}</span></label>
+    <label class="champ"><span>Note de synthèse de la rencontre</span>
+      <textarea name="note" rows="7" placeholder="Comment s'est passée la rencontre, attitude de l'enfant, du parent, éléments à retenir pour le rapport…">${ech(r.note)}</textarea>
+      <p class="aide">Ces notes se retrouvent dans l'export Word, prêtes pour votre rapport.</p></label>`;
+  ouvrirModale(neuf ? "Ajouter une rencontre" : "Modifier la rencontre", corps, f => {
+    const d = { date:val(f,"date"), presence:val(f,"presence") || "venu", note:val(f,"note") };
+    if(!estISO(d.date)){ alert("Indiquez la date de la rencontre."); return false; }
+    const cible = enfantParId(e.id).visites.find(x => x.id === v.id);
+    if(neuf) cible.rencontres.push(Object.assign({ id:uid() }, d));
+    else Object.assign(cible.rencontres.find(x => x.id === r.id), d);
+    maj();
+  }, 620);
 }
 
-/* =========================================================================
-   13. TÂCHES — formulaire
-   ========================================================================= */
-
+/* --- Tâche --- */
 function formTache(t){
-  t = t || { id:null, texte:"", echeance:aujourdHui(), enfantId:"", fait:false };
+  const neuf = !t;
+  t = t || { id:null, texte:"", echeance:aujourdHui(), enfantId:"", fait:false, faitLe:"" };
   const corps = `
     <label class="champ"><span>Tâche</span>
-      <input type="text" name="texte" required value="${ech(t.texte)}" placeholder="Ex. Téléphoner au SPJ pour la notification"></label>
+      <input type="text" name="texte" required value="${ech(t.texte)}"
+             placeholder="Ex. Téléphoner au SPJ pour la notification"></label>
     <div class="ligne c2">
       <label class="champ"><span>Échéance</span><input type="date" name="echeance" value="${ech(t.echeance)}"></label>
       <label class="champ"><span>Dossier lié</span>
-        <select name="enfantId"><option value="">—</option>${DB.enfants.slice()
-          .sort((a,b) => nomComplet(a).localeCompare(nomComplet(b),"fr"))
-          .map(e => '<option value="' + e.id + '"' + (t.enfantId === e.id ? " selected" : "") + ">" +
+        <select name="enfantId"><option value="">—</option>${DB.enfants.slice().sort(parNom)
+          .map(e => '<option value="'+e.id+'"'+(t.enfantId===e.id?" selected":"")+">" +
                     ech(nomComplet(e)) + "</option>").join("")}</select></label>
     </div>`;
-  ouvrirModale(t.id ? "Modifier la tâche" : "Nouvelle tâche", corps, f => {
-    const donnee = { id: t.id || uid(), texte: val(f,"texte"), echeance: val(f,"echeance"),
-                     enfantId: val(f,"enfantId"), fait: t.fait || false, faitLe: t.faitLe || "" };
-    if(t.id) Object.assign(DB.taches.find(x => x.id === t.id), donnee);
-    else DB.taches.push(donnee);
+  ouvrirModale(neuf ? "Nouvelle tâche" : "Modifier la tâche", corps, f => {
+    const d = { texte:val(f,"texte"), echeance:val(f,"echeance"), enfantId:val(f,"enfantId") };
+    if(neuf) DB.taches.push(Object.assign({ id:uid(), fait:false, faitLe:"" }, d));
+    else Object.assign(DB.taches.find(x => x.id === t.id), d);
     maj();
   }, 560);
 }
-
 function ajouterTache(texte, enfantId){
-  DB.taches.push({ id:uid(), texte, echeance:aujourdHui(), enfantId:enfantId || "", fait:false, faitLe:"" });
+  DB.taches.push({ id:uid(), texte, echeance:aujourdHui(), enfantId:enfantId||"", fait:false, faitLe:"" });
   maj();
 }
 
 /* =========================================================================
-   14. IMPORT / EXPORT
+   14. EXPORT WORD (.docx écrit à la main : un .docx est un fichier ZIP)
+   ========================================================================= */
+
+const TABLE_CRC = (() => {
+  const t = new Uint32Array(256);
+  for(let n = 0; n < 256; n++){
+    let c = n;
+    for(let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+function crc32(u8){
+  let c = 0xFFFFFFFF;
+  for(let i = 0; i < u8.length; i++) c = TABLE_CRC[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+/** Archive ZIP sans compression — suffisant et lisible par Word. */
+function zipCreer(entrees){
+  const enc = new TextEncoder();
+  const morceaux = [], central = [];
+  let position = 0;
+  entrees.forEach(e => {
+    const nom = enc.encode(e.nom);
+    const data = e.contenu;
+    const crc = crc32(data);
+    const entete = new Uint8Array(30 + nom.length);
+    const v = new DataView(entete.buffer);
+    v.setUint32(0, 0x04034b50, true); v.setUint16(4, 20, true); v.setUint16(6, 0, true);
+    v.setUint16(8, 0, true); v.setUint16(10, 0, true); v.setUint16(12, 0x21, true);
+    v.setUint32(14, crc, true); v.setUint32(18, data.length, true); v.setUint32(22, data.length, true);
+    v.setUint16(26, nom.length, true); v.setUint16(28, 0, true);
+    entete.set(nom, 30);
+
+    const fiche = new Uint8Array(46 + nom.length);
+    const c = new DataView(fiche.buffer);
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true);
+    c.setUint16(8, 0, true); c.setUint16(10, 0, true); c.setUint16(12, 0, true); c.setUint16(14, 0x21, true);
+    c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true);
+    c.setUint16(28, nom.length, true); c.setUint32(42, position, true);
+    fiche.set(nom, 46);
+
+    morceaux.push(entete, data); central.push(fiche);
+    position += entete.length + data.length;
+  });
+  const tailleCentral = central.reduce((s,x) => s + x.length, 0);
+  const fin = new Uint8Array(22);
+  const f = new DataView(fin.buffer);
+  f.setUint32(0, 0x06054b50, true);
+  f.setUint16(8, entrees.length, true); f.setUint16(10, entrees.length, true);
+  f.setUint32(12, tailleCentral, true); f.setUint32(16, position, true);
+
+  const total = morceaux.concat(central, [fin]);
+  const taille = total.reduce((s,x) => s + x.length, 0);
+  const sortie = new Uint8Array(taille);
+  let o = 0;
+  total.forEach(x => { sortie.set(x, o); o += x.length; });
+  return sortie;
+}
+
+const xml = s => String(s == null ? "" : s)
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;").replace(/'/g,"&apos;")
+  .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"");   // caractères de contrôle interdits en XML
+
+/** Un paragraphe Word ; le texte est coupé aux retours à la ligne. */
+function par(texte, opts){
+  const o = opts || {};
+  const taille = o.taille || 22;                       // demi-points
+  const rpr = "<w:rPr>" + (o.gras ? "<w:b/>" : "") + (o.italique ? "<w:i/>" : "") +
+              '<w:sz w:val="' + taille + '"/><w:szCs w:val="' + taille + '"/>' +
+              (o.couleur ? '<w:color w:val="' + o.couleur + '"/>' : "") + "</w:rPr>";
+  const lignes = String(texte == null ? "" : texte).split(/\r?\n/);
+  const runs = lignes.map((l,i) =>
+    "<w:r>" + rpr + (i ? "<w:br/>" : "") + '<w:t xml:space="preserve">' + xml(l) + "</w:t></w:r>").join("");
+  const ppr = "<w:pPr>" +
+    '<w:spacing w:before="' + (o.avant || 0) + '" w:after="' + (o.apres == null ? 100 : o.apres) + '"/>' +
+    (o.bordure ? '<w:pBdr><w:bottom w:val="single" w:sz="6" w:space="2" w:color="AAAAAA"/></w:pBdr>' : "") +
+    (o.retrait ? '<w:ind w:left="' + o.retrait + '"/>' : "") + "</w:pPr>";
+  return "<w:p>" + ppr + runs + "</w:p>";
+}
+
+function docxCreer(corpsXml, titre){
+  const enc = new TextEncoder();
+  const maintenant = new Date().toISOString().replace(/\.\d+Z$/, "Z");
+  const NS = "http://schemas.openxmlformats.org/";
+
+  const types = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<Types xmlns="' + NS + 'package/2006/content-types">' +
+    '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+    '<Default Extension="xml" ContentType="application/xml"/>' +
+    '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+    '<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>' +
+    "</Types>";
+
+  const rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<Relationships xmlns="' + NS + 'package/2006/relationships">' +
+    '<Relationship Id="rId1" Type="' + NS + 'officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+    '<Relationship Id="rId2" Type="' + NS + 'package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>' +
+    "</Relationships>";
+
+  const relsDoc = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<Relationships xmlns="' + NS + 'package/2006/relationships"/>';
+
+  const props = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<cp:coreProperties xmlns:cp="' + NS + 'package/2006/metadata/core-properties"' +
+    ' xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"' +
+    ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+    "<dc:title>" + xml(titre || "Notes de visites") + "</dc:title>" +
+    "<dc:creator>Gestion de mes dossiers</dc:creator>" +
+    "<cp:lastModifiedBy>Gestion de mes dossiers</cp:lastModifiedBy>" +
+    '<dcterms:created xsi:type="dcterms:W3CDTF">' + maintenant + "</dcterms:created>" +
+    '<dcterms:modified xsi:type="dcterms:W3CDTF">' + maintenant + "</dcterms:modified>" +
+    "</cp:coreProperties>";
+
+  const doc = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<w:document xmlns:w="' + NS + 'wordprocessingml/2006/main"><w:body>' +
+    corpsXml +
+    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>' +
+    '<w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="709" w:footer="709"/>' +
+    "</w:sectPr></w:body></w:document>";
+
+  return zipCreer([
+    { nom:"[Content_Types].xml",           contenu:enc.encode(types)   },
+    { nom:"_rels/.rels",                   contenu:enc.encode(rels)    },
+    { nom:"docProps/core.xml",             contenu:enc.encode(props)   },
+    { nom:"word/_rels/document.xml.rels",  contenu:enc.encode(relsDoc) },
+    { nom:"word/document.xml",             contenu:enc.encode(doc)     }
+  ]);
+}
+
+/** Construit le document des notes de visite. */
+function docxVisites(enfants, du, au, toutInclure){
+  const dans = d => (!du || d >= du) && (!au || d <= au);
+  if(!toutInclure){
+    enfants = enfants.filter(e =>
+      (e.visites||[]).some(v => (v.rencontres||[]).some(r => dans(r.date))));
+  }
+  let corps = "";
+  corps += par("Notes de visites", { gras:true, taille:34, apres:40 });
+  corps += par("Document généré le " + fmtLong(aujourdHui()) +
+               (du || au ? " — période du " + (du ? fmtFR(du) : "début") + " au " + (au ? fmtFR(au) : "aujourd'hui") : ""),
+               { italique:true, taille:18, couleur:"666666", apres:220, bordure:true });
+
+  let total = 0;
+  enfants.slice().sort(parNom).forEach(e => {
+    const visites = (e.visites||[]).filter(v => (v.rencontres||[]).some(r => dans(r.date)));
+    corps += par(nomComplet(e) + (e.service ? "  —  " + e.service : ""),
+                 { gras:true, taille:28, avant:240, apres:60, bordure:true });
+    if(!visites.length){
+      corps += par("Aucune rencontre encodée sur la période.", { italique:true, taille:20, couleur:"666666" });
+      return;
+    }
+    visites.forEach(v => {
+      const renc = (v.rencontres||[]).filter(r => dans(r.date))
+        .sort((a,b) => String(a.date).localeCompare(String(b.date)));
+      const venus = renc.filter(r => r.presence === "venu").length;
+      const absents = renc.filter(r => r.presence === "absent").length;
+      const annulees = renc.filter(r => r.presence === "annulee").length;
+      corps += par("Rencontres avec " + libelleParent(v) +
+                   (v.frequence ? "  (" + v.frequence + ")" : ""),
+                   { gras:true, taille:24, avant:160, apres:40 });
+      corps += par(pluriel(renc.length,"rencontre") + " : " + venus + " honorée(s), " +
+                   absents + " manquée(s)" + (annulees ? ", " + annulees + " annulée(s)" : "") +
+                   (v.suspendu ? " — droit suspendu" + (estISO(v.suspenduDepuis) ? " depuis le " +
+                     fmtFR(v.suspenduDepuis) : "") : ""),
+                   { italique:true, taille:19, couleur:"666666", apres:80 });
+      renc.forEach(r => {
+        total++;
+        corps += par(fmtLong(r.date) + "  —  " + presenceDe(r).label,
+                     { gras:true, taille:20, avant:80, apres:20 });
+        corps += par(r.note || "(pas de note)", { taille:21, retrait:283, apres:60 });
+      });
+    });
+  });
+  if(!total) corps += par("Aucune rencontre ne correspond à la période choisie.",
+                          { italique:true, couleur:"666666" });
+  return docxCreer(corps, "Notes de visites" +
+    (enfants.length === 1 ? " — " + nomComplet(enfants[0]) : ""));
+}
+
+function formExportWord(enfantUnique){
+  const corps = `
+    <p class="pt doux" style="margin-top:0">
+      ${enfantUnique ? "Notes de visite de <b>" + ech(nomComplet(enfantUnique)) + "</b>."
+                     : "Notes de visite de tous les enfants, un chapitre par enfant."}</p>
+    <div class="ligne c2">
+      <label class="champ"><span>À partir du (facultatif)</span><input type="date" name="du"></label>
+      <label class="champ"><span>Jusqu'au (facultatif)</span><input type="date" name="au"></label>
+    </div>
+    <p class="aide">Laissez vide pour reprendre toutes les rencontres encodées.</p>
+    ${enfantUnique ? "" : `<label class="champ" style="display:flex;gap:8px;align-items:center;margin-top:8px">
+      <input type="checkbox" name="tous" style="width:auto">
+      <span style="margin:0">Inclure aussi les enfants sans rencontre sur la période</span></label>`}`;
+  ouvrirModale("Exporter les notes en Word", corps, f => {
+    const du = val(f,"du"), au = val(f,"au");
+    const enfants = enfantUnique ? [enfantUnique] : DB.enfants;
+    const data = docxVisites(enfants, du, au, enfantUnique ? true : coche(f,"tous"));
+    const nom = "notes-visites-" + (enfantUnique
+      ? nomComplet(enfantUnique).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")
+      : "tous") + "-" + aujourdHui() + ".docx";
+    telecharger(nom, data,
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+  }, 520);
+}
+
+/* =========================================================================
+   15. IMPORT / EXPORT
    ========================================================================= */
 
 function telecharger(nom, contenu, type){
@@ -1212,28 +1671,38 @@ function telecharger(nom, contenu, type){
   a.href = URL.createObjectURL(blob);
   a.download = nom;
   document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
 }
 function csv(lignes){
   const e = v => '"' + String(v == null ? "" : v).replace(/"/g,'""') + '"';
-  // \uFEFF = marque d'ordre d'octets : Excel reconnait alors l'UTF-8 (accents corrects)
-  return "\uFEFF" + lignes.map(l => l.map(e).join(";")).join("\r\n");
+  // ﻿ = marque d'ordre d'octets : Excel reconnait alors l'UTF-8 (accents corrects)
+  return "﻿" + lignes.map(l => l.map(e).join(";")).join("\r\n");
 }
+const dt = s => estISO(s) ? fmtFR(s) : "";
+
 function exportCsvEnfants(){
-  const dt = s => s ? fmtFR(s) : "";     // cellule vide plutôt que « — » dans le tableur
-  const l = [["Prénom","Nom","Service","Naissance","Fin notification","Statut","Relances","Notes"]];
-  DB.enfants.forEach(e => l.push([e.prenom, e.nom, e.service, dt(e.naissance), dt(e.notifFin),
-    statutEcheance(e.notifFin).label, (e.relances||[]).map(fmtFR).join(" / "), e.notes]));
+  const l = [["Prénom","Nom","Service","Naissance","Formalisation","Statut notification","Relances",
+              "Rapport semestriel","Rapport annuel","Droits de visite","Notes"]];
+  DB.enfants.slice().sort(parNom).forEach(e => l.push([
+    e.prenom, e.nom, e.service, dt(e.naissance), dt(e.notifFin), statutNotif(e).label,
+    (e.relances||[]).map(fmtFR).join(" / "),
+    dt(echeanceRapport(e,"semestriel")), dt(echeanceRapport(e,"annuel")),
+    (e.visites||[]).map(v => libelleParent(v) + (v.frequence ? " : " + v.frequence : "") +
+      (estISO(v.dateFin) ? " jusqu'au " + fmtFR(v.dateFin) : "") + (v.suspendu ? " (suspendu)" : "")).join(" / "),
+    e.notes]));
   telecharger("dossiers-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8");
 }
-function exportCsvDroits(){
-  const l = [["Concerne","Enfants","Rythme","Date de fin","Statut","Créneaux","Notes"]];
-  DB.droits.forEach(d => l.push([d.libelle, nomsEnfants(d.enfantIds), d.rythme,
-    d.dateFin ? fmtFR(d.dateFin) : "",
-    statutDroit(d).label,
-    (d.creneaux||[]).map(c => libelleCreneau(c) + (c.type === "vacances" ? "" : " " + heuresCreneau(c))).join(" / "),
-    d.notes]));
-  telecharger("droits-de-visite-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8");
+function exportCsvRapports(){
+  const l = [["Échéance","Mois","Type","Enfant","Service"]];
+  const lignes = [];
+  DB.enfants.forEach(e => ["annuel","semestriel"].forEach(t => {
+    const d = echeanceRapport(e,t);
+    if(d) lignes.push([d, fmtMoisAnnee(d), t === "annuel" ? "Formalisation / annuel" : "Évolution / semestriel",
+                       nomComplet(e), e.service]);
+  }));
+  lignes.sort((a,b) => a[0].localeCompare(b[0]));
+  lignes.forEach(x => l.push([fmtFR(x[0]), x[1], x[2], x[3], x[4]]));
+  telecharger("rapports-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8");
 }
 
 document.getElementById("fichier-import").addEventListener("change", function(){
@@ -1243,12 +1712,11 @@ document.getElementById("fichier-import").addEventListener("change", function(){
   lect.onload = () => {
     try{
       const d = JSON.parse(lect.result);
-      if(!d || !Array.isArray(d.enfants)) throw new Error("Fichier non reconnu");
+      if(!d || !Array.isArray(d.enfants)) throw new Error("fichier non reconnu");
       if(!confirm("Remplacer toutes les données actuelles par celles du fichier ?")) return;
-      DB = Object.assign(baseVide(), d);
-      DB.parametres = Object.assign(baseVide().parametres, d.parametres || {});
+      DB = normaliser(d);
       maj();
-      alert("Sauvegarde restaurée.");
+      alert("Sauvegarde restaurée." + (FS.dossier ? " Le fichier du disque a été mis à jour." : ""));
     }catch(e){ alert("Fichier illisible : " + e.message); }
   };
   lect.readAsText(f);
@@ -1256,7 +1724,7 @@ document.getElementById("fichier-import").addEventListener("change", function(){
 });
 
 /* =========================================================================
-   15. ÉVÉNEMENTS
+   16. ÉVÉNEMENTS
    ========================================================================= */
 
 document.getElementById("nav").addEventListener("click", ev => {
@@ -1265,11 +1733,17 @@ document.getElementById("nav").addEventListener("click", ev => {
   onglet = b.dataset.onglet;
   rendre();
 });
-
 document.getElementById("zone-modale").addEventListener("click", ev => {
   if(ev.target.dataset && ev.target.dataset.fermer) fermerModale();
 });
 document.addEventListener("keydown", ev => { if(ev.key === "Escape") fermerModale(); });
+document.getElementById("etat-stockage").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-fs]");
+  if(!b) return;
+  if(b.dataset.fs === "choisir")     fsChoisir().then(rendre);
+  if(b.dataset.fs === "reconnecter") fsReconnecter(false).then(rendre);
+  if(b.dataset.fs === "aide"){ onglet = "donnees"; rendre(); }
+});
 
 document.getElementById("vue").addEventListener("input", ev => {
   if(ev.target.id === "recherche"){
@@ -1277,7 +1751,7 @@ document.getElementById("vue").addEventListener("input", ev => {
     const pos = ev.target.selectionStart;
     rendre();
     const n = document.getElementById("recherche");
-    if(n){ n.focus(); n.setSelectionRange(pos, pos); }
+    if(n){ n.focus(); n.setSelectionRange(pos,pos); }
   }
 });
 document.getElementById("vue").addEventListener("change", ev => {
@@ -1287,25 +1761,34 @@ document.getElementById("vue").addEventListener("change", ev => {
 document.getElementById("vue").addEventListener("click", ev => {
   const b = ev.target.closest("[data-action]");
   if(!b) return;
-  const id = b.dataset.id;
-  const act = b.dataset.action;
+  const id = b.dataset.id, vid = b.dataset.vid, rid = b.dataset.rid;
+  const e = id ? enfantParId(id) : null;
+  const v = (e && vid) ? (e.visites||[]).find(x => x.id === vid) : null;
 
-  switch(act){
+  switch(b.dataset.action){
+    /* --- navigation --- */
+    case "fiche": etat.ficheId = id; onglet = "fiche"; rendre(); break;
+    case "retour-enfants": onglet = "enfants"; rendre(); break;
+    case "annee":
+      etat.anneeRapports = b.dataset.delta === "0" ? 0 : etat.anneeRapports + Number(b.dataset.delta);
+      rendre();
+      break;
+
     /* --- enfants --- */
     case "enfant-nouveau":  formEnfant(null); break;
-    case "enfant-modifier": formEnfant(enfantParId(id)); break;
-    case "enfant-supprimer": {
-      const e = enfantParId(id);
-      if(confirm("Supprimer définitivement le dossier de " + nomComplet(e) + " ?")){
+    case "enfant-modifier": formEnfant(e); break;
+    case "enfant-supprimer":
+      if(confirm("Supprimer définitivement le dossier de " + nomComplet(e) +
+                 " , ses rencontres et ses notes ?")){
         DB.enfants = DB.enfants.filter(x => x.id !== id);
-        DB.droits.forEach(d => d.enfantIds = (d.enfantIds||[]).filter(x => x !== id));
         DB.taches.forEach(t => { if(t.enfantId === id) t.enfantId = ""; });
+        onglet = "enfants";
         maj();
       }
       break;
-    }
+
+    /* --- notification --- */
     case "relance": {
-      const e = enfantParId(id);
       const auj = aujourdHui();
       e.relances = e.relances || [];
       if(e.relances.includes(auj)){ alert("Une relance est déjà notée pour aujourd'hui."); break; }
@@ -1313,28 +1796,72 @@ document.getElementById("vue").addEventListener("click", ev => {
       maj();
       break;
     }
-    /* --- droits --- */
-    case "droit-nouveau":  formDroit(null); break;
-    case "droit-modifier": formDroit(DB.droits.find(d => d.id === id)); break;
-    case "droit-supprimer": {
-      const d = DB.droits.find(x => x.id === id);
-      if(confirm("Supprimer le droit de visite « " + d.libelle + " » ?")){
-        DB.droits = DB.droits.filter(x => x.id !== id);
+    case "relance-suppr":
+      e.relances = (e.relances||[]).filter(d => d !== b.dataset.date);
+      maj();
+      break;
+    case "reconduire": {
+      if(!estISO(e.notifFin)){
+        alert("Encodez d'abord une date de formalisation pour " + nomComplet(e) + ".");
+        break;
+      }
+      const nouvelle = decalerAns(e.notifFin, 1);
+      if(!confirm("Reconduire la notification de " + nomComplet(e) + " du " + fmtFR(e.notifFin) +
+                  " au " + fmtFR(nouvelle) + " ?")) break;
+      e.historique = e.historique || [];
+      e.historique.push(e.notifFin);
+      e.notifFin = nouvelle;
+      e.relances = [];
+      maj();
+      break;
+    }
+
+    /* --- rapports --- */
+    case "rapport-envoye": {
+      const type = b.dataset.type;
+      const d = echeanceRapport(e, type);
+      if(!d) break;
+      if(!confirm("Noter le rapport " + (type === "annuel" ? "annuel" : "semestriel") + " de " +
+                  nomComplet(e) + " (échéance " + fmtFR(d) + ") comme envoyé aujourd'hui ?")) break;
+      e.rapports = e.rapports || [];
+      e.rapports.push({ id:uid(), type, echeance:d, envoyeLe:aujourdHui() });
+      maj();
+      break;
+    }
+    case "rapport-annuler":
+      e.rapports = (e.rapports||[]).filter(r => r.id !== rid);
+      maj();
+      break;
+
+    /* --- droits de visite --- */
+    case "visite-nouvelle":  formVisite(e, null); break;
+    case "visite-modifier":  formVisite(e, v); break;
+    case "visite-supprimer":
+      if(confirm("Supprimer le droit de visite « " + libelleParent(v) + " » de " + nomComplet(e) +
+                 " et ses " + pluriel((v.rencontres||[]).length,"rencontre") + " ?")){
+        e.visites = e.visites.filter(x => x.id !== vid);
         maj();
       }
       break;
-    }
-    /* --- planning --- */
-    case "sem":
-      etat.semaineOffset = b.dataset.delta === "0" ? 0 : etat.semaineOffset + Number(b.dataset.delta);
-      rendre();
+
+    /* --- rencontres --- */
+    case "rencontre-nouvelle": formRencontre(e, v, null); break;
+    case "rencontre-modifier": formRencontre(e, v, (v.rencontres||[]).find(x => x.id === rid)); break;
+    case "rencontre-supprimer":
+      if(confirm("Supprimer cette rencontre et sa note ?")){
+        v.rencontres = v.rencontres.filter(x => x.id !== rid);
+        maj();
+      }
       break;
-    case "vue-planning": etat.vuePlanning = b.dataset.v; rendre(); break;
+
+    /* --- Word --- */
+    case "word-enfant": formExportWord(e); break;
+    case "word-tous":   formExportWord(null); break;
+
     /* --- tâches --- */
-    case "tache-nouvelle":  formTache(null); break;
-    case "tache-modifier":  formTache(DB.taches.find(t => t.id === id)); break;
-    case "tache-supprimer":
-      DB.taches = DB.taches.filter(t => t.id !== id); maj(); break;
+    case "tache-nouvelle": formTache(null); break;
+    case "tache-modifier": formTache(DB.taches.find(t => t.id === id)); break;
+    case "tache-supprimer": DB.taches = DB.taches.filter(t => t.id !== id); maj(); break;
     case "tache-bascule": {
       const t = DB.taches.find(x => x.id === id);
       t.fait = !t.fait; t.faitLe = t.fait ? aujourdHui() : "";
@@ -1347,135 +1874,137 @@ document.getElementById("vue").addEventListener("click", ev => {
         DB.taches = DB.taches.filter(t => !t.fait); maj();
       }
       break;
-    case "tache-rapport": {
-      const e = enfantParId(id);
-      ajouterTache("Relancer le service pour la notification de prise en charge — " + nomComplet(e), id);
+
+    /* --- enregistrement disque --- */
+    case "fs-choisir":     fsChoisir().then(rendre); break;
+    case "fs-reconnecter": fsReconnecter(false).then(rendre); break;
+    case "fs-maintenant":
+      fsEcrire().then(() => fsSauvegardeDuJour(JSON.stringify(DB,null,2), true)).then(rendre);
       break;
-    }
-    case "tache-droit": {
-      const d = DB.droits.find(x => x.id === id);
-      ajouterTache("Redemander / renouveler le droit de visite — " + d.libelle,
-                   (d.enfantIds || [])[0] || "");
+    case "fs-relire":
+      if(confirm("Recharger les données depuis le fichier du disque ? Les modifications non " +
+                 "encore enregistrées seront perdues.")){
+        DB.initial = true;
+        fsLire().then(rendre);
+      }
       break;
-    }
+    case "fs-oublier":
+      if(confirm("Ne plus enregistrer dans ce dossier ? Le fichier existant n'est pas supprimé.")){
+        FS.dossier = null; FS.enAttente = null; FS.nom = ""; FS.dernier = null; FS.erreur = "";
+        idbEffacer("dossier").then(rendre);
+      }
+      break;
+
     /* --- données --- */
     case "params-enregistrer": {
       const s = Number(document.getElementById("p-seuil").value);
-      DB.parametres.seuilAlerteJours = (s > 0 && s < 400) ? s : 30;
-      DB.parametres.debutCycle = document.getElementById("p-cycle").value || "2026-01-05";
+      const r = Number(document.getElementById("p-rapport").value);
+      DB.parametres.seuilAlerteJours  = (s > 0 && s < 400) ? s : 30;
+      DB.parametres.seuilRapportJours = (r > 0 && r < 400) ? r : 45;
       maj();
       alert("Paramètres enregistrés.");
       break;
     }
     case "export-json":
-      telecharger("sauvegarde-dossiers-" + aujourdHui() + ".json", JSON.stringify(DB, null, 2));
+      telecharger("sauvegarde-dossiers-" + aujourdHui() + ".json", JSON.stringify(DB,null,2));
       break;
     case "import-json": document.getElementById("fichier-import").click(); break;
-    case "export-csv-enfants": exportCsvEnfants(); break;
-    case "export-csv-droits":  exportCsvDroits(); break;
+    case "export-csv-enfants":  exportCsvEnfants(); break;
+    case "export-csv-rapports": exportCsvRapports(); break;
     case "tout-effacer":
       if(confirm("Effacer TOUTES les données ? Exportez d'abord une sauvegarde si nécessaire.") &&
          confirm("Confirmez-vous définitivement l'effacement ?")){
-        DB = baseVide(); maj();
+        DB = baseVide(); onglet = "enfants"; maj();
       }
       break;
     case "recharger-exemple":
-      if(confirm("Remplacer les données actuelles par les données de départ (celles du tableau Excel) ?")){
-        DB = donneesInitiales(); maj();
+      if(confirm("Remplacer les données actuelles par les données de départ (vos deux tableaux Excel) ?")){
+        DB = donneesInitiales(); onglet = "tableau"; maj();
       }
       break;
   }
 });
 
 /* =========================================================================
-   16. DONNÉES DE DÉPART (reprises du tableau Excel)
+   17. DONNÉES DE DÉPART (reprises des deux tableaux Excel)
    ========================================================================= */
 
 function donneesInitiales(){
-  const E = (id, prenom, nom, notifFin, relances) =>
-    ({ id, prenom, nom, service:"", naissance:"", notifFin, relances:relances || [], notes:"" });
-
-  const enfants = [
-    E("e1","Sofia","INFANTINO","2026-04-25",["2026-06-02"]),
-    E("e2","Guyliano","BERTOLINI","2026-04-30",["2026-06-02"]),
-    E("e3","Malone","BIHAIN","2026-06-02"),
-    E("e4","Eléana","PEIXOTO","2026-06-12"),
-    E("e5","Lucas","THEISMANN","2026-06-25"),
-    E("e6","Célia","THEISMANN","2026-06-25"),
-    E("e7","Théo","DE BRUYN","2026-08-18"),
-    E("e8","Sandy","FIERAIN","2026-10-14"),
-    E("e9","Timi","LEMET","2026-11-01"),
-    E("e10","David","LEMET","2026-11-02"),
-    E("e11","Alessandro","MAKA","2026-11-04"),
-    E("e12","Océanna","MAKA","2026-11-04"),
-    E("e13","Lionel","MAKA","2026-11-04"),
-    E("e14","Safia","CREPIN","2026-11-04"),
-    E("e15","Dyana","GASPAR","2026-11-12"),
-    E("e16","Kendjy","MARECHAL","2026-12-01"),
-    E("e17","Joackim","BRUGNEROTTO","2026-12-16"),
-    E("e18","Tellyoh","DESBESSEL","2027-01-30"),
-    E("e19","Mélina","LEFEVRE","2027-03-31"),
-    E("e20","Mathéo","TOURNEUR","2027-04-09"),
-    E("e21","Eléonore","HOUEE-WAUTIER","2027-04-27"),
-    E("e22","Théa","NEUFORGE","2027-05-06")
+  // prénom, nom, service, formalisation (fin de notification), relances
+  const source = [
+    ["Sofia","INFANTINO","SPJ","2026-04-25",["2026-06-02"]],
+    ["Guyliano","BERTOLINI","SPJ","2026-04-30",["2026-06-02"]],
+    ["Malone","BIHAIN","SPJ","2026-06-02",[]],
+    ["Eléana","PEIXOTO","SPJ","2026-06-12",[]],
+    ["Lucas","THEISMANN","SPJ","2026-06-25",[]],
+    ["Célia","THEISMANN","SPJ","2026-06-25",[]],
+    ["Théo","DE BRUYN","SPJ","2026-08-18",[]],
+    ["Sandy","FIERAIN","SAJ","2026-10-14",[]],
+    ["Timi","LEMET","SAJ","2026-11-01",[]],
+    ["David","LEMET","SAJ","2026-11-02",[]],
+    ["Alessandro","MAKA","SPJ","2026-11-04",[]],
+    ["Océanna","MAKA","SPJ","2026-11-04",[]],
+    ["Lionel","MAKA","SPJ","2026-11-04",[]],
+    ["Safia","CREPIN","SAJ","2026-11-04",[]],
+    ["Dyana","GASPAR","SPJ","2026-11-12",[]],
+    ["Kendjy","MARECHAL","SAJ","2026-12-01",[]],
+    ["Joackim","BRUGNEROTTO","SPJ","2026-12-16",[]],
+    ["Tellyoh","DESBESSEL","SPJ","2027-01-30",[]],
+    ["Mélina","LEFEVRE","SAJ","2027-03-31",[]],
+    ["Mathéo","TOURNEUR","SPJ","2027-04-09",[]],
+    ["Eléonore","HOUEE-WAUTIER","SAJ","2027-04-27",[]],
+    ["Théa","NEUFORGE","SAJ","2027-05-06",[]]
   ];
+  // droits de visite repris du premier tableau : le parent reste à préciser
+  const visites = {
+    "Sofia INFANTINO":    [["", "2h/vacances", "2026-05-08", false, ""]],
+    "Malone BIHAIN":      [["", "1h/mois",     "2026-06-03", false, ""]],
+    "Eléana PEIXOTO":     [["", "1h/mois",     "2026-06-24", false, ""]],
+    "Lucas THEISMANN":    [["", "2x 1h/mois",  "2026-08-18", false, ""]],
+    "Célia THEISMANN":    [["", "2x 1h/mois",  "2026-08-18", false, ""]],
+    "Théo DE BRUYN":      [["", "Pendant les congés", "",    false, ""]],
+    "Timi LEMET":         [["", "1h/mois",     "",           true,  "2026-05-20"]],
+    "David LEMET":        [["", "1h/mois",     "",           true,  "2026-05-20"]],
+    "Alessandro MAKA":    [["", "4h/mois",     "2040-01-01", false, ""]],
+    "Océanna MAKA":       [["", "4h/mois",     "2040-01-01", false, ""]],
+    "Lionel MAKA":        [["", "4h/mois",     "2040-01-01", false, ""]],
+    "Dyana GASPAR":       [["", "2x 1h/mois",  "2040-01-01", false, ""]],
+    "Joackim BRUGNEROTTO":[["", "2x 1h/mois",  "2026-08-19", false, ""]],
+    "Tellyoh DESBESSEL":  [["", "2x 1h/mois",  "2026-08-26", false, ""]],
+    "Mélina LEFEVRE":     [["", "2x 1h/mois",  "2026-08-19", false, ""]]
+  };
 
-  // c : créneau du cycle de 4 semaines (jour non renseigné dans le tableau d'origine)
-  const c4 = (semaine, debut, fin) =>
-    ({ id:uid(), type:"cycle4", semaine, occurrence:1, jour:null, date:"", debut, fin, lieu:"" });
-  const cm = (occurrence, jour, debut, fin) =>
-    ({ id:uid(), type:"mensuel", semaine:1, occurrence, jour, date:"", debut, fin, lieu:"" });
-  const cv = () =>
-    ({ id:uid(), type:"vacances", semaine:1, occurrence:1, jour:null, date:"", debut:"", fin:"", lieu:"" });
-
-  const droits = [
-    { id:"d1", libelle:"Joackim", enfantIds:["e17"], rythme:"2x 1h/mois", dateFin:"2026-08-19",
-      suspendu:false, suspenduDepuis:"", notes:"",
-      creneaux:[c4(1,"09:30","10:30"), c4(3,"13:30","14:30")] },
-    { id:"d2", libelle:"Dyana", enfantIds:["e15"], rythme:"2x 1h/mois", dateFin:"2040-01-01",
-      suspendu:false, suspenduDepuis:"", notes:"", creneaux:[] },
-    { id:"d3", libelle:"Maka", enfantIds:["e11","e12","e13"], rythme:"4h/mois", dateFin:"2040-01-01",
-      suspendu:false, suspenduDepuis:"", notes:"", creneaux:[] },
-    { id:"d4", libelle:"Lemet", enfantIds:["e9","e10"], rythme:"1h/mois", dateFin:"",
-      suspendu:true, suspenduDepuis:"2026-05-20", notes:"",
-      creneaux:[c4(4,"14:00","15:00"), cv()] },
-    { id:"d5", libelle:"Theismann", enfantIds:["e5","e6"], rythme:"2x 1h/mois", dateFin:"2026-08-18",
-      suspendu:false, suspenduDepuis:"", notes:"",
-      creneaux:[cm(1,2,"16:00","17:00"), cm(3,2,"15:30","17:00")] },
-    { id:"d6", libelle:"Malone", enfantIds:["e3"], rythme:"1h/mois", dateFin:"2026-06-03",
-      suspendu:false, suspenduDepuis:"", notes:"", creneaux:[c4(1,"12:45","13:45")] },
-    { id:"d7", libelle:"Eléana", enfantIds:["e4"], rythme:"1h/mois", dateFin:"2026-06-24",
-      suspendu:false, suspenduDepuis:"", notes:"", creneaux:[c4(2,"14:00","15:00")] },
-    { id:"d8", libelle:"Infantino", enfantIds:["e1"], rythme:"2h/vacances", dateFin:"2026-05-08",
-      suspendu:false, suspenduDepuis:"", notes:"", creneaux:[cv()] },
-    { id:"d9", libelle:"Mélina", enfantIds:["e19"], rythme:"2x 1h/mois", dateFin:"2026-08-19",
-      suspendu:false, suspenduDepuis:"", notes:"",
-      creneaux:[c4(2,"15:00","16:00"), c4(4,"15:00","16:00"), cv()] },
-    { id:"d10", libelle:"Tellyoh", enfantIds:["e18"], rythme:"2x 1h/mois", dateFin:"2026-08-26",
-      suspendu:false, suspenduDepuis:"", notes:"",
-      creneaux:[c4(1,"15:00","16:00"), c4(3,"15:00","16:00")] },
-    { id:"d11", libelle:"Théo / Louna", enfantIds:["e7"], rythme:"Pendant les congés", dateFin:"",
-      suspendu:false, suspenduDepuis:"", notes:"Louna n'est pas encore encodée dans les dossiers.",
-      creneaux:[cv()] }
-  ];
+  const enfants = source.map(([prenom, nom, service, notifFin, relances]) => {
+    const cle = prenom + " " + nom;
+    return {
+      id: uid(), prenom, nom, service, naissance:"", notifFin,
+      relances: relances.slice(), historique:[], rapports:[], notes:"",
+      visites: (visites[cle] || []).map(([parent, frequence, dateFin, suspendu, depuis]) => ({
+        id: uid(), parent, frequence, dateFin, suspendu,
+        suspenduDepuis: depuis, lieu:"", notes:"", rencontres:[]
+      }))
+    };
+  });
 
   return {
-    version: 1,
-    parametres: { seuilAlerteJours: 30, debutCycle: "2026-01-05" },
-    enfants, droits,
+    version: 2,
+    initial: true,
+    parametres: { seuilAlerteJours:30, seuilRapportJours:45 },
+    enfants,
     taches: [
-      { id:uid(), texte:"Exemple : vérifier les notifications de prise en charge dépassées",
+      { id:uid(), texte:"Exemple : préciser le parent concerné pour chaque droit de visite",
         echeance:aujourdHui(), enfantId:"", fait:false, faitLe:"" }
     ]
   };
 }
 
 /* =========================================================================
-   17. DÉMARRAGE
+   18. DÉMARRAGE
    ========================================================================= */
 
 charger();
 rendre();
+fsReconnecter(true).catch(() => {});
 </script>
 </body>
 </html>
