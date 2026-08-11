@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gestion de mes dossiers</title>
+<title>Gestion des dossiers</title>
 <style>
 :root{
   --fond:#f4f6f8; --carte:#ffffff; --texte:#1b2733; --doux:#617080; --bord:#dfe5ec;
@@ -31,58 +31,41 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--fond);color:var(--texte);
   font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-h1,h2,h3{margin:0 0 .4em;line-height:1.25}
-h1{font-size:20px}
-h2{font-size:17px}
-h3{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux);margin-top:0}
+h2{margin:0 0 .5em;font-size:17px;line-height:1.25}
+h3{margin:0 0 .4em;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux)}
 
 /* ---------- En-tête ---------- */
 header{background:var(--carte);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:40}
-.bandeau{max-width:1280px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bandeau{max-width:1180px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .logo{font-weight:700;font-size:17px;white-space:nowrap}
 .logo span{color:var(--accent)}
-.droite{margin-left:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end}
-.info-jour{font-size:13px;color:var(--doux);text-align:right}
-.info-jour b{color:var(--texte)}
-.stockage{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--doux);
+.droite{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.stockage{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--doux);
   padding:5px 11px;border:1px solid var(--bord);border-radius:20px;background:var(--fond)}
 .stockage b{color:var(--texte);font-weight:600}
-nav{max-width:1280px;margin:0 auto;padding:0 12px;display:flex;gap:2px;overflow-x:auto}
-nav button{background:none;border:0;border-bottom:2px solid transparent;padding:9px 13px;
-  font:inherit;font-size:14px;color:var(--doux);cursor:pointer;white-space:nowrap;border-radius:6px 6px 0 0}
+nav{max-width:1180px;margin:0 auto;padding:0 12px;display:flex;gap:2px;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 15px;
+  font:inherit;font-size:14.5px;color:var(--doux);cursor:pointer;white-space:nowrap;border-radius:6px 6px 0 0}
 nav button:hover{color:var(--texte);background:var(--accent-doux)}
 nav button.actif{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
-nav .pastille{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:9px;
+nav .pastille{display:inline-block;min-width:18px;padding:0 5px;margin-left:7px;border-radius:9px;
   background:var(--rouge);color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:18px}
 @media (prefers-color-scheme: dark){nav .pastille{color:#1c242e}}
 
-main{max-width:1280px;margin:0 auto;padding:18px}
+main{max-width:1180px;margin:0 auto;padding:18px}
 .carte{background:var(--carte);border:1px solid var(--bord);border-radius:var(--r);
   box-shadow:var(--ombre);padding:16px;margin-bottom:16px}
-.carte>h2{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.grille{display:grid;gap:16px}
-@media(min-width:900px){.g2{grid-template-columns:1fr 1fr}}
-
-/* ---------- Indicateurs ---------- */
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
-.kpi{background:var(--carte);border:1px solid var(--bord);border-radius:var(--r);padding:13px 15px;box-shadow:var(--ombre)}
-.kpi .n{font-size:26px;font-weight:700;line-height:1.1}
-.kpi .l{font-size:12.5px;color:var(--doux);margin-top:2px}
-.kpi.rouge .n{color:var(--rouge)} .kpi.orange .n{color:var(--orange)}
-.kpi.vert .n{color:var(--vert)} .kpi.accent .n{color:var(--accent)}
 
 /* ---------- Tableaux ---------- */
-.tableau-enveloppe{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tableau-enveloppe{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:14px}
 th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux);
-  padding:8px 10px;border-bottom:1px solid var(--bord);white-space:nowrap;background:var(--carte)}
-td{padding:8px 10px;border-bottom:1px solid var(--bord);vertical-align:top}
+  padding:8px 10px;border-bottom:1px solid var(--bord);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--bord);vertical-align:middle}
 tbody tr:hover{background:var(--accent-doux)}
 tbody tr:last-child td{border-bottom:0}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.vide{padding:26px 10px;text-align:center;color:var(--doux);font-style:italic}
-.cliquable{cursor:pointer}
-.cliquable b{color:var(--accent)}
+.vide{padding:30px 10px;text-align:center;color:var(--doux);font-style:italic}
 
 /* ---------- Étiquettes ---------- */
 .et{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
@@ -92,28 +75,27 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:now
 .et.gris{background:var(--gris-f);color:var(--gris)}
 .et.suspendu{background:var(--violet-f);color:var(--violet)}
 .et.info{background:var(--accent-doux);color:var(--accent)}
+.puce{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.puce.vert{background:var(--vert)} .puce.orange{background:var(--orange)}
+.puce.rouge{background:var(--rouge)} .puce.gris{background:var(--gris)} .puce.suspendu{background:var(--violet)}
 tr.l-rouge td:first-child{box-shadow:inset 3px 0 var(--rouge)}
 tr.l-orange td:first-child{box-shadow:inset 3px 0 var(--orange)}
 tr.l-vert td:first-child{box-shadow:inset 3px 0 var(--vert)}
 tr.l-gris td:first-child{box-shadow:inset 3px 0 var(--gris)}
 tr.l-suspendu td:first-child{box-shadow:inset 3px 0 var(--violet)}
-.puce{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.puce.vert{background:var(--vert)} .puce.orange{background:var(--orange)}
-.puce.rouge{background:var(--rouge)} .puce.gris{background:var(--gris)} .puce.suspendu{background:var(--violet)}
 
 /* ---------- Boutons ---------- */
-button.b,a.b{display:inline-flex;align-items:center;gap:6px;background:var(--carte);color:var(--texte);
-  border:1px solid var(--bord);border-radius:8px;padding:6px 12px;font:inherit;font-size:13.5px;
-  cursor:pointer;text-decoration:none}
-button.b:hover,a.b:hover{background:var(--accent-doux);border-color:var(--accent)}
+button.b{display:inline-flex;align-items:center;gap:6px;background:var(--carte);color:var(--texte);
+  border:1px solid var(--bord);border-radius:8px;padding:6px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+button.b:hover{background:var(--accent-doux);border-color:var(--accent)}
 button.b.primaire{background:var(--accent);border-color:var(--accent);color:#fff}
 button.b.primaire:hover{filter:brightness(1.08)}
 button.b.danger{color:var(--rouge)}
 button.b.danger:hover{background:var(--rouge-f);border-color:var(--rouge)}
-button.b.mini{padding:3px 8px;font-size:12.5px}
+button.b.mini{padding:3px 9px;font-size:12.5px}
 .actions{display:flex;gap:6px;flex-wrap:wrap}
-.barre-outils{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
-.barre-outils .pousse{margin-left:auto}
+.barre{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.barre .pousse{margin-left:auto}
 
 /* ---------- Formulaires ---------- */
 input[type=text],input[type=date],input[type=number],input[type=search],select,textarea{
@@ -121,72 +103,85 @@ input[type=text],input[type=date],input[type=number],input[type=search],select,t
   background:var(--carte);color:var(--texte);width:100%}
 textarea{resize:vertical}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
-label.champ{display:block;margin-bottom:11px}
+label.champ{display:block;margin-bottom:12px}
 label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:4px}
-.ligne{display:grid;gap:11px}
-@media(min-width:560px){.ligne.c2{grid-template-columns:1fr 1fr}.ligne.c3{grid-template-columns:1fr 1fr 1fr}}
+.ligne{display:grid;gap:12px}
+@media(min-width:560px){.ligne.c2{grid-template-columns:1fr 1fr}}
 .radios{display:flex;gap:8px;flex-wrap:wrap}
 .radios label{display:flex;align-items:center;gap:6px;border:1px solid var(--bord);border-radius:8px;
   padding:7px 12px;cursor:pointer;font-size:13.5px}
 .radios input{width:auto;margin:0}
-.aide{font-size:12.5px;color:var(--doux);margin:4px 0 0}
+.aide{font-size:12.5px;color:var(--doux);margin:5px 0 0}
 
 /* ---------- Modale ---------- */
 .voile{position:fixed;inset:0;background:rgba(10,16,24,.5);display:flex;align-items:flex-start;
   justify-content:center;padding:24px 14px;overflow:auto;z-index:100}
 .modale{background:var(--carte);border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.3);
-  width:100%;max-width:640px;border:1px solid var(--bord)}
+  width:100%;max-width:620px;border:1px solid var(--bord)}
 .modale header{position:static;background:none;border:0;padding:16px 18px 0}
+.modale header h2{margin:0}
 .modale .corps{padding:14px 18px}
 .modale .pied{padding:14px 18px;border-top:1px solid var(--bord);display:flex;gap:8px;justify-content:flex-end}
 
-/* ---------- Fiche enfant ---------- */
-.entete-fiche{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
-.entete-fiche .nom{font-size:22px;font-weight:700}
-.bloc{border:1px solid var(--bord);border-radius:var(--r);padding:13px 15px;margin-bottom:11px;background:var(--fond)}
-.bloc .chapeau{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
-.bloc .chapeau .t{font-weight:700}
-.rencontre{display:flex;gap:11px;padding:9px 0;border-top:1px solid var(--bord);align-items:flex-start}
-.rencontre .d{min-width:104px;font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;white-space:nowrap}
-.rencontre .n{flex:1;white-space:pre-wrap}
-.deux-col{display:grid;gap:11px}
-@media(min-width:780px){.deux-col{grid-template-columns:1fr 1fr}}
+/* ---------- Notifications : vue visuelle ---------- */
+.filtres{display:flex;gap:6px;flex-wrap:wrap}
+.filtres button{border:1px solid var(--bord);background:var(--carte);color:var(--doux);
+  border-radius:20px;padding:5px 14px;font:inherit;font-size:13px;cursor:pointer}
+.filtres button.actif{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.compteurs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.compteur{flex:1;min-width:150px;border:1px solid var(--bord);border-radius:var(--r);padding:12px 14px;
+  background:var(--carte);box-shadow:var(--ombre)}
+.compteur .n{font-size:26px;font-weight:700;line-height:1.1}
+.compteur .l{font-size:12.5px;color:var(--doux)}
+.compteur.vert .n{color:var(--vert)} .compteur.rouge .n{color:var(--rouge)}
+.compteur.orange .n{color:var(--orange)} .compteur.gris .n{color:var(--gris)}
 
-/* ---------- Calendrier des rapports ---------- */
-.mois-grille{display:grid;gap:11px}
-@media(min-width:700px){.mois-grille{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:1050px){.mois-grille{grid-template-columns:repeat(3,1fr)}}
-.mois{border:1px solid var(--bord);border-radius:var(--r);background:var(--carte);overflow:hidden}
-.mois>.tete{padding:7px 12px;background:var(--gris-f);font-weight:700;font-size:13.5px;
-  display:flex;justify-content:space-between;align-items:baseline}
-.mois>.tete.courant{background:var(--accent-doux);color:var(--accent)}
-.mois .part{padding:8px 12px;border-top:1px solid var(--bord)}
-.mois .part .lib{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux);margin-bottom:3px}
-.mois .part .item{font-size:13px;padding:1px 0}
-.mois .rien{padding:9px 12px;color:var(--doux);font-size:12.5px;font-style:italic}
+.cartes{display:grid;gap:11px;grid-template-columns:1fr}
+@media(min-width:640px){.cartes{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.cartes{grid-template-columns:1fr 1fr 1fr}}
+.fiche{border:1px solid var(--bord);border-left:5px solid var(--gris);border-radius:var(--r);
+  background:var(--carte);padding:12px 14px;box-shadow:var(--ombre)}
+.fiche.vert{border-left-color:var(--vert)}
+.fiche.orange{border-left-color:var(--orange)}
+.fiche.rouge{border-left-color:var(--rouge)}
+.fiche .nom{font-weight:700;font-size:15px}
+.fiche .etat{margin:7px 0;font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:7px}
+.fiche .etat.vert{color:var(--vert)} .fiche .etat.orange{color:var(--orange)}
+.fiche .etat.rouge{color:var(--rouge)} .fiche .etat.gris{color:var(--gris)}
+.fiche .marque{font-size:17px;line-height:1}
+.fiche .detail{font-size:12.5px;color:var(--doux);margin-bottom:9px}
+
+/* ---------- Droits de visite ---------- */
+.bloc{border:1px solid var(--bord);border-radius:var(--r);padding:13px 15px;margin-bottom:12px;background:var(--fond)}
+.bloc .chapeau{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
+.bloc .chapeau .t{font-weight:700}
+.bloc .chapeau .actions{margin-left:auto}
+.rencontre{display:flex;gap:11px;padding:8px 0;border-top:1px solid var(--bord);align-items:flex-start}
+.rencontre .d{min-width:96px;font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;white-space:nowrap}
+.rencontre .n{flex:1;white-space:pre-wrap;font-size:13.5px}
 
 /* ---------- Divers ---------- */
 .doux{color:var(--doux)}
 .pt{font-size:12.5px}
 .nowrap{white-space:nowrap}
 ul.liste{list-style:none;margin:0;padding:0}
-ul.liste li{padding:8px 0;border-bottom:1px solid var(--bord);display:flex;gap:10px;align-items:flex-start}
+ul.liste li{padding:9px 0;border-bottom:1px solid var(--bord);display:flex;gap:10px;align-items:flex-start}
 ul.liste li:last-child{border-bottom:0}
 .tache-faite{text-decoration:line-through;color:var(--doux)}
-.legende{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--doux);margin-top:10px}
 .encadre{border:1px solid var(--bord);border-radius:var(--r);padding:12px 14px;background:var(--fond);margin-bottom:12px}
 .encadre.ok{border-color:var(--vert);background:var(--vert-f)}
 .encadre.attention{border-color:var(--orange);background:var(--orange-f)}
 .encadre.souci{border-color:var(--rouge);background:var(--rouge-f)}
 .encadre .titre{font-weight:600;margin-bottom:3px}
 code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px}
-footer{max-width:1280px;margin:0 auto;padding:6px 18px 34px;font-size:12.5px;color:var(--doux)}
+.legende{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--doux);margin-top:12px}
+footer{max-width:1180px;margin:0 auto;padding:6px 18px 34px;font-size:12.5px;color:var(--doux)}
 
 @media print{
-  header,nav,.barre-outils,footer,.actions,button{display:none !important}
+  header,nav,.barre,footer,.actions,button,.filtres{display:none !important}
   body{background:#fff}
   main{max-width:none;padding:0}
-  .carte,.mois,.bloc{break-inside:avoid;box-shadow:none;border-color:#bbb;margin-bottom:10px}
+  .carte,.fiche,.bloc{break-inside:avoid;box-shadow:none;border-color:#bbb}
   .et{border:1px solid #999}
 }
 </style>
@@ -195,10 +190,10 @@ footer{max-width:1280px;margin:0 auto;padding:6px 18px 34px;font-size:12.5px;col
 
 <header>
   <div class="bandeau">
-    <div class="logo">Gestion de mes <span>dossiers</span></div>
+    <div class="logo">Gestion des <span>dossiers</span></div>
     <div class="droite">
       <div class="stockage" id="etat-stockage"></div>
-      <div class="info-jour" id="info-jour"></div>
+      <button class="b" id="bouton-reglages">Réglages</button>
     </div>
   </div>
   <nav id="nav"></nav>
@@ -251,10 +246,6 @@ function fmtLong(s){
   const d = parseISO(s);
   return JOURS[(d.getDay()+6)%7] + " " + d.getDate() + " " + MOIS[d.getMonth()] + " " + d.getFullYear();
 }
-function fmtMoisAnnee(s){
-  const d = parseISO(s);
-  return MOIS[d.getMonth()] + " " + d.getFullYear();
-}
 function joursEntre(a,b){ return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
 
 /** Décale une date de n mois, en ramenant au dernier jour du mois si besoin. */
@@ -276,8 +267,9 @@ function pluriel(n, mot, plur){ return n + " " + (Math.abs(n) > 1 ? (plur || mot
 
 const CLE = "fa-dossiers-v2";
 let DB = null;
-let onglet = "tableau";
-let etat = { recherche:"", tri:"date", ficheId:null, tachesFaites:false, anneeRapports:0 };
+let onglet = "taches";
+let etat = { recherche:"", tri:"date", tachesFaites:false,
+             filtreNotif:"tout", rencontresOuvertes:{} };
 
 function baseVide(){
   return {
@@ -294,8 +286,8 @@ function normaliser(d){
   r.enfants.forEach(e => {
     e.relances   = Array.isArray(e.relances)   ? e.relances   : [];
     e.historique = Array.isArray(e.historique) ? e.historique : [];
-    e.rapports   = Array.isArray(e.rapports)   ? e.rapports   : [];
     e.visites    = Array.isArray(e.visites)    ? e.visites    : [];
+    if(e.notifRecue === undefined) e.notifRecue = true;
     e.visites.forEach(v => { v.rencontres = Array.isArray(v.rencontres) ? v.rencontres : []; });
   });
   return r;
@@ -574,7 +566,7 @@ function majEtatStockage(){
 }
 
 /* =========================================================================
-   4. ÉCHÉANCES : notifications, rapports, droits de visite
+   4. ÉCHÉANCES : notification, rapports, droit de visite
    ========================================================================= */
 
 const ORDRE_STATUT = { rouge:0, orange:1, suspendu:2, gris:3, vert:4 };
@@ -589,90 +581,59 @@ function statutEcheance(date, seuil){
   return { code:"vert", label:"Dans " + pluriel(j,"jour"), jours:j };
 }
 
-/* --- Notification de prise en charge --- */
-const statutNotif = e => statutEcheance(e.notifFin);
+/* --- Notification de prise en charge ---------------------------------------
+   Trois questions dans l'ordre : y a-t-il une date ? l'ai-je reçue ?
+   est-elle encore valable ? */
+function statutNotif(e){
+  if(!estISO(e.notifFin))
+    return { code:"gris", marque:"?", titre:"Pas de date encodée",
+             detail:"Complétez la date dans l'onglet Enfants." };
+  const j = joursEntre(aujourdHui(), e.notifFin);
+  if(j < 0)
+    return { code:"rouge", marque:"✕", titre:"Notification à réclamer",
+             detail:"Échéance dépassée depuis " + pluriel(-j,"jour") + ".", jours:j };
+  if(e.notifRecue === false)
+    return { code:"rouge", marque:"✕", titre:"Pas encore reçue",
+             detail:"Attendue pour le " + fmtFR(e.notifFin) + ".", jours:j };
+  if(j <= DB.parametres.seuilAlerteJours)
+    return { code:"orange", marque:"!", titre:"Renouvellement proche",
+             detail:"Valable encore " + pluriel(j,"jour") + ".", jours:j };
+  return { code:"vert", marque:"✓", titre:"Reçue",
+           detail:"Valable jusqu'au " + fmtFR(e.notifFin) + ".", jours:j };
+}
 
 /* --- Rapports : l'annuel tombe à la date de formalisation,
        le semestriel exactement six mois plus tôt. --- */
-function dateBaseRapport(e, type){
-  if(!estISO(e.notifFin)) return null;
-  return type === "annuel" ? e.notifFin : decalerMois(e.notifFin, -6);
-}
-const rapportEnvoye = (e, type, echeance) =>
-  (e.rapports || []).some(r => r.type === type && r.echeance === echeance && r.envoyeLe);
+const RATTRAPAGE_RAPPORT = 60;   // jours pendant lesquels un retard reste affiché
 
-/** Nombre de jours pendant lesquels un rapport dépassé reste signalé. */
-const RATTRAPAGE_RAPPORT = 60;
-
-/** Prochaine échéance non encore envoyée, en gardant les retards récents. */
 function echeanceRapport(e, type){
-  const base = dateBaseRapport(e, type);
-  if(!base) return null;
-  let d = base;
+  if(!estISO(e.notifFin)) return null;
+  let d = type === "annuel" ? e.notifFin : decalerMois(e.notifFin, -6);
   const limite = decalerJours(aujourdHui(), -RATTRAPAGE_RAPPORT);
   let garde = 0;
-  while(d < limite && garde++ < 50) d = decalerAns(d, 1);   // les cycles révolus sont passés
-  garde = 0;
-  while(rapportEnvoye(e, type, d) && garde++ < 20) d = decalerAns(d, 1);
+  while(d < limite && garde++ < 50) d = decalerAns(d, 1);
   return d;
 }
-function statutRapport(e, type){
-  const d = echeanceRapport(e, type);
-  if(!d) return { code:"gris", label:"Sans date de formalisation", date:null };
-  const st = statutEcheance(d, DB.parametres.seuilRapportJours);
-  st.date = d;
-  return st;
-}
-
-/* --- Droits de visite (un bloc par parent) --- */
+/* --- Droits de visite --- */
 function statutVisite(v){
   if(v.suspendu) return { code:"suspendu",
     label:"Suspendu" + (estISO(v.suspenduDepuis) ? " depuis le " + fmtFR(v.suspenduDepuis) : "") };
   if(!estISO(v.dateFin)) return { code:"gris", label:"Sans date de fin" };
   return statutEcheance(v.dateFin);
 }
-function toutesVisites(){
-  const l = [];
-  DB.enfants.forEach(e => (e.visites||[]).forEach(v => l.push({ enfant:e, visite:v })));
-  return l;
-}
+const libelleParent = v => v.parent && v.parent.trim() ? v.parent.trim() : "Parent à préciser";
+const PRESENCES = {
+  venu:    { label:"Parent venu",       court:"Venu",    code:"vert"  },
+  absent:  { label:"Parent absent",     court:"Absent",  code:"rouge" },
+  annulee: { label:"Rencontre annulée", court:"Annulée", code:"gris"  }
+};
+const presenceDe = r => PRESENCES[r.presence] || PRESENCES.venu;
+
 function toutesRencontres(){
   const l = [];
   DB.enfants.forEach(e => (e.visites||[]).forEach(v => (v.rencontres||[]).forEach(r =>
     l.push({ enfant:e, visite:v, rencontre:r }))));
-  l.sort((a,b) => String(b.rencontre.date).localeCompare(String(a.rencontre.date)));
   return l;
-}
-const libelleParent = v => v.parent && v.parent.trim() ? v.parent.trim() : "Parent à préciser";
-const PRESENCES = {
-  venu:    { label:"Parent venu",       court:"Venu",     code:"vert"   },
-  absent:  { label:"Parent absent",     court:"Absent",   code:"rouge"  },
-  annulee: { label:"Rencontre annulée", court:"Annulée",  code:"gris"   }
-};
-const presenceDe = r => PRESENCES[r.presence] || PRESENCES.venu;
-
-/* --- Alertes globales --- */
-function alertes(){
-  const notifs = DB.enfants
-    .map(e => ({ enfant:e, st:statutNotif(e) }))
-    .filter(o => o.st.code !== "vert")
-    .sort((a,b) => ORDRE_STATUT[a.st.code] - ORDRE_STATUT[b.st.code] ||
-                   String(a.enfant.notifFin||"9").localeCompare(String(b.enfant.notifFin||"9")));
-
-  const rapports = [];
-  DB.enfants.forEach(e => ["semestriel","annuel"].forEach(t => {
-    const st = statutRapport(e, t);
-    if(st.code === "rouge" || st.code === "orange") rapports.push({ enfant:e, type:t, st });
-  }));
-  rapports.sort((a,b) => String(a.st.date).localeCompare(String(b.st.date)));
-
-  const visites = toutesVisites()
-    .map(o => Object.assign({ st:statutVisite(o.visite) }, o))
-    .filter(o => o.st.code !== "vert")
-    .sort((a,b) => ORDRE_STATUT[a.st.code] - ORDRE_STATUT[b.st.code] ||
-                   String(a.visite.dateFin||"9").localeCompare(String(b.visite.dateFin||"9")));
-
-  return { notifs, rapports, visites };
 }
 function tachesEnCours(){
   const auj = aujourdHui();
@@ -690,535 +651,35 @@ function tachesEnCours(){
    ========================================================================= */
 
 const ONGLETS = [
-  { id:"tableau",  titre:"Tableau de bord" },
-  { id:"enfants",  titre:"Enfants" },
-  { id:"rapports", titre:"Rapports" },
-  { id:"visites",  titre:"Visites" },
-  { id:"taches",   titre:"À faire" },
-  { id:"donnees",  titre:"Données" }
+  { id:"taches",  titre:"À faire" },
+  { id:"enfants", titre:"Enfants" },
+  { id:"notifs",  titre:"Notifications de prise en charge" },
+  { id:"visites", titre:"Droits de visite" }
 ];
 
 function rendre(){
-  const al = alertes();
-  const urgent = al.notifs.filter(o => o.st.code === "rouge").length +
-                 al.rapports.filter(o => o.st.code === "rouge").length +
-                 al.visites.filter(o => o.st.code === "rouge").length;
-  const nbTaches = tachesEnCours().filter(t => t.enRetard || t.pourAuj).length;
+  const aFaire = tachesEnCours().filter(t => t.enRetard || t.pourAuj).length;
+  const aReclamer = DB.enfants.filter(e => statutNotif(e).code === "rouge").length;
 
-  document.getElementById("info-jour").innerHTML =
-    "<b>" + ech(fmtLong(aujourdHui())) + "</b>";
-
-  const actif = onglet === "fiche" ? "enfants" : onglet;
   document.getElementById("nav").innerHTML = ONGLETS.map(o => {
     let p = "";
-    if(o.id === "tableau" && urgent)   p = '<span class="pastille">' + urgent + "</span>";
-    if(o.id === "taches"  && nbTaches) p = '<span class="pastille">' + nbTaches + "</span>";
-    return '<button data-onglet="' + o.id + '" class="' + (actif === o.id ? "actif" : "") + '">' +
+    if(o.id === "taches" && aFaire)    p = '<span class="pastille">' + aFaire + "</span>";
+    if(o.id === "notifs" && aReclamer) p = '<span class="pastille">' + aReclamer + "</span>";
+    return '<button data-onglet="' + o.id + '" class="' + (onglet === o.id ? "actif" : "") + '">' +
            ech(o.titre) + p + "</button>";
   }).join("");
 
-  const vues = { tableau:vueTableau, enfants:vueEnfants, fiche:vueFiche, rapports:vueRapports,
-                 visites:vueVisites, taches:vueTaches, donnees:vueDonnees };
-  document.getElementById("vue").innerHTML = (vues[onglet] || vueTableau)();
+  const vues = { taches:vueTaches, enfants:vueEnfants, notifs:vueNotifs, visites:vueVisites };
+  document.getElementById("vue").innerHTML = (vues[onglet] || vueTaches)();
   document.getElementById("pied").innerHTML = FS.dossier
-    ? "Données enregistrées automatiquement dans le dossier <b>" + ech(FS.nom) + "</b>."
-    : "Données enregistrées dans ce navigateur — connectez un dossier depuis l'onglet <b>Données</b> " +
-      "pour les conserver dans un vrai fichier.";
+    ? "Enregistrement automatique dans <b>" + ech(FS.nom) + "</b>."
+    : "Données enregistrées dans ce navigateur — voir <b>Réglages</b>.";
   majEtatStockage();
   window.scrollTo({ top:0 });
 }
 
 /* =========================================================================
-   6. VUE — Tableau de bord
-   ========================================================================= */
-
-function lienEnfant(e){
-  return '<b class="cliquable" data-action="fiche" data-id="' + e.id + '">' + ech(nomComplet(e)) + "</b>";
-}
-
-function vueTableau(){
-  const al = alertes();
-  const taches = tachesEnCours();
-  const rouges = al.notifs.filter(o => o.st.code === "rouge").length +
-                 al.rapports.filter(o => o.st.code === "rouge").length +
-                 al.visites.filter(o => o.st.code === "rouge").length;
-
-  const kpis = `
-    <div class="kpis">
-      <div class="kpi accent"><div class="n">${DB.enfants.length}</div><div class="l">Enfants suivis</div></div>
-      <div class="kpi ${rouges?"rouge":"vert"}"><div class="n">${rouges}</div><div class="l">En retard</div></div>
-      <div class="kpi ${al.rapports.length?"orange":"vert"}"><div class="n">${al.rapports.length}</div>
-        <div class="l">Rapports à préparer</div></div>
-      <div class="kpi ${taches.length?"orange":"vert"}"><div class="n">${taches.length}</div>
-        <div class="l">Tâches à faire</div></div>
-    </div>`;
-
-  const blocNotifs = `
-    <div class="carte">
-      <h2>Notifications de prise en charge
-        <span class="et ${al.notifs.length?"orange":"vert"}">${al.notifs.length} à surveiller</span></h2>
-      ${al.notifs.length ? '<ul class="liste">' + al.notifs.map(o => `
-        <li>
-          <span class="puce ${o.st.code}"></span>
-          <div style="flex:1">
-            ${lienEnfant(o.enfant)} <span class="doux pt">${o.enfant.service ? "· " + ech(o.enfant.service) : ""}</span><br>
-            <span class="pt doux">${estISO(o.enfant.notifFin)
-              ? "Échéance le " + ech(fmtFR(o.enfant.notifFin)) + " — " + ech(o.st.label)
-              : "Aucune notification encodée"}
-            ${(o.enfant.relances||[]).length
-              ? " · dernière relance le " + ech(fmtFR(o.enfant.relances[o.enfant.relances.length-1])) : ""}</span>
-          </div>
-          <div class="actions">
-            <button class="b mini" data-action="relance" data-id="${o.enfant.id}">Relance</button>
-            <button class="b mini" data-action="reconduire" data-id="${o.enfant.id}">Reconduire 1 an</button>
-          </div>
-        </li>`).join("") + "</ul>"
-      : '<p class="doux">Toutes les notifications sont en ordre.</p>'}
-    </div>`;
-
-  const blocRapports = `
-    <div class="carte">
-      <h2>Rapports à préparer
-        <span class="et info">dans les ${DB.parametres.seuilRapportJours} jours</span></h2>
-      ${al.rapports.length ? '<ul class="liste">' + al.rapports.map(o => `
-        <li>
-          <span class="puce ${o.st.code}"></span>
-          <div style="flex:1">
-            ${lienEnfant(o.enfant)}
-            <span class="et ${o.type==="annuel"?"info":"gris"}">${o.type === "annuel" ? "Annuel" : "Semestriel"}</span><br>
-            <span class="pt doux">À rendre pour le ${ech(fmtFR(o.st.date))} — ${ech(o.st.label)}</span>
-          </div>
-          <div class="actions">
-            <button class="b mini" data-action="rapport-envoye" data-id="${o.enfant.id}"
-                    data-type="${o.type}">Envoyé</button>
-          </div>
-        </li>`).join("") + "</ul>"
-      : '<p class="doux">Aucun rapport à rendre dans les semaines qui viennent.</p>'}
-    </div>`;
-
-  const blocVisites = `
-    <div class="carte">
-      <h2>Droits de visite à renouveler
-        <span class="et ${al.visites.length?"orange":"vert"}">${al.visites.length} à surveiller</span></h2>
-      ${al.visites.length ? '<ul class="liste">' + al.visites.map(o => `
-        <li>
-          <span class="puce ${o.st.code}"></span>
-          <div style="flex:1">
-            ${lienEnfant(o.enfant)} <span class="doux pt">· ${ech(libelleParent(o.visite))}
-              ${o.visite.frequence ? "· " + ech(o.visite.frequence) : ""}</span><br>
-            <span class="pt doux">${(o.visite.suspendu || !estISO(o.visite.dateFin))
-              ? ech(o.st.label)
-              : "Fin du droit le " + ech(fmtFR(o.visite.dateFin)) + " — " + ech(o.st.label)}</span>
-          </div>
-        </li>`).join("") + "</ul>"
-      : '<p class="doux">Tous les droits de visite sont en ordre.</p>'}
-    </div>`;
-
-  const jour = taches.filter(t => t.enRetard || t.pourAuj || !estISO(t.echeance)).slice(0,12);
-  const blocTaches = `
-    <div class="carte">
-      <h2>To do quotidienne <button class="b mini" data-action="tache-nouvelle">+ Ajouter</button></h2>
-      ${jour.length ? '<ul class="liste">' + jour.map(ligneTache).join("") + "</ul>"
-                    : '<p class="doux">Rien de prévu pour aujourd\'hui.</p>'}
-    </div>`;
-
-  return kpis + blocNotifs + blocRapports + '<div class="grille g2">' + blocVisites + blocTaches + "</div>";
-}
-
-/* =========================================================================
-   7. VUE — Liste des enfants
-   ========================================================================= */
-
-function vueEnfants(){
-  const q = etat.recherche.trim().toLowerCase();
-  let liste = DB.enfants.slice();
-  if(q) liste = liste.filter(e =>
-    (nomComplet(e) + " " + (e.service||"") + " " + (e.notes||"")).toLowerCase().includes(q));
-
-  liste.sort((a,b) => {
-    if(etat.tri === "nom") return parNom(a,b);
-    if(etat.tri === "statut"){
-      const sa = statutNotif(a), sb = statutNotif(b);
-      return ORDRE_STATUT[sa.code] - ORDRE_STATUT[sb.code] ||
-             String(a.notifFin||"9").localeCompare(String(b.notifFin||"9"));
-    }
-    return String(a.notifFin||"9").localeCompare(String(b.notifFin||"9"));
-  });
-
-  const lignes = liste.map(e => {
-    const st = statutNotif(e);
-    const sem = statutRapport(e,"semestriel"), an = statutRapport(e,"annuel");
-    const vis = (e.visites||[]);
-    return `<tr class="l-${st.code}">
-      <td>${lienEnfant(e)}${e.naissance ? '<br><span class="pt doux">né(e) le ' + ech(fmtFR(e.naissance)) + "</span>" : ""}</td>
-      <td>${e.service ? '<span class="et info">' + ech(e.service) + "</span>" : '<span class="doux">—</span>'}</td>
-      <td class="num">${ech(fmtFR(e.notifFin))}</td>
-      <td><span class="et ${st.code}">${ech(st.label)}</span></td>
-      <td class="pt">${(e.relances||[]).length
-          ? (e.relances||[]).slice(-2).map(r => ech(fmtFR(r))).join("<br>") : '<span class="doux">—</span>'}</td>
-      <td class="pt nowrap"><span class="puce ${sem.code}"></span>${ech(fmtFR(sem.date))}</td>
-      <td class="pt nowrap"><span class="puce ${an.code}"></span>${ech(fmtFR(an.date))}</td>
-      <td class="pt">${vis.length
-          ? vis.map(v => '<span class="puce ' + statutVisite(v).code + '"></span>' +
-                          ech(libelleParent(v)) + (v.frequence ? " · " + ech(v.frequence) : "")).join("<br>")
-          : '<span class="doux">—</span>'}</td>
-      <td><div class="actions">
-        <button class="b mini" data-action="fiche" data-id="${e.id}">Ouvrir</button>
-      </div></td>
-    </tr>`;
-  }).join("");
-
-  return `
-  <div class="carte">
-    <div class="barre-outils">
-      <button class="b primaire" data-action="enfant-nouveau">+ Nouvel enfant</button>
-      <input type="search" id="recherche" placeholder="Rechercher un nom…" style="max-width:230px"
-             value="${ech(etat.recherche)}">
-      <label class="nowrap pt doux">Trier par
-        <select id="tri" style="width:auto;margin-left:5px">
-          <option value="date"${etat.tri==="date"?" selected":""}>date de notification</option>
-          <option value="statut"${etat.tri==="statut"?" selected":""}>urgence</option>
-          <option value="nom"${etat.tri==="nom"?" selected":""}>nom</option>
-        </select></label>
-      <span class="pousse doux pt">${pluriel(liste.length,"enfant")} sur ${DB.enfants.length}</span>
-      <button class="b" onclick="window.print()">Imprimer</button>
-    </div>
-    <div class="tableau-enveloppe">
-      <table>
-        <thead><tr>
-          <th>Enfant</th><th>Service</th><th class="num">Notification</th><th>Statut</th>
-          <th>Relances</th><th>Rapport semestriel</th><th>Rapport annuel</th><th>Droits de visite</th><th></th>
-        </tr></thead>
-        <tbody>${lignes || '<tr><td colspan="9" class="vide">Aucun dossier.</td></tr>'}</tbody>
-      </table>
-    </div>
-    <div class="legende">
-      <span><span class="puce rouge"></span>en retard</span>
-      <span><span class="puce orange"></span>échéance proche</span>
-      <span><span class="puce vert"></span>en ordre</span>
-      <span><span class="puce gris"></span>date manquante</span>
-      <span><span class="puce suspendu"></span>droit suspendu</span>
-    </div>
-  </div>`;
-}
-
-/* =========================================================================
-   8. VUE — Fiche d'un enfant
-   ========================================================================= */
-
-function vueFiche(){
-  const e = enfantParId(etat.ficheId);
-  if(!e){ onglet = "enfants"; return vueEnfants(); }
-  const st = statutNotif(e);
-  const sem = statutRapport(e,"semestriel"), an = statutRapport(e,"annuel");
-
-  const envoyes = (e.rapports||[]).filter(r => r.envoyeLe)
-    .sort((a,b) => String(b.envoyeLe).localeCompare(String(a.envoyeLe)));
-
-  const blocNotif = `
-    <div class="carte">
-      <h2>Notification de prise en charge
-        <span class="et ${st.code}">${ech(st.label)}</span></h2>
-      <div class="bloc">
-        <div class="chapeau">
-          <span class="t">Échéance : ${ech(fmtFR(e.notifFin))}</span>
-          <span class="doux pt">${e.service ? "Service : " + ech(e.service) : "Service à préciser"}</span>
-        </div>
-        <p class="pt doux" style="margin:0 0 8px">
-          La notification est en principe reconduite d'un an. Si le ${ech(e.service || "SAJ / SPJ")}
-          ne l'envoie pas, notez vos relances ici.</p>
-        <div class="actions">
-          <button class="b primaire" data-action="reconduire" data-id="${e.id}">Reconduire d'un an</button>
-          <button class="b" data-action="relance" data-id="${e.id}">Noter une relance aujourd'hui</button>
-          <button class="b" data-action="enfant-modifier" data-id="${e.id}">Modifier la date</button>
-        </div>
-        ${(e.relances||[]).length ? `
-          <div style="margin-top:10px"><h3>Relances</h3>
-          <ul class="liste">${e.relances.slice().reverse().map(r => `<li>
-            <span style="flex:1">${ech(fmtLong(r))}</span>
-            <button class="b mini danger" data-action="relance-suppr" data-id="${e.id}"
-                    data-date="${ech(r)}">✕</button></li>`).join("")}</ul></div>` : ""}
-        ${(e.historique||[]).length ? `
-          <p class="aide">Échéances précédentes : ${e.historique.map(h => ech(fmtFR(h))).join(" · ")}</p>` : ""}
-      </div>
-    </div>`;
-
-  const carteRapport = (type, s) => `
-    <div class="bloc">
-      <div class="chapeau">
-        <span class="t">Rapport ${type === "annuel" ? "annuel" : "semestriel"}</span>
-        <span class="et ${s.code}">${ech(s.label)}</span>
-      </div>
-      <div class="pt">À rendre pour le <b>${ech(fmtFR(s.date))}</b>
-        ${s.date ? '<span class="doux">(' + ech(fmtMoisAnnee(s.date)) + ")</span>" : ""}</div>
-      <p class="aide">${type === "annuel"
-        ? "Tombe à la date de formalisation."
-        : "Tombe six mois avant la formalisation."}</p>
-      ${s.date ? `<div class="actions" style="margin-top:8px">
-        <button class="b" data-action="rapport-envoye" data-id="${e.id}" data-type="${type}">
-          Marquer comme envoyé</button></div>` : ""}
-    </div>`;
-
-  const blocRapports = `
-    <div class="carte">
-      <h2>Rapports d'évolution</h2>
-      <div class="deux-col">${carteRapport("semestriel", sem)}${carteRapport("annuel", an)}</div>
-      ${envoyes.length ? `<h3 style="margin-top:12px">Rapports déjà envoyés</h3>
-        <ul class="liste">${envoyes.map(r => `<li>
-          <span style="flex:1"><b>${r.type === "annuel" ? "Annuel" : "Semestriel"}</b>
-            <span class="doux pt">· échéance ${ech(fmtFR(r.echeance))} · envoyé le ${ech(fmtFR(r.envoyeLe))}</span></span>
-          <button class="b mini danger" data-action="rapport-annuler" data-id="${e.id}"
-                  data-rid="${r.id}">Annuler</button></li>`).join("")}</ul>` : ""}
-    </div>`;
-
-  const blocVisites = `
-    <div class="carte">
-      <h2>Droits de visite et rencontres
-        <button class="b mini" data-action="visite-nouvelle" data-id="${e.id}">+ Ajouter un droit de visite</button>
-        ${(e.visites||[]).length ? '<button class="b mini" data-action="word-enfant" data-id="' + e.id +
-          '">Exporter les notes en Word</button>' : ""}</h2>
-      ${(e.visites||[]).length ? e.visites.map(v => blocUneVisite(e,v)).join("")
-        : `<p class="doux">Aucun droit de visite encodé. Ajoutez-en un par parent :
-           un pour le papa, un pour la maman, s'ils voient l'enfant séparément.</p>`}
-    </div>`;
-
-  return `
-  <div class="carte">
-    <div class="barre-outils">
-      <button class="b" data-action="retour-enfants">← Tous les enfants</button>
-      <span class="pousse"></span>
-      <button class="b" data-action="enfant-modifier" data-id="${e.id}">Modifier la fiche</button>
-      <button class="b danger" data-action="enfant-supprimer" data-id="${e.id}">Supprimer</button>
-      <button class="b" onclick="window.print()">Imprimer</button>
-    </div>
-    <div class="entete-fiche">
-      <div>
-        <div class="nom">${ech(nomComplet(e))}</div>
-        <div class="doux pt">
-          ${e.service ? ech(e.service) : "Service à préciser"}
-          ${estISO(e.naissance) ? " · né(e) le " + ech(fmtFR(e.naissance)) : ""}
-        </div>
-      </div>
-    </div>
-    ${e.notes ? '<p class="pt" style="margin:10px 0 0;white-space:pre-wrap">' + ech(e.notes) + "</p>" : ""}
-  </div>
-  ${blocNotif}${blocRapports}${blocVisites}`;
-}
-
-function blocUneVisite(e, v){
-  const s = statutVisite(v);
-  const renc = (v.rencontres||[]).slice().sort((a,b) => String(b.date).localeCompare(String(a.date)));
-  const venus = renc.filter(r => r.presence === "venu").length;
-  const absents = renc.filter(r => r.presence === "absent").length;
-  const annulees = renc.filter(r => r.presence === "annulee").length;
-
-  return `<div class="bloc">
-    <div class="chapeau">
-      <span class="t">${ech(libelleParent(v))}</span>
-      ${v.frequence ? '<span class="et info">' + ech(v.frequence) + "</span>" : ""}
-      <span class="et ${s.code}">${ech(s.label)}</span>
-      <span class="pousse" style="margin-left:auto"></span>
-      <span class="actions">
-        <button class="b mini" data-action="rencontre-nouvelle" data-id="${e.id}" data-vid="${v.id}">+ Rencontre</button>
-        <button class="b mini" data-action="visite-modifier" data-id="${e.id}" data-vid="${v.id}">Modifier</button>
-        <button class="b mini danger" data-action="visite-supprimer" data-id="${e.id}" data-vid="${v.id}">✕</button>
-      </span>
-    </div>
-    <div class="pt doux">
-      ${estISO(v.dateFin) ? "Droit valable jusqu'au " + ech(fmtFR(v.dateFin)) + " · " : ""}
-      ${renc.length ? pluriel(renc.length,"rencontre") + " encodée(s) : " +
-        venus + " honorée(s), " + absents + " manquée(s)" + (annulees ? ", " + annulees + " annulée(s)" : "")
-        : "aucune rencontre encodée"}
-      ${v.lieu ? " · lieu : " + ech(v.lieu) : ""}
-    </div>
-    ${v.notes ? '<p class="pt" style="margin:6px 0 0;white-space:pre-wrap">' + ech(v.notes) + "</p>" : ""}
-    ${renc.length ? '<div style="margin-top:8px">' + renc.map(r => {
-      const p = presenceDe(r);
-      return `<div class="rencontre">
-        <span class="d">${ech(fmtFR(r.date))}</span>
-        <span class="et ${p.code}" style="min-width:76px;text-align:center">${ech(p.court)}</span>
-        <span class="n">${r.note ? ech(r.note) : '<span class="doux">Pas de note</span>'}</span>
-        <span class="actions">
-          <button class="b mini" data-action="rencontre-modifier" data-id="${e.id}" data-vid="${v.id}"
-                  data-rid="${r.id}">Modifier</button>
-          <button class="b mini danger" data-action="rencontre-supprimer" data-id="${e.id}" data-vid="${v.id}"
-                  data-rid="${r.id}">✕</button>
-        </span></div>`;
-    }).join("") + "</div>" : ""}
-  </div>`;
-}
-
-/* =========================================================================
-   9. VUE — Rapports (calendrier des douze prochains mois)
-   ========================================================================= */
-
-function vueRapports(){
-  const dep = new Date();
-  const debut = new Date(dep.getFullYear(), dep.getMonth() + etat.anneeRapports*12, 1);
-
-  const mois = [];
-  for(let i = 0; i < 12; i++){
-    const d = new Date(debut.getFullYear(), debut.getMonth()+i, 1);
-    mois.push({ annee:d.getFullYear(), mois:d.getMonth(), annuels:[], semestriels:[] });
-  }
-  const place = (type, e, date) => {
-    if(!date) return;
-    const d = parseISO(date);
-    const c = mois.find(m => m.annee === d.getFullYear() && m.mois === d.getMonth());
-    if(c) c[type].push({ enfant:e, date });
-  };
-  DB.enfants.forEach(e => {
-    place("annuels",     e, echeanceRapport(e,"annuel"));
-    place("semestriels", e, echeanceRapport(e,"semestriel"));
-  });
-
-  const item = o => {
-    const st = statutEcheance(o.date, DB.parametres.seuilRapportJours);
-    return '<div class="item"><span class="puce ' + st.code + '"></span>' +
-      '<span class="cliquable" data-action="fiche" data-id="' + o.enfant.id + '">' +
-      ech(nomComplet(o.enfant)) + "</span>" +
-      (o.enfant.service ? ' <span class="doux">· ' + ech(o.enfant.service) + "</span>" : "") +
-      ' <span class="doux">· ' + ech(fmtFR(o.date).slice(0,5)) + "</span></div>";
-  };
-
-  const auj = new Date();
-  const cases = mois.map(m => {
-    const courant = m.annee === auj.getFullYear() && m.mois === auj.getMonth();
-    const tri = l => l.sort((a,b) => a.date.localeCompare(b.date));
-    tri(m.annuels); tri(m.semestriels);
-    return `<div class="mois">
-      <div class="tete ${courant?"courant":""}">
-        <span>${MOIS[m.mois].charAt(0).toUpperCase() + MOIS[m.mois].slice(1)}</span>
-        <span class="doux">${m.annee}</span>
-      </div>
-      ${m.annuels.length ? '<div class="part"><div class="lib">Formalisations — rapport annuel</div>' +
-        m.annuels.map(item).join("") + "</div>" : ""}
-      ${m.semestriels.length ? '<div class="part"><div class="lib">Rapports d\'évolution — semestriel</div>' +
-        m.semestriels.map(item).join("") + "</div>" : ""}
-      ${(!m.annuels.length && !m.semestriels.length) ? '<div class="rien">Rien de prévu</div>' : ""}
-    </div>`;
-  }).join("");
-
-  const al = alertes().rapports;
-  const aPreparer = al.length ? `
-    <div class="carte">
-      <h2>À préparer maintenant <span class="et orange">${al.length}</span></h2>
-      <div class="tableau-enveloppe"><table>
-        <thead><tr><th>Enfant</th><th>Service</th><th>Type</th><th class="num">Échéance</th><th>Statut</th><th></th></tr></thead>
-        <tbody>${al.map(o => `<tr class="l-${o.st.code}">
-          <td>${lienEnfant(o.enfant)}</td>
-          <td>${o.enfant.service ? '<span class="et info">' + ech(o.enfant.service) + "</span>" : "—"}</td>
-          <td>${o.type === "annuel" ? "Annuel" : "Semestriel"}</td>
-          <td class="num">${ech(fmtFR(o.st.date))}</td>
-          <td><span class="et ${o.st.code}">${ech(o.st.label)}</span></td>
-          <td><button class="b mini" data-action="rapport-envoye" data-id="${o.enfant.id}"
-                      data-type="${o.type}">Marquer envoyé</button></td>
-        </tr>`).join("")}</tbody>
-      </table></div>
-    </div>` : "";
-
-  const sansDate = DB.enfants.filter(e => !estISO(e.notifFin));
-
-  return `
-  <div class="carte">
-    <div class="barre-outils">
-      <button class="b" data-action="annee" data-delta="-1">← 12 mois avant</button>
-      <button class="b" data-action="annee" data-delta="0">Aujourd'hui</button>
-      <button class="b" data-action="annee" data-delta="1">12 mois après →</button>
-      <b style="margin-left:6px">De ${ech(MOIS[debut.getMonth()])} ${debut.getFullYear()}
-         à ${ech(MOIS[mois[11].mois])} ${mois[11].annee}</b>
-      <span class="pousse"></span>
-      <button class="b" onclick="window.print()">Imprimer</button>
-    </div>
-    <p class="pt doux" style="margin:-4px 0 12px">
-      Le <b>rapport annuel</b> tombe à la date de formalisation, le <b>rapport d'évolution semestriel</b>
-      six mois plus tôt. Les deux sont recalculés automatiquement à chaque reconduction.</p>
-    <div class="mois-grille">${cases}</div>
-    ${sansDate.length ? '<div class="encadre attention" style="margin-top:14px">' +
-      '<div class="titre">' + pluriel(sansDate.length,"enfant") + " sans date de formalisation</div>" +
-      "Impossible de calculer leurs rapports : " +
-      sansDate.map(e => '<span class="cliquable" data-action="fiche" data-id="' + e.id + '">' +
-        ech(nomComplet(e)) + "</span>").join(", ") + ".</div>" : ""}
-  </div>
-  ${aPreparer}`;
-}
-
-/* =========================================================================
-   10. VUE — Visites
-   ========================================================================= */
-
-function vueVisites(){
-  const liste = toutesVisites().sort((a,b) => {
-    const sa = statutVisite(a.visite), sb = statutVisite(b.visite);
-    return ORDRE_STATUT[sa.code] - ORDRE_STATUT[sb.code] || parNom(a.enfant, b.enfant);
-  });
-
-  const lignes = liste.map(o => {
-    const s = statutVisite(o.visite);
-    const renc = (o.visite.rencontres||[]).slice().sort((a,b) => String(b.date).localeCompare(String(a.date)));
-    const derniere = renc[0];
-    return `<tr class="l-${s.code}">
-      <td>${lienEnfant(o.enfant)}</td>
-      <td>${ech(libelleParent(o.visite))}</td>
-      <td>${ech(o.visite.frequence || "—")}</td>
-      <td class="num">${o.visite.suspendu ? "—" : ech(fmtFR(o.visite.dateFin))}</td>
-      <td><span class="et ${s.code}">${ech(s.label)}</span></td>
-      <td class="num">${renc.length}</td>
-      <td class="pt">${derniere
-        ? ech(fmtFR(derniere.date)) + ' <span class="et ' + presenceDe(derniere).code + '">' +
-          ech(presenceDe(derniere).court) + "</span>"
-        : '<span class="doux">—</span>'}</td>
-      <td><div class="actions">
-        <button class="b mini primaire" data-action="rencontre-nouvelle" data-id="${o.enfant.id}"
-                data-vid="${o.visite.id}">+ Rencontre</button>
-      </div></td>
-    </tr>`;
-  }).join("");
-
-  const recentes = toutesRencontres().slice(0, 25);
-
-  return `
-  <div class="carte">
-    <div class="barre-outils">
-      <button class="b primaire" data-action="word-tous">Exporter les notes en Word</button>
-      <span class="pousse doux pt">${pluriel(liste.length,"droit")} de visite ·
-        ${pluriel(toutesRencontres().length,"rencontre")} encodée(s)</span>
-      <button class="b" onclick="window.print()">Imprimer</button>
-    </div>
-    <p class="pt doux" style="margin:-4px 0 12px">
-      Un droit de visite par parent : si l'enfant voit son papa et sa maman séparément, encodez-en deux.</p>
-    <div class="tableau-enveloppe">
-      <table>
-        <thead><tr>
-          <th>Enfant</th><th>Rencontre avec</th><th>Fréquence</th><th class="num">Fin du droit</th>
-          <th>Statut</th><th class="num">Rencontres</th><th>Dernière</th><th></th>
-        </tr></thead>
-        <tbody>${lignes || '<tr><td colspan="8" class="vide">Aucun droit de visite encodé.</td></tr>'}</tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="carte">
-    <h2>Dernières rencontres</h2>
-    ${recentes.length ? '<ul class="liste">' + recentes.map(o => {
-      const p = presenceDe(o.rencontre);
-      return `<li>
-        <span class="d nowrap" style="min-width:104px;font-weight:600;font-size:13px">${ech(fmtFR(o.rencontre.date))}</span>
-        <span class="et ${p.code}" style="min-width:76px;text-align:center">${ech(p.court)}</span>
-        <span style="flex:1">
-          ${lienEnfant(o.enfant)} <span class="doux pt">· ${ech(libelleParent(o.visite))}</span>
-          ${o.rencontre.note ? '<br><span class="pt" style="white-space:pre-wrap">' + ech(o.rencontre.note) + "</span>"
-                             : '<br><span class="pt doux">Pas de note</span>'}
-        </span>
-        <button class="b mini" data-action="rencontre-modifier" data-id="${o.enfant.id}"
-                data-vid="${o.visite.id}" data-rid="${o.rencontre.id}">Modifier</button>
-      </li>`;
-    }).join("") + "</ul>" : '<p class="doux">Aucune rencontre encodée pour le moment.</p>'}
-  </div>`;
-}
-
-/* =========================================================================
-   11. VUE — Tâches
+   6. VUE — À faire
    ========================================================================= */
 
 function ligneTache(t){
@@ -1232,7 +693,8 @@ function ligneTache(t){
         ? '<span class="doux pt"> · ' + ech(nomComplet(enfantParId(t.enfantId))) + "</span>" : ""}
       ${estISO(t.echeance) && !t.fait
         ? '<br><span class="et ' + cls + '">' +
-          (t.enRetard ? "En retard — " : (t.pourAuj ? "Aujourd'hui — " : "")) + ech(fmtFR(t.echeance)) + "</span>" : ""}
+          (t.enRetard ? "En retard — " : (t.pourAuj ? "Aujourd'hui — " : "")) + ech(fmtFR(t.echeance)) + "</span>"
+        : ""}
     </div>
     <div class="actions">
       <button class="b mini" data-action="tache-modifier" data-id="${t.id}">Modifier</button>
@@ -1253,26 +715,426 @@ function vueTaches(){
   ];
   return `
   <div class="carte">
-    <div class="barre-outils">
+    <div class="barre">
       <button class="b primaire" data-action="tache-nouvelle">+ Nouvelle tâche</button>
       <span class="pousse doux pt">${pluriel(enCours.length,"tâche")} en cours · ${faites.length} terminée(s)</span>
-      <button class="b" data-action="taches-basculer-faites">${etat.tachesFaites?"Masquer":"Afficher"} les tâches faites</button>
+      <button class="b" data-action="taches-basculer">${etat.tachesFaites?"Masquer":"Afficher"} les tâches faites</button>
       <button class="b" onclick="window.print()">Imprimer</button>
     </div>
     ${groupes.map(([t,l]) => l.length
-      ? '<h3 style="margin-top:14px">' + t + " (" + l.length + ')</h3><ul class="liste">' +
+      ? '<h3 style="margin-top:16px">' + t + " (" + l.length + ')</h3><ul class="liste">' +
         l.map(ligneTache).join("") + "</ul>" : "").join("")
       || '<p class="doux">Aucune tâche en cours.</p>'}
     ${etat.tachesFaites && faites.length
-      ? '<h3 style="margin-top:18px">Terminées</h3><ul class="liste">' + faites.map(ligneTache).join("") +
-        '</ul><button class="b danger" style="margin-top:10px" data-action="taches-purger">Supprimer les tâches terminées</button>'
+      ? '<h3 style="margin-top:20px">Terminées</h3><ul class="liste">' + faites.map(ligneTache).join("") +
+        '</ul><button class="b danger" style="margin-top:12px" data-action="taches-purger">' +
+        "Supprimer les tâches terminées</button>"
       : ""}
   </div>`;
 }
 
 /* =========================================================================
-   12. VUE — Données
+   7. VUE — Enfants (la fiche à compléter)
    ========================================================================= */
+
+function vueEnfants(){
+  const q = etat.recherche.trim().toLowerCase();
+  let liste = DB.enfants.slice();
+  if(q) liste = liste.filter(e => (nomComplet(e) + " " + (e.service||"")).toLowerCase().includes(q));
+
+  liste.sort((a,b) => etat.tri === "nom" ? parNom(a,b)
+    : String(a.notifFin||"9").localeCompare(String(b.notifFin||"9")));
+
+  const cel = (d, seuil) => {
+    const st = statutEcheance(d, seuil);
+    return '<span class="puce ' + st.code + '"></span>' + ech(fmtFR(d));
+  };
+
+  const lignes = liste.map(e => `<tr>
+      <td><b>${ech(nomComplet(e))}</b></td>
+      <td class="num pt">${ech(fmtFR(e.naissance))}</td>
+      <td>${e.service ? '<span class="et info">' + ech(e.service) + "</span>"
+                      : '<span class="et gris">à préciser</span>'}</td>
+      <td class="num">${cel(e.notifFin)}</td>
+      <td class="num pt">${cel(echeanceRapport(e,"semestriel"), DB.parametres.seuilRapportJours)}</td>
+      <td class="num pt">${cel(echeanceRapport(e,"annuel"), DB.parametres.seuilRapportJours)}</td>
+      <td><div class="actions">
+        <button class="b mini" data-action="enfant-modifier" data-id="${e.id}">Modifier</button>
+        <button class="b mini danger" data-action="enfant-supprimer" data-id="${e.id}">✕</button>
+      </div></td>
+    </tr>`).join("");
+
+  const incomplets = DB.enfants.filter(e => !estISO(e.notifFin) || !e.service || !estISO(e.naissance));
+
+  return `
+  <div class="carte">
+    <div class="barre">
+      <button class="b primaire" data-action="enfant-nouveau">+ Nouvel enfant</button>
+      <input type="search" id="recherche" placeholder="Rechercher un nom…" style="max-width:220px"
+             value="${ech(etat.recherche)}">
+      <label class="nowrap pt doux">Trier par
+        <select id="tri" style="width:auto;margin-left:5px">
+          <option value="date"${etat.tri==="date"?" selected":""}>date de notification</option>
+          <option value="nom"${etat.tri==="nom"?" selected":""}>nom</option>
+        </select></label>
+      <span class="pousse doux pt">${pluriel(liste.length,"enfant")} sur ${DB.enfants.length}</span>
+      <button class="b" onclick="window.print()">Imprimer</button>
+    </div>
+    ${incomplets.length ? '<div class="encadre attention"><div class="titre">' +
+      pluriel(incomplets.length,"fiche") + " incomplète(s)</div><span class=\"pt\">" +
+      incomplets.slice(0,8).map(e => ech(nomComplet(e))).join(", ") +
+      (incomplets.length > 8 ? " et " + (incomplets.length-8) + " autre(s)" : "") +
+      " — il manque la date de naissance, le service ou la date de notification.</span></div>" : ""}
+    <div class="tableau-enveloppe">
+      <table>
+        <thead><tr>
+          <th>Enfant</th><th class="num">Naissance</th><th>Service</th>
+          <th class="num">Notification</th><th class="num">Rapport semestriel</th>
+          <th class="num">Rapport annuel</th><th></th>
+        </tr></thead>
+        <tbody>${lignes || '<tr><td colspan="7" class="vide">Aucun enfant encodé.</td></tr>'}</tbody>
+      </table>
+    </div>
+    <p class="aide">Les dates de rapport se calculent toutes seules à partir de la date de
+       notification : le <b>rapport annuel</b> tombe à cette date, le <b>rapport semestriel</b>
+       six mois plus tôt.</p>
+  </div>`;
+}
+
+/* =========================================================================
+   8. VUE — Notifications de prise en charge
+   ========================================================================= */
+
+function vueNotifs(){
+  const tout = DB.enfants.map(e => ({ enfant:e, st:statutNotif(e) }));
+  const nb = c => tout.filter(o => o.st.code === c).length;
+
+  const filtre = etat.filtreNotif;
+  let liste = tout;
+  if(filtre === "recues")   liste = tout.filter(o => o.st.code === "vert");
+  if(filtre === "attente")  liste = tout.filter(o => o.st.code === "rouge");
+  if(filtre === "bientot")  liste = tout.filter(o => o.st.code === "orange");
+  liste.sort((a,b) => ORDRE_STATUT[a.st.code] - ORDRE_STATUT[b.st.code] ||
+                      String(a.enfant.notifFin||"9").localeCompare(String(b.enfant.notifFin||"9")));
+
+  const bouton = (id, texte) =>
+    '<button data-action="filtre-notif" data-f="' + id + '" class="' +
+    (filtre === id ? "actif" : "") + '">' + texte + "</button>";
+
+  const cartes = liste.map(({enfant:e, st}) => `
+    <div class="fiche ${st.code}">
+      <div class="nom">${ech(nomComplet(e))}
+        ${e.service ? '<span class="et info" style="margin-left:4px">' + ech(e.service) + "</span>" : ""}</div>
+      <div class="etat ${st.code}"><span class="marque">${st.marque}</span>${ech(st.titre)}</div>
+      <div class="detail">${ech(st.detail)}
+        ${(e.relances||[]).length
+          ? "<br>Dernière relance le " + ech(fmtFR(e.relances[e.relances.length-1])) +
+            " (" + pluriel(e.relances.length,"relance") + ")" : ""}</div>
+      <div class="actions">
+        ${st.code === "vert"
+          ? '<button class="b mini" data-action="notif-attente" data-id="' + e.id +
+            '">Marquer non reçue</button>'
+          : '<button class="b mini primaire" data-action="notif-recue" data-id="' + e.id +
+            '">Notification reçue</button>' +
+            '<button class="b mini" data-action="relance" data-id="' + e.id + '">Relance</button>'}
+        <button class="b mini" data-action="tache-notif" data-id="${e.id}">+ tâche</button>
+      </div>
+    </div>`).join("");
+
+  return `
+  <div class="carte">
+    <div class="compteurs">
+      <div class="compteur vert"><div class="n">${nb("vert")}</div><div class="l">Reçues, en ordre</div></div>
+      <div class="compteur orange"><div class="n">${nb("orange")}</div><div class="l">À renouveler bientôt</div></div>
+      <div class="compteur rouge"><div class="n">${nb("rouge")}</div><div class="l">À réclamer</div></div>
+      <div class="compteur gris"><div class="n">${nb("gris")}</div><div class="l">Sans date</div></div>
+    </div>
+    <div class="barre">
+      <div class="filtres">
+        ${bouton("tout","Tous")}${bouton("attente","À réclamer")}
+        ${bouton("bientot","Bientôt")}${bouton("recues","En ordre")}
+      </div>
+      <span class="pousse doux pt">${pluriel(liste.length,"dossier")} affiché(s)</span>
+      <button class="b" onclick="window.print()">Imprimer</button>
+    </div>
+    ${cartes ? '<div class="cartes">' + cartes + "</div>"
+             : '<p class="vide">Aucun dossier dans cette catégorie.</p>'}
+    <div class="legende">
+      <span><span class="puce vert"></span>✓ reçue et valable</span>
+      <span><span class="puce orange"></span>! renouvellement dans moins de ${DB.parametres.seuilAlerteJours} jours</span>
+      <span><span class="puce rouge"></span>✕ pas reçue ou échéance dépassée</span>
+      <span><span class="puce gris"></span>? date manquante</span>
+    </div>
+  </div>`;
+}
+
+/* =========================================================================
+   9. VUE — Droits de visite
+   ========================================================================= */
+
+function vueVisites(){
+  const q = etat.recherche.trim().toLowerCase();
+  let enfants = DB.enfants.filter(e => (e.visites||[]).length);
+  if(q) enfants = enfants.filter(e => (nomComplet(e) + " " +
+    (e.visites||[]).map(libelleParent).join(" ")).toLowerCase().includes(q));
+  enfants.sort(parNom);
+
+  const blocs = enfants.map(e => (e.visites||[]).map(v => {
+    const s = statutVisite(v);
+    const renc = (v.rencontres||[]).slice().sort((a,b) => String(b.date).localeCompare(String(a.date)));
+    const venus = renc.filter(r => r.presence === "venu").length;
+    const absents = renc.filter(r => r.presence === "absent").length;
+    const tout = etat.rencontresOuvertes[v.id];
+    const visibles = tout ? renc : renc.slice(0,3);
+
+    return `<div class="bloc">
+      <div class="chapeau">
+        <span class="t">${ech(nomComplet(e))}</span>
+        <span class="doux">avec</span>
+        <span class="t">${ech(libelleParent(v))}</span>
+        ${v.frequence ? '<span class="et info">' + ech(v.frequence) + "</span>" : ""}
+        <span class="et ${s.code}">${ech(s.label)}</span>
+        <span class="actions">
+          <button class="b mini primaire" data-action="rencontre-nouvelle" data-id="${e.id}"
+                  data-vid="${v.id}">+ Rencontre</button>
+          <button class="b mini" data-action="visite-modifier" data-id="${e.id}" data-vid="${v.id}">Modifier</button>
+          <button class="b mini danger" data-action="visite-supprimer" data-id="${e.id}" data-vid="${v.id}">✕</button>
+        </span>
+      </div>
+      <div class="pt doux">
+        ${renc.length ? pluriel(renc.length,"rencontre") + " : " + venus + " honorée(s), " +
+          absents + " manquée(s)" : "Aucune rencontre encodée"}
+        ${v.lieu ? " · " + ech(v.lieu) : ""}
+      </div>
+      ${visibles.map(r => {
+        const p = presenceDe(r);
+        return `<div class="rencontre">
+          <span class="d">${ech(fmtFR(r.date))}</span>
+          <span class="et ${p.code}" style="min-width:74px;text-align:center">${ech(p.court)}</span>
+          <span class="n">${r.note ? ech(r.note) : '<span class="doux">Pas de note</span>'}</span>
+          <span class="actions">
+            <button class="b mini" data-action="rencontre-modifier" data-id="${e.id}"
+                    data-vid="${v.id}" data-rid="${r.id}">Modifier</button>
+            <button class="b mini danger" data-action="rencontre-supprimer" data-id="${e.id}"
+                    data-vid="${v.id}" data-rid="${r.id}">✕</button>
+          </span></div>`;
+      }).join("")}
+      ${renc.length > 3 ? '<button class="b mini" style="margin-top:9px" data-action="voir-rencontres" ' +
+        'data-vid="' + v.id + '">' + (tout ? "Réduire" : "Voir les " + renc.length + " rencontres") +
+        "</button>" : ""}
+    </div>`;
+  }).join("")).join("");
+
+  const sans = DB.enfants.filter(e => !(e.visites||[]).length);
+
+  return `
+  <div class="carte">
+    <div class="barre">
+      <button class="b primaire" data-action="visite-nouvelle">+ Ajouter un droit de visite</button>
+      <button class="b" data-action="word">Exporter les notes en Word</button>
+      <input type="search" id="recherche" placeholder="Rechercher…" style="max-width:200px"
+             value="${ech(etat.recherche)}">
+      <span class="pousse doux pt">${pluriel(toutesRencontres().length,"rencontre")} encodée(s)</span>
+      <button class="b" onclick="window.print()">Imprimer</button>
+    </div>
+    <p class="aide" style="margin:-6px 0 14px">Un droit de visite par parent : si l'enfant voit son
+       papa et sa maman séparément, encodez-en deux.</p>
+    ${blocs || '<p class="vide">Aucun droit de visite encodé.</p>'}
+    ${sans.length ? '<p class="aide">Sans droit de visite encodé : ' +
+      sans.map(e => ech(nomComplet(e))).join(", ") + ".</p>" : ""}
+  </div>`;
+}
+
+/* =========================================================================
+   10. FORMULAIRES
+   ========================================================================= */
+
+/* --- Enfant --- */
+function formEnfant(e){
+  const neuf = !e;
+  e = e || { id:null, prenom:"", nom:"", service:"", naissance:"", notifFin:"" };
+  const apercu = estISO(e.notifFin)
+    ? "Rapport semestriel le <b>" + fmtFR(decalerMois(e.notifFin,-6)) +
+      "</b>, rapport annuel le <b>" + fmtFR(e.notifFin) + "</b>."
+    : "Les dates de rapport apparaîtront dès que la date de notification sera encodée.";
+  const corps = `
+    <div class="ligne c2">
+      <label class="champ"><span>Prénom</span>
+        <input type="text" name="prenom" required value="${ech(e.prenom)}"></label>
+      <label class="champ"><span>Nom</span>
+        <input type="text" name="nom" value="${ech(e.nom)}"></label>
+    </div>
+    <div class="ligne c2">
+      <label class="champ"><span>Date de naissance</span>
+        <input type="date" name="naissance" value="${ech(e.naissance)}"></label>
+      <label class="champ"><span>Service</span>
+        <select name="service">${["","SAJ","SPJ"].map(s =>
+          '<option value="'+s+'"'+(e.service===s?" selected":"")+">"+(s||"— à préciser —")+
+          "</option>").join("")}</select></label>
+    </div>
+    <label class="champ"><span>Date de la notification de prise en charge</span>
+      <input type="date" name="notifFin" value="${ech(e.notifFin)}"></label>
+    <div class="encadre"><div class="titre">Dates des rapports</div>
+      <span class="pt">${apercu}</span></div>`;
+  ouvrirModale(neuf ? "Nouvel enfant" : "Modifier " + nomComplet(e), corps, f => {
+    const d = { prenom:val(f,"prenom"), nom:val(f,"nom"), service:val(f,"service"),
+                naissance:val(f,"naissance"), notifFin:val(f,"notifFin") };
+    if(neuf) DB.enfants.push(Object.assign({ id:uid(), notifRecue:true, notifRecueLe:"",
+                                             relances:[], historique:[], visites:[] }, d));
+    else Object.assign(enfantParId(e.id), d);
+    maj();
+  });
+}
+
+/* --- Notification reçue --- */
+function formNotifRecue(e){
+  const propose = estISO(e.notifFin) && joursEntre(aujourdHui(), e.notifFin) < 0
+    ? decalerAns(e.notifFin, 1)
+    : (estISO(e.notifFin) ? e.notifFin : aujourdHui());
+  const corps = `
+    <p class="pt doux" style="margin-top:0">${ech(nomComplet(e))}
+      ${e.service ? "— " + ech(e.service) : ""}</p>
+    <label class="champ"><span>Date de la notification reçue (échéance)</span>
+      <input type="date" name="notifFin" required value="${ech(propose)}">
+      <p class="aide">Une notification est en principe reconduite d'un an. L'échéance actuelle est
+        ${estISO(e.notifFin) ? "le <b>" + ech(fmtFR(e.notifFin)) + "</b>" : "vide"}.</p></label>
+    <label class="champ"><span>Reçue le</span>
+      <input type="date" name="recueLe" value="${ech(aujourdHui())}"></label>`;
+  ouvrirModale("Notification reçue", corps, f => {
+    const nouvelle = val(f,"notifFin");
+    if(!estISO(nouvelle)){ alert("Indiquez la date d'échéance de la notification."); return false; }
+    const cible = enfantParId(e.id);
+    if(estISO(cible.notifFin) && cible.notifFin !== nouvelle){
+      cible.historique = cible.historique || [];
+      cible.historique.push(cible.notifFin);
+    }
+    cible.notifFin = nouvelle;
+    cible.notifRecue = true;
+    cible.notifRecueLe = val(f,"recueLe");
+    cible.relances = [];
+    maj();
+  }, 520);
+}
+
+/* --- Droit de visite --- */
+function formVisite(e, v){
+  const neuf = !v;
+  v = v || { id:null, parent:"", frequence:"", dateFin:"", suspendu:false, suspenduDepuis:"", lieu:"" };
+  const choixEnfant = e ? "" : `
+    <label class="champ"><span>Enfant</span>
+      <select name="enfantId" required><option value="">— choisir —</option>${DB.enfants.slice()
+        .sort(parNom).map(x => '<option value="'+x.id+'">' + ech(nomComplet(x)) +
+        "</option>").join("")}</select></label>`;
+  const corps = choixEnfant + `
+    <label class="champ"><span>Rencontre avec</span>
+      <input type="text" name="parent" list="l-parents" required value="${ech(v.parent)}"
+             placeholder="Papa, Maman…">
+      <datalist id="l-parents">${["Papa","Maman","Les deux parents","Grands-parents"]
+        .map(s => '<option value="'+s+'">').join("")}</datalist></label>
+    <div class="ligne c2">
+      <label class="champ"><span>Fréquence des rencontres</span>
+        <input type="text" name="frequence" value="${ech(v.frequence)}" placeholder="Ex. 2x 1h/mois"></label>
+      <label class="champ"><span>Fin du droit de visite</span>
+        <input type="date" name="dateFin" value="${ech(v.dateFin)}"></label>
+    </div>
+    <div class="ligne c2">
+      <label class="champ"><span>Lieu habituel</span>
+        <input type="text" name="lieu" value="${ech(v.lieu)}"></label>
+      <label class="champ"><span>Suspendu depuis le</span>
+        <input type="date" name="suspenduDepuis" value="${ech(v.suspenduDepuis)}"></label>
+    </div>
+    <label class="champ" style="display:flex;gap:8px;align-items:center">
+      <input type="checkbox" name="suspendu" style="width:auto"${v.suspendu?" checked":""}>
+      <span style="margin:0">Droit de visite actuellement suspendu</span></label>`;
+  ouvrirModale(neuf ? "Nouveau droit de visite" : "Modifier le droit de visite", corps, f => {
+    const cible = e || enfantParId(val(f,"enfantId"));
+    if(!cible){ alert("Choisissez l'enfant concerné."); return false; }
+    const d = { parent:val(f,"parent"), frequence:val(f,"frequence"), dateFin:val(f,"dateFin"),
+                lieu:val(f,"lieu"), suspendu:coche(f,"suspendu"), suspenduDepuis:val(f,"suspenduDepuis") };
+    if(neuf) cible.visites.push(Object.assign({ id:uid(), rencontres:[] }, d));
+    else Object.assign(cible.visites.find(x => x.id === v.id), d);
+    maj();
+  });
+}
+
+/* --- Rencontre --- */
+function formRencontre(e, v, r){
+  const neuf = !r;
+  r = r || { id:null, date:aujourdHui(), presence:"venu", note:"" };
+  const corps = `
+    <p class="pt doux" style="margin-top:0">${ech(nomComplet(e))} — rencontre avec
+      <b>${ech(libelleParent(v))}</b></p>
+    <label class="champ"><span>Date de la rencontre</span>
+      <input type="date" name="date" required value="${ech(r.date)}"></label>
+    <label class="champ"><span>Le parent est-il venu ?</span>
+      <span class="radios">${Object.keys(PRESENCES).map(k =>
+        '<label><input type="radio" name="presence" value="'+k+'"'+(r.presence===k?" checked":"")+">" +
+        PRESENCES[k].label + "</label>").join("")}</span></label>
+    <label class="champ"><span>Note de synthèse</span>
+      <textarea name="note" rows="7" placeholder="Comment s'est passée la rencontre, attitude de l'enfant, du parent, éléments à retenir pour le rapport…">${ech(r.note)}</textarea>
+      <p class="aide">Ces notes se retrouvent dans l'export Word.</p></label>`;
+  ouvrirModale(neuf ? "Ajouter une rencontre" : "Modifier la rencontre", corps, f => {
+    const d = { date:val(f,"date"), presence:val(f,"presence") || "venu", note:val(f,"note") };
+    if(!estISO(d.date)){ alert("Indiquez la date de la rencontre."); return false; }
+    const cible = enfantParId(e.id).visites.find(x => x.id === v.id);
+    if(neuf) cible.rencontres.push(Object.assign({ id:uid() }, d));
+    else Object.assign(cible.rencontres.find(x => x.id === r.id), d);
+    maj();
+  }, 600);
+}
+
+/* --- Tâche --- */
+function formTache(t){
+  const neuf = !t;
+  t = t || { id:null, texte:"", echeance:aujourdHui(), enfantId:"" };
+  const corps = `
+    <label class="champ"><span>Tâche</span>
+      <input type="text" name="texte" required value="${ech(t.texte)}"
+             placeholder="Ex. Téléphoner au SPJ pour la notification"></label>
+    <div class="ligne c2">
+      <label class="champ"><span>Échéance</span>
+        <input type="date" name="echeance" value="${ech(t.echeance)}"></label>
+      <label class="champ"><span>Dossier lié</span>
+        <select name="enfantId"><option value="">—</option>${DB.enfants.slice().sort(parNom)
+          .map(e => '<option value="'+e.id+'"'+(t.enfantId===e.id?" selected":"")+">" +
+                    ech(nomComplet(e)) + "</option>").join("")}</select></label>
+    </div>`;
+  ouvrirModale(neuf ? "Nouvelle tâche" : "Modifier la tâche", corps, f => {
+    const d = { texte:val(f,"texte"), echeance:val(f,"echeance"), enfantId:val(f,"enfantId") };
+    if(neuf) DB.taches.push(Object.assign({ id:uid(), fait:false, faitLe:"" }, d));
+    else Object.assign(DB.taches.find(x => x.id === t.id), d);
+    maj();
+  }, 540);
+}
+function ajouterTache(texte, enfantId){
+  DB.taches.push({ id:uid(), texte, echeance:aujourdHui(), enfantId:enfantId||"", fait:false, faitLe:"" });
+  maj();
+}
+
+/* --- Export Word --- */
+function formExportWord(){
+  const corps = `
+    <p class="pt doux" style="margin-top:0">Un chapitre par enfant, avec la présence du parent
+       et vos notes de synthèse.</p>
+    <div class="ligne c2">
+      <label class="champ"><span>À partir du (facultatif)</span><input type="date" name="du"></label>
+      <label class="champ"><span>Jusqu'au (facultatif)</span><input type="date" name="au"></label>
+    </div>
+    <label class="champ"><span>Enfant</span>
+      <select name="enfantId"><option value="">Tous les enfants</option>${DB.enfants.slice()
+        .sort(parNom).filter(e => (e.visites||[]).length)
+        .map(e => '<option value="'+e.id+'">' + ech(nomComplet(e)) + "</option>").join("")}</select></label>`;
+  ouvrirModale("Exporter les notes en Word", corps, f => {
+    const id = val(f,"enfantId");
+    const un = id ? enfantParId(id) : null;
+    const data = docxVisites(un ? [un] : DB.enfants, val(f,"du"), val(f,"au"), false);
+    const nom = "notes-visites-" + (un
+      ? nomComplet(un).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")
+      : "tous") + "-" + aujourdHui() + ".docx";
+    telecharger(nom, data,
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Document Word");
+  }, 520);
+}
 
 function blocStockage(){
   if(NATIF){
@@ -1338,59 +1200,38 @@ function blocStockage(){
       <button class="b primaire" data-action="fs-choisir">Choisir mon dossier de données</button></div></div>`;
 }
 
-function vueDonnees(){
-  return `
-  <div class="carte">
-    <h2>Où sont enregistrées mes données ?</h2>
+/* --- Réglages (remplace l'ancien onglet Données) --- */
+function formReglages(){
+  const corps = `
+    <h3>Enregistrement</h3>
     ${blocStockage()}
-  </div>
-  <div class="grille g2">
-    <div class="carte">
-      <h2>Paramètres</h2>
-      <label class="champ"><span>Alerte orange pour les notifications (jours avant l'échéance)</span>
-        <input type="number" id="p-seuil" min="1" max="365" value="${DB.parametres.seuilAlerteJours}"></label>
-      <label class="champ"><span>Anticipation des rapports (jours avant l'échéance)</span>
-        <input type="number" id="p-rapport" min="1" max="365" value="${DB.parametres.seuilRapportJours}">
-        <p class="aide">Délai à partir duquel un rapport apparaît dans « à préparer ».</p></label>
-      <button class="b primaire" data-action="params-enregistrer">Enregistrer</button>
+    <h3 style="margin-top:18px">Délais d'alerte</h3>
+    <div class="ligne c2">
+      <label class="champ"><span>Notification : alerte orange (jours avant)</span>
+        <input type="number" name="seuil" min="1" max="365" value="${DB.parametres.seuilAlerteJours}"></label>
+      <label class="champ"><span>Rapports : alerte orange (jours avant)</span>
+        <input type="number" name="rapport" min="1" max="365" value="${DB.parametres.seuilRapportJours}"></label>
     </div>
-    <div class="carte">
-      <h2>Copies et exports</h2>
-      <p class="doux pt">Rien n'est envoyé sur internet. Ces boutons servent à emporter une copie
-         ailleurs ou à réutiliser les données.</p>
-      <div class="actions" style="margin-top:12px">
-        <button class="b primaire" data-action="export-json">⬇ Exporter une sauvegarde</button>
-        <button class="b" data-action="import-json">⬆ Restaurer une sauvegarde</button>
-      </div>
-      <div class="actions" style="margin-top:10px">
-        <button class="b" data-action="word-tous">Notes de visites en Word</button>
-        <button class="b" data-action="export-csv-enfants">Dossiers en CSV (Excel)</button>
-        <button class="b" data-action="export-csv-rapports">Calendrier des rapports en CSV</button>
-      </div>
-      <hr style="border:0;border-top:1px solid var(--bord);margin:16px 0">
-      <div class="actions">
-        <button class="b danger" data-action="tout-effacer">Tout effacer</button>
-        <button class="b" data-action="recharger-exemple">Recharger les données de départ</button>
-      </div>
-      <p class="aide">Contenu : ${pluriel(DB.enfants.length,"enfant")},
-        ${pluriel(toutesVisites().length,"droit")} de visite,
-        ${pluriel(toutesRencontres().length,"rencontre")}, ${pluriel(DB.taches.length,"tâche")}.</p>
+    <h3 style="margin-top:18px">Copies et exports</h3>
+    <div class="actions">
+      <button type="button" class="b" data-action="export-json">Exporter une sauvegarde</button>
+      <button type="button" class="b" data-action="import-json">Restaurer une sauvegarde</button>
+      <button type="button" class="b" data-action="export-csv-enfants">Dossiers en CSV</button>
     </div>
-  </div>
-  <div class="carte">
-    <h2>Comment ça marche</h2>
-    <ul class="pt" style="padding-left:20px;line-height:1.75">
-      <li><b>Notification de prise en charge</b> : une par enfant, reconduite d'un an. Le bouton
-        <i>Reconduire d'un an</i> décale l'échéance et garde l'ancienne en historique. Si le service
-        oublie de l'envoyer, l'échéance passe en rouge et vous notez vos relances.</li>
-      <li><b>Rapports</b> : le rapport annuel tombe à la date de formalisation, le rapport d'évolution
-        semestriel six mois plus tôt. Le calendrier des douze prochains mois est calculé tout seul.</li>
-      <li><b>Visites</b> : un droit de visite par parent, avec sa fréquence. Pour chaque rencontre,
-        cochez si le parent est venu et ajoutez votre note de synthèse.</li>
-      <li><b>Word</b> : les notes de visite s'exportent dans un document Word, prêt à être repris
-        dans vos rapports.</li>
-    </ul>
-  </div>`;
+    <h3 style="margin-top:18px">Remise à zéro</h3>
+    <div class="actions">
+      <button type="button" class="b danger" data-action="tout-effacer">Tout effacer</button>
+      <button type="button" class="b" data-action="recharger-exemple">Recharger les données de départ</button>
+    </div>
+    <p class="aide">Contenu : ${pluriel(DB.enfants.length,"enfant")},
+      ${pluriel(DB.enfants.reduce((s,e) => s + (e.visites||[]).length, 0),"droit")} de visite,
+      ${pluriel(toutesRencontres().length,"rencontre")}, ${pluriel(DB.taches.length,"tâche")}.</p>`;
+  ouvrirModale("Réglages", corps, f => {
+    const s = Number(val(f,"seuil")), r = Number(val(f,"rapport"));
+    DB.parametres.seuilAlerteJours  = (s > 0 && s < 400) ? s : 30;
+    DB.parametres.seuilRapportJours = (r > 0 && r < 400) ? r : 45;
+    maj();
+  }, 620);
 }
 
 /* =========================================================================
@@ -1429,132 +1270,6 @@ function fermerModale(){
 }
 const val = (f,n) => { const e = f.elements[n]; return e ? String(e.value).trim() : ""; };
 const coche = (f,n) => { const e = f.elements[n]; return !!(e && e.checked); };
-
-/* --- Enfant --- */
-function formEnfant(e){
-  const neuf = !e;
-  e = e || { id:null, prenom:"", nom:"", service:"", naissance:"", notifFin:"", notes:"" };
-  const corps = `
-    <div class="ligne c2">
-      <label class="champ"><span>Prénom</span><input type="text" name="prenom" required value="${ech(e.prenom)}"></label>
-      <label class="champ"><span>Nom</span><input type="text" name="nom" value="${ech(e.nom)}"></label>
-    </div>
-    <div class="ligne c2">
-      <label class="champ"><span>Service</span>
-        <select name="service">${["","SAJ","SPJ","TJ","Autre"].map(s =>
-          '<option value="'+s+'"'+(e.service===s?" selected":"")+">"+(s||"—")+"</option>").join("")}</select></label>
-      <label class="champ"><span>Date de naissance</span>
-        <input type="date" name="naissance" value="${ech(e.naissance)}"></label>
-    </div>
-    <label class="champ"><span>Date de formalisation / fin de la notification de prise en charge</span>
-      <input type="date" name="notifFin" value="${ech(e.notifFin)}">
-      <p class="aide">Cette date pilote tout : l'alerte sur la notification, le rapport annuel
-         (à cette date) et le rapport semestriel (six mois plus tôt).</p></label>
-    <label class="champ"><span>Notes sur le dossier</span>
-      <textarea name="notes" rows="3">${ech(e.notes)}</textarea></label>`;
-  ouvrirModale(neuf ? "Nouvel enfant" : "Modifier la fiche", corps, f => {
-    const d = { prenom:val(f,"prenom"), nom:val(f,"nom"), service:val(f,"service"),
-                naissance:val(f,"naissance"), notifFin:val(f,"notifFin"), notes:val(f,"notes") };
-    if(neuf){
-      DB.enfants.push(Object.assign({ id:uid(), relances:[], historique:[], rapports:[], visites:[] }, d));
-    }else{
-      Object.assign(enfantParId(e.id), d);
-    }
-    maj();
-  });
-}
-
-/* --- Droit de visite --- */
-function formVisite(e, v){
-  const neuf = !v;
-  v = v || { id:null, parent:"", frequence:"", dateFin:"", suspendu:false, suspenduDepuis:"", lieu:"", notes:"" };
-  const suggestions = ["Papa","Maman","Les deux parents","Grands-parents"];
-  const corps = `
-    <label class="champ"><span>Rencontre avec</span>
-      <input type="text" name="parent" list="l-parents" required value="${ech(v.parent)}"
-             placeholder="Papa, Maman, les deux parents…">
-      <datalist id="l-parents">${suggestions.map(s => '<option value="'+s+'">').join("")}</datalist>
-      <p class="aide">Si l'enfant voit son papa et sa maman séparément, créez deux droits de visite.</p></label>
-    <div class="ligne c2">
-      <label class="champ"><span>Fréquence des rencontres</span>
-        <input type="text" name="frequence" value="${ech(v.frequence)}" placeholder="Ex. 2x 1h/mois"></label>
-      <label class="champ"><span>Fin du droit de visite</span>
-        <input type="date" name="dateFin" value="${ech(v.dateFin)}"></label>
-    </div>
-    <div class="ligne c2">
-      <label class="champ"><span>Lieu habituel</span>
-        <input type="text" name="lieu" value="${ech(v.lieu)}" placeholder="Ex. au service, au domicile…"></label>
-      <label class="champ"><span>Suspendu depuis le</span>
-        <input type="date" name="suspenduDepuis" value="${ech(v.suspenduDepuis)}"></label>
-    </div>
-    <label class="champ" style="display:flex;gap:8px;align-items:center">
-      <input type="checkbox" name="suspendu" style="width:auto"${v.suspendu?" checked":""}>
-      <span style="margin:0">Droit de visite actuellement suspendu</span></label>
-    <label class="champ"><span>Remarques</span>
-      <textarea name="notes" rows="2">${ech(v.notes)}</textarea></label>`;
-  ouvrirModale(neuf ? "Nouveau droit de visite" : "Modifier le droit de visite", corps, f => {
-    const d = { parent:val(f,"parent"), frequence:val(f,"frequence"), dateFin:val(f,"dateFin"),
-                lieu:val(f,"lieu"), suspendu:coche(f,"suspendu"), suspenduDepuis:val(f,"suspenduDepuis"),
-                notes:val(f,"notes") };
-    const cible = enfantParId(e.id);
-    if(neuf) cible.visites.push(Object.assign({ id:uid(), rencontres:[] }, d));
-    else Object.assign(cible.visites.find(x => x.id === v.id), d);
-    maj();
-  });
-}
-
-/* --- Rencontre --- */
-function formRencontre(e, v, r){
-  const neuf = !r;
-  r = r || { id:null, date:aujourdHui(), presence:"venu", note:"" };
-  const corps = `
-    <p class="pt doux" style="margin-top:0">${ech(nomComplet(e))} — rencontre avec
-       <b>${ech(libelleParent(v))}</b>${v.frequence ? " (" + ech(v.frequence) + ")" : ""}</p>
-    <label class="champ"><span>Date de la rencontre</span>
-      <input type="date" name="date" required value="${ech(r.date)}"></label>
-    <label class="champ"><span>Le parent est-il venu ?</span>
-      <span class="radios">${Object.keys(PRESENCES).map(k =>
-        '<label><input type="radio" name="presence" value="'+k+'"'+(r.presence===k?" checked":"")+">" +
-        PRESENCES[k].label + "</label>").join("")}</span></label>
-    <label class="champ"><span>Note de synthèse de la rencontre</span>
-      <textarea name="note" rows="7" placeholder="Comment s'est passée la rencontre, attitude de l'enfant, du parent, éléments à retenir pour le rapport…">${ech(r.note)}</textarea>
-      <p class="aide">Ces notes se retrouvent dans l'export Word, prêtes pour votre rapport.</p></label>`;
-  ouvrirModale(neuf ? "Ajouter une rencontre" : "Modifier la rencontre", corps, f => {
-    const d = { date:val(f,"date"), presence:val(f,"presence") || "venu", note:val(f,"note") };
-    if(!estISO(d.date)){ alert("Indiquez la date de la rencontre."); return false; }
-    const cible = enfantParId(e.id).visites.find(x => x.id === v.id);
-    if(neuf) cible.rencontres.push(Object.assign({ id:uid() }, d));
-    else Object.assign(cible.rencontres.find(x => x.id === r.id), d);
-    maj();
-  }, 620);
-}
-
-/* --- Tâche --- */
-function formTache(t){
-  const neuf = !t;
-  t = t || { id:null, texte:"", echeance:aujourdHui(), enfantId:"", fait:false, faitLe:"" };
-  const corps = `
-    <label class="champ"><span>Tâche</span>
-      <input type="text" name="texte" required value="${ech(t.texte)}"
-             placeholder="Ex. Téléphoner au SPJ pour la notification"></label>
-    <div class="ligne c2">
-      <label class="champ"><span>Échéance</span><input type="date" name="echeance" value="${ech(t.echeance)}"></label>
-      <label class="champ"><span>Dossier lié</span>
-        <select name="enfantId"><option value="">—</option>${DB.enfants.slice().sort(parNom)
-          .map(e => '<option value="'+e.id+'"'+(t.enfantId===e.id?" selected":"")+">" +
-                    ech(nomComplet(e)) + "</option>").join("")}</select></label>
-    </div>`;
-  ouvrirModale(neuf ? "Nouvelle tâche" : "Modifier la tâche", corps, f => {
-    const d = { texte:val(f,"texte"), echeance:val(f,"echeance"), enfantId:val(f,"enfantId") };
-    if(neuf) DB.taches.push(Object.assign({ id:uid(), fait:false, faitLe:"" }, d));
-    else Object.assign(DB.taches.find(x => x.id === t.id), d);
-    maj();
-  }, 560);
-}
-function ajouterTache(texte, enfantId){
-  DB.taches.push({ id:uid(), texte, echeance:aujourdHui(), enfantId:enfantId||"", fait:false, faitLe:"" });
-  maj();
-}
 
 /* =========================================================================
    14. EXPORT WORD (.docx écrit à la main : un .docx est un fichier ZIP)
@@ -1738,32 +1453,6 @@ function docxVisites(enfants, du, au, toutInclure){
     (enfants.length === 1 ? " — " + nomComplet(enfants[0]) : ""));
 }
 
-function formExportWord(enfantUnique){
-  const corps = `
-    <p class="pt doux" style="margin-top:0">
-      ${enfantUnique ? "Notes de visite de <b>" + ech(nomComplet(enfantUnique)) + "</b>."
-                     : "Notes de visite de tous les enfants, un chapitre par enfant."}</p>
-    <div class="ligne c2">
-      <label class="champ"><span>À partir du (facultatif)</span><input type="date" name="du"></label>
-      <label class="champ"><span>Jusqu'au (facultatif)</span><input type="date" name="au"></label>
-    </div>
-    <p class="aide">Laissez vide pour reprendre toutes les rencontres encodées.</p>
-    ${enfantUnique ? "" : `<label class="champ" style="display:flex;gap:8px;align-items:center;margin-top:8px">
-      <input type="checkbox" name="tous" style="width:auto">
-      <span style="margin:0">Inclure aussi les enfants sans rencontre sur la période</span></label>`}`;
-  ouvrirModale("Exporter les notes en Word", corps, f => {
-    const du = val(f,"du"), au = val(f,"au");
-    const enfants = enfantUnique ? [enfantUnique] : DB.enfants;
-    const data = docxVisites(enfants, du, au, enfantUnique ? true : coche(f,"tous"));
-    const nom = "notes-visites-" + (enfantUnique
-      ? nomComplet(enfantUnique).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")
-      : "tous") + "-" + aujourdHui() + ".docx";
-    telecharger(nom, data,
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "Document Word");
-  }, 520);
-}
-
 /* =========================================================================
    15. IMPORT / EXPORT
    ========================================================================= */
@@ -1812,7 +1501,7 @@ function exportCsvEnfants(){
   const l = [["Prénom","Nom","Service","Naissance","Formalisation","Statut notification","Relances",
               "Rapport semestriel","Rapport annuel","Droits de visite","Notes"]];
   DB.enfants.slice().sort(parNom).forEach(e => l.push([
-    e.prenom, e.nom, e.service, dt(e.naissance), dt(e.notifFin), statutNotif(e).label,
+    e.prenom, e.nom, e.service, dt(e.naissance), dt(e.notifFin), statutNotif(e).titre,
     (e.relances||[]).map(fmtFR).join(" / "),
     dt(echeanceRapport(e,"semestriel")), dt(echeanceRapport(e,"annuel")),
     (e.visites||[]).map(v => libelleParent(v) + (v.frequence ? " : " + v.frequence : "") +
@@ -1820,27 +1509,6 @@ function exportCsvEnfants(){
     e.notes]));
   telecharger("dossiers-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8", "Tableur CSV");
 }
-function exportCsvRapports(){
-  const l = [["Échéance","Mois","Type","Enfant","Service"]];
-  const lignes = [];
-  DB.enfants.forEach(e => ["annuel","semestriel"].forEach(t => {
-    const d = echeanceRapport(e,t);
-    if(d) lignes.push([d, fmtMoisAnnee(d), t === "annuel" ? "Formalisation / annuel" : "Évolution / semestriel",
-                       nomComplet(e), e.service]);
-  }));
-  lignes.sort((a,b) => a[0].localeCompare(b[0]));
-  lignes.forEach(x => l.push([fmtFR(x[0]), x[1], x[2], x[3], x[4]]));
-  telecharger("rapports-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8", "Tableur CSV");
-}
-
-document.getElementById("fichier-import").addEventListener("change", function(){
-  const f = this.files && this.files[0];
-  if(!f) return;
-  const lect = new FileReader();
-  lect.onload = () => appliquerImport(lect.result);
-  lect.readAsText(f);
-  this.value = "";
-});
 
 /* =========================================================================
    16. ÉVÉNEMENTS
@@ -1850,8 +1518,10 @@ document.getElementById("nav").addEventListener("click", ev => {
   const b = ev.target.closest("[data-onglet]");
   if(!b) return;
   onglet = b.dataset.onglet;
+  etat.recherche = "";
   rendre();
 });
+document.getElementById("bouton-reglages").addEventListener("click", formReglages);
 document.getElementById("zone-modale").addEventListener("click", ev => {
   if(ev.target.dataset && ev.target.dataset.fermer) fermerModale();
 });
@@ -1862,7 +1532,7 @@ document.getElementById("etat-stockage").addEventListener("click", ev => {
   if(b.dataset.fs === "choisir")     (NATIF ? natifChangerDossier() : fsChoisir().then(rendre));
   if(b.dataset.fs === "ouvrir")      window.programme.ouvrirDossier();
   if(b.dataset.fs === "reconnecter") fsReconnecter(false).then(rendre);
-  if(b.dataset.fs === "aide"){ onglet = "donnees"; rendre(); }
+  if(b.dataset.fs === "aide")        formReglages();
 });
 
 document.getElementById("vue").addEventListener("input", ev => {
@@ -1878,36 +1548,31 @@ document.getElementById("vue").addEventListener("change", ev => {
   if(ev.target.id === "tri"){ etat.tri = ev.target.value; rendre(); }
 });
 
-document.getElementById("vue").addEventListener("click", ev => {
-  const b = ev.target.closest("[data-action]");
-  if(!b) return;
+/* Les actions valent aussi bien dans la page que dans une modale. */
+function actionner(b){
   const id = b.dataset.id, vid = b.dataset.vid, rid = b.dataset.rid;
   const e = id ? enfantParId(id) : null;
   const v = (e && vid) ? (e.visites||[]).find(x => x.id === vid) : null;
 
   switch(b.dataset.action){
-    /* --- navigation --- */
-    case "fiche": etat.ficheId = id; onglet = "fiche"; rendre(); break;
-    case "retour-enfants": onglet = "enfants"; rendre(); break;
-    case "annee":
-      etat.anneeRapports = b.dataset.delta === "0" ? 0 : etat.anneeRapports + Number(b.dataset.delta);
-      rendre();
-      break;
-
     /* --- enfants --- */
     case "enfant-nouveau":  formEnfant(null); break;
     case "enfant-modifier": formEnfant(e); break;
     case "enfant-supprimer":
       if(confirm("Supprimer définitivement le dossier de " + nomComplet(e) +
-                 " , ses rencontres et ses notes ?")){
+                 ", ses rencontres et ses notes ?")){
         DB.enfants = DB.enfants.filter(x => x.id !== id);
         DB.taches.forEach(t => { if(t.enfantId === id) t.enfantId = ""; });
-        onglet = "enfants";
         maj();
       }
       break;
 
     /* --- notification --- */
+    case "notif-recue": formNotifRecue(e); break;
+    case "notif-attente":
+      e.notifRecue = false;
+      maj();
+      break;
     case "relance": {
       const auj = aujourdHui();
       e.relances = e.relances || [];
@@ -1916,41 +1581,11 @@ document.getElementById("vue").addEventListener("click", ev => {
       maj();
       break;
     }
-    case "relance-suppr":
-      e.relances = (e.relances||[]).filter(d => d !== b.dataset.date);
-      maj();
-      break;
-    case "reconduire": {
-      if(!estISO(e.notifFin)){
-        alert("Encodez d'abord une date de formalisation pour " + nomComplet(e) + ".");
-        break;
-      }
-      const nouvelle = decalerAns(e.notifFin, 1);
-      if(!confirm("Reconduire la notification de " + nomComplet(e) + " du " + fmtFR(e.notifFin) +
-                  " au " + fmtFR(nouvelle) + " ?")) break;
-      e.historique = e.historique || [];
-      e.historique.push(e.notifFin);
-      e.notifFin = nouvelle;
-      e.relances = [];
-      maj();
-      break;
-    }
-
-    /* --- rapports --- */
-    case "rapport-envoye": {
-      const type = b.dataset.type;
-      const d = echeanceRapport(e, type);
-      if(!d) break;
-      if(!confirm("Noter le rapport " + (type === "annuel" ? "annuel" : "semestriel") + " de " +
-                  nomComplet(e) + " (échéance " + fmtFR(d) + ") comme envoyé aujourd'hui ?")) break;
-      e.rapports = e.rapports || [];
-      e.rapports.push({ id:uid(), type, echeance:d, envoyeLe:aujourdHui() });
-      maj();
-      break;
-    }
-    case "rapport-annuler":
-      e.rapports = (e.rapports||[]).filter(r => r.id !== rid);
-      maj();
+    case "filtre-notif": etat.filtreNotif = b.dataset.f; rendre(); break;
+    case "tache-notif":
+      ajouterTache("Réclamer la notification de prise en charge — " + nomComplet(e), id);
+      onglet = "taches";
+      rendre();
       break;
 
     /* --- droits de visite --- */
@@ -1963,6 +1598,10 @@ document.getElementById("vue").addEventListener("click", ev => {
         maj();
       }
       break;
+    case "voir-rencontres":
+      etat.rencontresOuvertes[vid] = !etat.rencontresOuvertes[vid];
+      rendre();
+      break;
 
     /* --- rencontres --- */
     case "rencontre-nouvelle": formRencontre(e, v, null); break;
@@ -1973,10 +1612,7 @@ document.getElementById("vue").addEventListener("click", ev => {
         maj();
       }
       break;
-
-    /* --- Word --- */
-    case "word-enfant": formExportWord(e); break;
-    case "word-tous":   formExportWord(null); break;
+    case "word": formExportWord(); break;
 
     /* --- tâches --- */
     case "tache-nouvelle": formTache(null); break;
@@ -1988,15 +1624,16 @@ document.getElementById("vue").addEventListener("click", ev => {
       maj();
       break;
     }
-    case "taches-basculer-faites": etat.tachesFaites = !etat.tachesFaites; rendre(); break;
+    case "taches-basculer": etat.tachesFaites = !etat.tachesFaites; rendre(); break;
     case "taches-purger":
       if(confirm("Supprimer toutes les tâches terminées ?")){
         DB.taches = DB.taches.filter(t => !t.fait); maj();
       }
       break;
 
-    /* --- enregistrement disque --- */
+    /* --- enregistrement --- */
     case "fs-choisir":
+      fermerModale();
       (NATIF ? natifChangerDossier() : fsChoisir().then(rendre));
       break;
     case "fs-ouvrir":      window.programme.ouvrirDossier(); break;
@@ -2005,48 +1642,40 @@ document.getElementById("vue").addEventListener("click", ev => {
       fsEcrire().then(() => fsSauvegardeDuJour(JSON.stringify(DB,null,2), true)).then(rendre);
       break;
     case "fs-relire":
+      fermerModale();
       if(confirm("Recharger les données depuis le fichier du disque ? Les modifications non " +
                  "encore enregistrées seront perdues.")){
-        if(NATIF){ natifRelire(); }
-        else { DB.initial = true; fsLire().then(rendre); }
-      }
-      break;
-    case "fs-oublier":
-      if(confirm("Ne plus enregistrer dans ce dossier ? Le fichier existant n'est pas supprimé.")){
-        FS.dossier = null; FS.enAttente = null; FS.nom = ""; FS.dernier = null; FS.erreur = "";
-        idbEffacer("dossier").then(rendre);
+        if(NATIF){ natifRelire(); } else { DB.initial = true; fsLire().then(rendre); }
       }
       break;
 
-    /* --- données --- */
-    case "params-enregistrer": {
-      const s = Number(document.getElementById("p-seuil").value);
-      const r = Number(document.getElementById("p-rapport").value);
-      DB.parametres.seuilAlerteJours  = (s > 0 && s < 400) ? s : 30;
-      DB.parametres.seuilRapportJours = (r > 0 && r < 400) ? r : 45;
-      maj();
-      alert("Paramètres enregistrés.");
-      break;
-    }
+    /* --- sauvegardes --- */
     case "export-json":
       telecharger("sauvegarde-dossiers-" + aujourdHui() + ".json", JSON.stringify(DB,null,2),
                   null, "Sauvegarde");
       break;
     case "import-json": importerSauvegarde(); break;
-    case "export-csv-enfants":  exportCsvEnfants(); break;
-    case "export-csv-rapports": exportCsvRapports(); break;
+    case "export-csv-enfants": exportCsvEnfants(); break;
     case "tout-effacer":
       if(confirm("Effacer TOUTES les données ? Exportez d'abord une sauvegarde si nécessaire.") &&
          confirm("Confirmez-vous définitivement l'effacement ?")){
-        DB = baseVide(); onglet = "enfants"; maj();
+        DB = baseVide(); fermerModale(); maj();
       }
       break;
     case "recharger-exemple":
-      if(confirm("Remplacer les données actuelles par les données de départ (vos deux tableaux Excel) ?")){
-        DB = donneesInitiales(); onglet = "tableau"; maj();
+      if(confirm("Remplacer les données actuelles par les données de départ (vos tableaux Excel) ?")){
+        DB = donneesInitiales(); fermerModale(); maj();
       }
       break;
   }
+}
+document.getElementById("vue").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-action]");
+  if(b) actionner(b);
+});
+document.getElementById("zone-modale").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-action]");
+  if(b) actionner(b);
 });
 
 /* =========================================================================
@@ -2054,7 +1683,7 @@ document.getElementById("vue").addEventListener("click", ev => {
    ========================================================================= */
 
 function donneesInitiales(){
-  // prénom, nom, service, formalisation (fin de notification), relances
+  // prénom, nom, service, date de notification, relances déjà notées
   const source = [
     ["Sofia","INFANTINO","SPJ","2026-04-25",["2026-06-02"]],
     ["Guyliano","BERTOLINI","SPJ","2026-04-30",["2026-06-02"]],
@@ -2079,39 +1708,37 @@ function donneesInitiales(){
     ["Eléonore","HOUEE-WAUTIER","SAJ","2027-04-27",[]],
     ["Théa","NEUFORGE","SAJ","2027-05-06",[]]
   ];
-  // droits de visite repris du premier tableau : le parent reste à préciser
+  // droits de visite du premier tableau : le parent reste à préciser
   const visites = {
-    "Sofia INFANTINO":    [["", "2h/vacances", "2026-05-08", false, ""]],
-    "Malone BIHAIN":      [["", "1h/mois",     "2026-06-03", false, ""]],
-    "Eléana PEIXOTO":     [["", "1h/mois",     "2026-06-24", false, ""]],
-    "Lucas THEISMANN":    [["", "2x 1h/mois",  "2026-08-18", false, ""]],
-    "Célia THEISMANN":    [["", "2x 1h/mois",  "2026-08-18", false, ""]],
-    "Théo DE BRUYN":      [["", "Pendant les congés", "",    false, ""]],
-    "Timi LEMET":         [["", "1h/mois",     "",           true,  "2026-05-20"]],
-    "David LEMET":        [["", "1h/mois",     "",           true,  "2026-05-20"]],
-    "Alessandro MAKA":    [["", "4h/mois",     "2040-01-01", false, ""]],
-    "Océanna MAKA":       [["", "4h/mois",     "2040-01-01", false, ""]],
-    "Lionel MAKA":        [["", "4h/mois",     "2040-01-01", false, ""]],
-    "Dyana GASPAR":       [["", "2x 1h/mois",  "2040-01-01", false, ""]],
-    "Joackim BRUGNEROTTO":[["", "2x 1h/mois",  "2026-08-19", false, ""]],
-    "Tellyoh DESBESSEL":  [["", "2x 1h/mois",  "2026-08-26", false, ""]],
-    "Mélina LEFEVRE":     [["", "2x 1h/mois",  "2026-08-19", false, ""]]
+    "Sofia INFANTINO":     [["", "2h/vacances",         "2026-05-08", false, ""]],
+    "Malone BIHAIN":       [["", "1h/mois",             "2026-06-03", false, ""]],
+    "Eléana PEIXOTO":      [["", "1h/mois",             "2026-06-24", false, ""]],
+    "Lucas THEISMANN":     [["", "2x 1h/mois",          "2026-08-18", false, ""]],
+    "Célia THEISMANN":     [["", "2x 1h/mois",          "2026-08-18", false, ""]],
+    "Théo DE BRUYN":       [["", "Pendant les congés",  "",           false, ""]],
+    "Timi LEMET":          [["", "1h/mois",             "",           true,  "2026-05-20"]],
+    "David LEMET":         [["", "1h/mois",             "",           true,  "2026-05-20"]],
+    "Alessandro MAKA":     [["", "4h/mois",             "2040-01-01", false, ""]],
+    "Océanna MAKA":        [["", "4h/mois",             "2040-01-01", false, ""]],
+    "Lionel MAKA":         [["", "4h/mois",             "2040-01-01", false, ""]],
+    "Dyana GASPAR":        [["", "2x 1h/mois",          "2040-01-01", false, ""]],
+    "Joackim BRUGNEROTTO": [["", "2x 1h/mois",          "2026-08-19", false, ""]],
+    "Tellyoh DESBESSEL":   [["", "2x 1h/mois",          "2026-08-26", false, ""]],
+    "Mélina LEFEVRE":      [["", "2x 1h/mois",          "2026-08-19", false, ""]]
   };
 
-  const enfants = source.map(([prenom, nom, service, notifFin, relances]) => {
-    const cle = prenom + " " + nom;
-    return {
-      id: uid(), prenom, nom, service, naissance:"", notifFin,
-      relances: relances.slice(), historique:[], rapports:[], notes:"",
-      visites: (visites[cle] || []).map(([parent, frequence, dateFin, suspendu, depuis]) => ({
-        id: uid(), parent, frequence, dateFin, suspendu,
-        suspenduDepuis: depuis, lieu:"", notes:"", rencontres:[]
-      }))
-    };
-  });
+  const enfants = source.map(([prenom, nom, service, notifFin, relances]) => ({
+    id: uid(), prenom, nom, service, naissance:"", notifFin,
+    notifRecue: true, notifRecueLe: "",
+    relances: relances.slice(), historique: [],
+    visites: (visites[prenom + " " + nom] || []).map(([parent, frequence, dateFin, suspendu, depuis]) => ({
+      id: uid(), parent, frequence, dateFin, suspendu,
+      suspenduDepuis: depuis, lieu:"", rencontres:[]
+    }))
+  }));
 
   return {
-    version: 2,
+    version: 3,
     initial: true,
     parametres: { seuilAlerteJours:30, seuilRapportJours:45 },
     enfants,
@@ -2136,6 +1763,7 @@ if(NATIF){
       telecharger("sauvegarde-dossiers-" + aujourdHui() + ".json", JSON.stringify(DB,null,2),
                   null, "Sauvegarde");
     if(action === "dossier-change") natifChangerDossier();
+    if(action === "reglages") formReglages();
   });
 }else{
   fsReconnecter(true).catch(() => {});

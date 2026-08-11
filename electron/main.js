@@ -102,6 +102,8 @@ function construireMenu(){
       { type:"separator" },
       { label:"Enregistrer une copie de sauvegarde…",
         click: () => fenetre && fenetre.webContents.send("menu", "export-json") },
+      { label:"Réglages…",
+        click: () => fenetre && fenetre.webContents.send("menu", "reglages") },
       { type:"separator" },
       { role:"quit", label:"Quitter" }
     ]},
