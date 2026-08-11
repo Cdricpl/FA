@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gestion de mes dossiers</title>
+<style>
+:root{
+  --fond:#f4f6f8; --carte:#ffffff; --texte:#1b2733; --doux:#617080; --bord:#dfe5ec;
+  --accent:#2f6fb0; --accent-doux:#e8f0f9;
+  --vert:#1f8a4c; --vert-f:#e3f5e9;
+  --orange:#b46b00; --orange-f:#fdf0da;
+  --rouge:#c02b2b; --rouge-f:#fbe4e4;
+  --gris:#6b7785; --gris-f:#eef1f5;
+  --violet:#6b4ea8; --violet-f:#efe9fa;
+  --ombre:0 1px 2px rgba(16,24,40,.06),0 4px 12px rgba(16,24,40,.05);
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --fond:#141a21; --carte:#1c242e; --texte:#e8edf3; --doux:#9aa8b8; --bord:#2c3743;
+    --accent:#6aa6e0; --accent-doux:#22303f;
+    --vert:#5fcf8e; --vert-f:#1b3327;
+    --orange:#e8b055; --orange-f:#3a2e17;
+    --rouge:#f08a8a; --rouge-f:#3a1f1f;
+    --gris:#9aa8b8; --gris-f:#232c36;
+    --violet:#b39ae8; --violet-f:#2a2340;
+    --ombre:none;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fond);color:var(--texte);
+  font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+h1,h2,h3{margin:0 0 .4em;line-height:1.25}
+h1{font-size:19px}
+h2{font-size:17px}
+h3{font-size:14px;text-transform:uppercase;letter-spacing:.04em;color:var(--doux)}
+a{color:var(--accent)}
+
+/* ---------- En-tête ---------- */
+header{background:var(--carte);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:40}
+.bandeau{max-width:1280px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{font-weight:700;font-size:17px;white-space:nowrap}
+.logo span{color:var(--accent)}
+.info-jour{margin-left:auto;font-size:13px;color:var(--doux);text-align:right}
+.info-jour b{color:var(--texte)}
+nav{max-width:1280px;margin:0 auto;padding:0 12px;display:flex;gap:2px;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:2px solid transparent;padding:9px 13px;
+  font:inherit;font-size:14px;color:var(--doux);cursor:pointer;white-space:nowrap;border-radius:6px 6px 0 0}
+nav button:hover{color:var(--texte);background:var(--accent-doux)}
+nav button.actif{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+nav .pastille{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:9px;
+  background:var(--rouge);color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:18px}
+@media (prefers-color-scheme: dark){nav .pastille{color:#1c242e}}
+
+main{max-width:1280px;margin:0 auto;padding:18px}
+.carte{background:var(--carte);border:1px solid var(--bord);border-radius:var(--r);
+  box-shadow:var(--ombre);padding:16px;margin-bottom:16px}
+.carte>h2{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.grille{display:grid;gap:16px}
+@media(min-width:900px){.g2{grid-template-columns:1fr 1fr}}
+
+/* ---------- Indicateurs ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--carte);border:1px solid var(--bord);border-radius:var(--r);padding:13px 15px;box-shadow:var(--ombre)}
+.kpi .n{font-size:26px;font-weight:700;line-height:1.1}
+.kpi .l{font-size:12.5px;color:var(--doux);margin-top:2px}
+.kpi.rouge .n{color:var(--rouge)} .kpi.orange .n{color:var(--orange)}
+.kpi.vert .n{color:var(--vert)} .kpi.accent .n{color:var(--accent)}
+
+/* ---------- Tableaux ---------- */
+.tableau-enveloppe{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux);
+  padding:8px 10px;border-bottom:1px solid var(--bord);white-space:nowrap;background:var(--carte);position:sticky;top:0}
+td{padding:8px 10px;border-bottom:1px solid var(--bord);vertical-align:top}
+tbody tr:hover{background:var(--accent-doux)}
+tbody tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vide{padding:26px 10px;text-align:center;color:var(--doux);font-style:italic}
+
+/* ---------- Étiquettes de statut ---------- */
+.et{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.et.vert{background:var(--vert-f);color:var(--vert)}
+.et.orange{background:var(--orange-f);color:var(--orange)}
+.et.rouge{background:var(--rouge-f);color:var(--rouge)}
+.et.gris{background:var(--gris-f);color:var(--gris)}
+.et.suspendu{background:var(--violet-f);color:var(--violet)}
+.et.info{background:var(--accent-doux);color:var(--accent)}
+tr.l-rouge td:first-child{box-shadow:inset 3px 0 var(--rouge)}
+tr.l-orange td:first-child{box-shadow:inset 3px 0 var(--orange)}
+tr.l-vert td:first-child{box-shadow:inset 3px 0 var(--vert)}
+tr.l-suspendu td:first-child{box-shadow:inset 3px 0 var(--violet)}
+
+/* ---------- Boutons ---------- */
+button.b,a.b{display:inline-flex;align-items:center;gap:6px;background:var(--carte);color:var(--texte);
+  border:1px solid var(--bord);border-radius:8px;padding:6px 12px;font:inherit;font-size:13.5px;
+  cursor:pointer;text-decoration:none}
+button.b:hover,a.b:hover{background:var(--accent-doux);border-color:var(--accent)}
+button.b.primaire{background:var(--accent);border-color:var(--accent);color:#fff}
+button.b.primaire:hover{filter:brightness(1.08)}
+button.b.danger{color:var(--rouge);border-color:var(--bord)}
+button.b.danger:hover{background:var(--rouge-f);border-color:var(--rouge)}
+button.b.mini{padding:3px 8px;font-size:12.5px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.barre-outils{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.barre-outils .pousse{margin-left:auto}
+
+/* ---------- Formulaires ---------- */
+input[type=text],input[type=date],input[type=time],input[type=number],input[type=search],select,textarea{
+  font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--bord);border-radius:8px;
+  background:var(--carte);color:var(--texte);width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+label.champ{display:block;margin-bottom:11px}
+label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:4px}
+.ligne{display:grid;gap:11px}
+@media(min-width:560px){.ligne.c2{grid-template-columns:1fr 1fr}.ligne.c3{grid-template-columns:1fr 1fr 1fr}}
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:2px;
+  max-height:190px;overflow:auto;border:1px solid var(--bord);border-radius:8px;padding:8px}
+.cases label{display:flex;gap:7px;align-items:center;font-size:13.5px}
+.cases input{width:auto}
+.aide{font-size:12.5px;color:var(--doux);margin:4px 0 0}
+
+/* ---------- Modale ---------- */
+.voile{position:fixed;inset:0;background:rgba(10,16,24,.5);display:flex;align-items:flex-start;
+  justify-content:center;padding:24px 14px;overflow:auto;z-index:100}
+.modale{background:var(--carte);border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.3);
+  width:100%;max-width:640px;border:1px solid var(--bord)}
+.modale header{position:static;background:none;border:0;padding:16px 18px 0}
+.modale .corps{padding:14px 18px}
+.modale .pied{padding:14px 18px;border-top:1px solid var(--bord);display:flex;gap:8px;justify-content:flex-end}
+
+/* ---------- Divers ---------- */
+.puce{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.puce.vert{background:var(--vert)} .puce.orange{background:var(--orange)}
+.puce.rouge{background:var(--rouge)} .puce.gris{background:var(--gris)} .puce.suspendu{background:var(--violet)}
+.doux{color:var(--doux)}
+.pt{font-size:12.5px}
+.nowrap{white-space:nowrap}
+ul.liste{list-style:none;margin:0;padding:0}
+ul.liste li{padding:8px 0;border-bottom:1px solid var(--bord);display:flex;gap:10px;align-items:flex-start}
+ul.liste li:last-child{border-bottom:0}
+.tache-faite{text-decoration:line-through;color:var(--doux)}
+.jour{border:1px solid var(--bord);border-radius:var(--r);overflow:hidden;background:var(--carte)}
+.jour>.tete{padding:7px 11px;background:var(--gris-f);font-size:12.5px;font-weight:600;
+  display:flex;justify-content:space-between;align-items:baseline}
+.jour>.tete.auj{background:var(--accent-doux);color:var(--accent)}
+.jour .creneau{padding:8px 11px;border-top:1px solid var(--bord);display:flex;gap:10px;align-items:baseline}
+.jour .creneau .h{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;font-size:13px}
+.jour .rien{padding:9px 11px;color:var(--doux);font-size:12.5px;font-style:italic}
+.semaine{display:grid;gap:9px}
+@media(min-width:800px){.semaine{grid-template-columns:repeat(7,1fr)}}
+.legende{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--doux);margin-top:10px}
+footer{max-width:1280px;margin:0 auto;padding:6px 18px 34px;font-size:12.5px;color:var(--doux)}
+
+@media print{
+  header,nav,.barre-outils,footer,.actions,button{display:none !important}
+  body{background:#fff}
+  main{max-width:none;padding:0}
+  .carte{break-inside:avoid;box-shadow:none;border-color:#bbb;margin-bottom:10px}
+  .et{border:1px solid #999}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bandeau">
+    <div class="logo">Gestion de mes <span>dossiers</span></div>
+    <div class="info-jour" id="info-jour"></div>
+  </div>
+  <nav id="nav"></nav>
+</header>
+
+<main id="vue"></main>
+<footer>
+  Données enregistrées uniquement sur cet ordinateur (stockage local du navigateur) — pensez à faire
+  une sauvegarde régulière depuis l'onglet <b>Données</b>.
+</footer>
+
+<div id="zone-modale"></div>
+<input type="file" id="fichier-import" accept="application/json,.json" hidden>
+
+<script>
+"use strict";
+
+/* =========================================================================
+   1. OUTILS GÉNÉRAUX
+   ========================================================================= */
+
+const JOURS = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+const MOIS  = ["janvier","février","mars","avril","mai","juin","juillet","août",
+               "septembre","octobre","novembre","décembre"];
+
+const uid = () => Math.random().toString(36).slice(2, 10);
+
+function ech(v){
+  return String(v == null ? "" : v)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+/* --- Dates : on manipule des chaînes ISO "AAAA-MM-JJ" en heure locale --- */
+function dISO(d){
+  const p = n => String(n).padStart(2,"0");
+  return d.getFullYear() + "-" + p(d.getMonth()+1) + "-" + p(d.getDate());
+}
+function parseISO(s){
+  const [a,m,j] = String(s).split("-").map(Number);
+  return new Date(a, m-1, j);
+}
+const aujourdHui = () => dISO(new Date());
+
+function fmtFR(s){
+  if(!s) return "—";
+  const [a,m,j] = String(s).split("-");
+  return j + "/" + m + "/" + a;
+}
+function fmtLong(d){
+  return JOURS[(d.getDay()+6)%7] + " " + d.getDate() + " " + MOIS[d.getMonth()] + " " + d.getFullYear();
+}
+function ajJours(d, n){ const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+function joursEntre(a, b){
+  return Math.round((parseISO(b) - parseISO(a)) / 86400000);
+}
+function lundiDe(d){ return ajJours(d, -(((d.getDay()+6)%7))); }
+function numJour(d){ return ((d.getDay()+6)%7) + 1; }   // 1 = lundi … 7 = dimanche
+
+/** n-ième « jour » (1=lundi) du mois ; null si ce mois ne l'a pas. */
+function niemeJourDuMois(annee, mois, jour, n){
+  const premier = new Date(annee, mois, 1);
+  const decal = ((jour - 1) - ((premier.getDay()+6)%7) + 7) % 7;
+  const d = new Date(annee, mois, 1 + decal + (n-1)*7);
+  return d.getMonth() === mois ? d : null;
+}
+function pluriel(n, mot, plur){ return n + " " + (Math.abs(n) > 1 ? (plur || mot+"s") : mot); }
+
+/* =========================================================================
+   2. DONNÉES
+   ========================================================================= */
+
+const CLE = "fa-dossiers-v1";
+let DB = null;
+let onglet = "tableau";
+let etat = { recherche:"", tri:"date", tachesFaites:false, semaineOffset:0, vuePlanning:"semaine" };
+
+function baseVide(){
+  return {
+    version: 1,
+    parametres: { seuilAlerteJours: 30, debutCycle: "2026-01-05" },
+    enfants: [], droits: [], taches: []
+  };
+}
+
+function charger(){
+  try{
+    const brut = localStorage.getItem(CLE);
+    if(brut){
+      const d = JSON.parse(brut);
+      DB = Object.assign(baseVide(), d);
+      DB.parametres = Object.assign(baseVide().parametres, d.parametres || {});
+      return;
+    }
+  }catch(e){ console.warn("Lecture impossible :", e); }
+  DB = donneesInitiales();
+  sauver();
+}
+function sauver(){
+  try{ localStorage.setItem(CLE, JSON.stringify(DB)); }
+  catch(e){ alert("Impossible d'enregistrer les données : " + e.message); }
+}
+function maj(){ sauver(); rendre(); }
+
+const enfantParId = id => DB.enfants.find(e => e.id === id);
+const nomComplet  = e => e ? ((e.prenom || "") + " " + (e.nom || "")).trim() : "";
+function nomsEnfants(ids){
+  return (ids || []).map(i => nomComplet(enfantParId(i))).filter(Boolean).join(", ");
+}
+
+/* =========================================================================
+   3. STATUTS ET ALERTES
+   ========================================================================= */
+
+/** Statut d'une échéance : rouge = dépassée, orange = proche, vert = ok. */
+function statutEcheance(dateFin){
+  if(!dateFin) return { code:"gris", label:"Date à encoder", jours:null };
+  const j = joursEntre(aujourdHui(), dateFin);
+  if(j < 0)  return { code:"rouge",  label:"Dépassée depuis " + pluriel(-j,"jour"), jours:j };
+  if(j === 0) return { code:"orange", label:"Échéance aujourd'hui", jours:0 };
+  if(j <= DB.parametres.seuilAlerteJours) return { code:"orange", label:"Dans " + pluriel(j,"jour"), jours:j };
+  return { code:"vert", label:"Dans " + pluriel(j,"jour"), jours:j };
+}
+function statutDroit(dr){
+  if(dr.suspendu){
+    return { code:"suspendu",
+             label:"Suspendu" + (dr.suspenduDepuis ? " depuis le " + fmtFR(dr.suspenduDepuis) : ""),
+             jours:null };
+  }
+  return statutEcheance(dr.dateFin);
+}
+const ORDRE_STATUT = { rouge:0, orange:1, suspendu:2, gris:3, vert:4 };
+
+function alertes(){
+  const rapports = DB.enfants
+    .map(e => ({ enfant:e, st:statutEcheance(e.notifFin) }))
+    .filter(o => o.st.code === "rouge" || o.st.code === "orange" || o.st.code === "gris")
+    .sort((a,b) => ORDRE_STATUT[a.st.code] - ORDRE_STATUT[b.st.code] ||
+                   String(a.enfant.notifFin).localeCompare(String(b.enfant.notifFin)));
+  const droits = DB.droits
+    .map(d => ({ droit:d, st:statutDroit(d) }))
+    .filter(o => o.st.code !== "vert")
+    .sort((a,b) => ORDRE_STATUT[a.st.code] - ORDRE_STATUT[b.st.code] ||
+                   String(a.droit.dateFin).localeCompare(String(b.droit.dateFin)));
+  return { rapports, droits };
+}
+function tachesEnCours(){
+  const auj = aujourdHui();
+  return DB.taches.filter(t => !t.fait).sort((a,b) => {
+    const ea = a.echeance || "9999", eb = b.echeance || "9999";
+    return ea.localeCompare(eb) || String(a.texte).localeCompare(String(b.texte));
+  }).map(t => Object.assign({}, t, {
+    enRetard: !!t.echeance && t.echeance < auj,
+    pourAuj:  t.echeance === auj
+  }));
+}
+
+/* =========================================================================
+   4. PLANNING DES VISITES
+   ========================================================================= */
+
+/** Numéro (1..4) de la semaine dans le cycle, pour le lundi donné. */
+function semaineDuCycle(lundiISO){
+  const debut = lundiDe(parseISO(DB.parametres.debutCycle || "2026-01-05"));
+  const ecart = Math.round((parseISO(lundiISO) - debut) / (7*86400000));
+  return ((ecart % 4) + 4) % 4 + 1;
+}
+
+function libelleCreneau(c){
+  if(c.type === "hebdo")    return "Chaque semaine, " + (c.jour ? JOURS[c.jour-1] : "jour à préciser");
+  if(c.type === "cycle4")   return "Semaine " + c.semaine + (c.jour ? ", " + JOURS[c.jour-1] : ", jour à préciser");
+  if(c.type === "mensuel")  return (c.jour ? JOURS[c.jour-1] : "Jour à préciser") + " " + (c.occurrence||1) + " du mois";
+  if(c.type === "vacances") return "Pendant les congés / vacances";
+  if(c.type === "ponctuel") return "Le " + fmtFR(c.date);
+  return "—";
+}
+const heuresCreneau = c => (c.debut || "?") + " – " + (c.fin || "?");
+
+/** Toutes les occurrences de visite d'une semaine (lundi → dimanche). */
+function occurrencesSemaine(lundiISO){
+  const lundi = parseISO(lundiISO);
+  const dimanche = ajJours(lundi, 6);
+  const sem = semaineDuCycle(lundiISO);
+  const res = [], aPreciser = [], vacances = [];
+
+  DB.droits.forEach(dr => (dr.creneaux || []).forEach(c => {
+    const base = { droit:dr, creneau:c };
+
+    if(c.type === "vacances"){ vacances.push(base); return; }
+
+    if(c.type === "ponctuel"){
+      if(c.date){
+        const d = parseISO(c.date);
+        if(d >= lundi && d <= dimanche) res.push(Object.assign({ date:c.date }, base));
+      }
+      return;
+    }
+    if(c.type === "cycle4" && c.semaine !== sem) return;
+
+    if(c.type === "mensuel"){
+      if(!c.jour){ aPreciser.push(base); return; }
+      const vus = new Set();
+      [lundi, dimanche].forEach(ref => {
+        const cle = ref.getFullYear() + "-" + ref.getMonth();
+        if(vus.has(cle)) return;
+        vus.add(cle);
+        const d = niemeJourDuMois(ref.getFullYear(), ref.getMonth(), c.jour, c.occurrence || 1);
+        if(d && d >= lundi && d <= dimanche) res.push(Object.assign({ date:dISO(d) }, base));
+      });
+      return;
+    }
+    // hebdo et cycle4
+    if(!c.jour){ aPreciser.push(base); return; }
+    res.push(Object.assign({ date: dISO(ajJours(lundi, c.jour - 1)) }, base));
+  }));
+
+  res.sort((a,b) => a.date.localeCompare(b.date) || String(a.creneau.debut).localeCompare(String(b.creneau.debut)));
+  return { occurrences:res, aPreciser, vacances, semaineCycle:sem };
+}
+
+/* =========================================================================
+   5. RENDU — squelette
+   ========================================================================= */
+
+const ONGLETS = [
+  { id:"tableau",  titre:"Tableau de bord" },
+  { id:"dossiers", titre:"Dossiers / rapports" },
+  { id:"droits",   titre:"Droits de visite" },
+  { id:"planning", titre:"Planning" },
+  { id:"taches",   titre:"À faire" },
+  { id:"donnees",  titre:"Données" }
+];
+
+function rendre(){
+  const al = alertes();
+  const nbUrgent = al.rapports.filter(o => o.st.code === "rouge").length +
+                   al.droits.filter(o => o.st.code === "rouge").length;
+  const nbTaches = tachesEnCours().filter(t => t.enRetard || t.pourAuj).length;
+
+  const maintenant = new Date();
+  document.getElementById("info-jour").innerHTML =
+    "<b>" + ech(fmtLong(maintenant)) + "</b><br>Semaine <b>" +
+    semaineDuCycle(dISO(lundiDe(maintenant))) + "</b> du cycle";
+
+  document.getElementById("nav").innerHTML = ONGLETS.map(o => {
+    let p = "";
+    if(o.id === "tableau" && nbUrgent) p = '<span class="pastille">' + nbUrgent + "</span>";
+    if(o.id === "taches" && nbTaches)  p = '<span class="pastille">' + nbTaches + "</span>";
+    return '<button data-onglet="' + o.id + '" class="' + (onglet === o.id ? "actif" : "") + '">' +
+           ech(o.titre) + p + "</button>";
+  }).join("");
+
+  const vues = { tableau:vueTableau, dossiers:vueDossiers, droits:vueDroits,
+                 planning:vuePlanning, taches:vueTaches, donnees:vueDonnees };
+  document.getElementById("vue").innerHTML = (vues[onglet] || vueTableau)();
+  window.scrollTo({ top:0 });
+}
+
+/* =========================================================================
+   6. VUE — Tableau de bord
+   ========================================================================= */
+
+function vueTableau(){
+  const al = alertes();
+  const taches = tachesEnCours();
+  const rouges = al.rapports.filter(o => o.st.code === "rouge").length +
+                 al.droits.filter(o => o.st.code === "rouge").length;
+  const oranges = al.rapports.filter(o => o.st.code === "orange").length +
+                  al.droits.filter(o => o.st.code === "orange").length;
+
+  const lundiISO = dISO(lundiDe(new Date()));
+  const sem = occurrencesSemaine(lundiISO);
+
+  const kpis = `
+    <div class="kpis">
+      <div class="kpi accent"><div class="n">${DB.enfants.length}</div><div class="l">Enfants suivis</div></div>
+      <div class="kpi rouge"><div class="n">${rouges}</div><div class="l">Échéance dépassée</div></div>
+      <div class="kpi orange"><div class="n">${oranges}</div><div class="l">À traiter sous ${DB.parametres.seuilAlerteJours} j</div></div>
+      <div class="kpi ${taches.filter(t=>t.enRetard||t.pourAuj).length?"orange":"vert"}">
+        <div class="n">${taches.length}</div><div class="l">Tâches à faire</div></div>
+    </div>`;
+
+  const ligneAlerteRapport = o => `
+    <li>
+      <span class="puce ${o.st.code}"></span>
+      <div style="flex:1">
+        <b>${ech(nomComplet(o.enfant))}</b>
+        <span class="doux pt">${o.enfant.service ? " · " + ech(o.enfant.service) : ""}</span><br>
+        <span class="pt doux">Notification de prise en charge : ${ech(fmtFR(o.enfant.notifFin))} — ${ech(o.st.label)}
+        ${o.enfant.relances && o.enfant.relances.length
+            ? " · dernière relance le " + ech(fmtFR(o.enfant.relances[o.enfant.relances.length-1])) : ""}</span>
+      </div>
+      <div class="actions">
+        <button class="b mini" data-action="relance" data-id="${o.enfant.id}">Relance</button>
+        <button class="b mini" data-action="tache-rapport" data-id="${o.enfant.id}">+ tâche</button>
+      </div>
+    </li>`;
+
+  const ligneAlerteDroit = o => `
+    <li>
+      <span class="puce ${o.st.code}"></span>
+      <div style="flex:1">
+        <b>${ech(o.droit.libelle)}</b>
+        <span class="doux pt">${o.droit.rythme ? " · " + ech(o.droit.rythme) : ""}</span><br>
+        <span class="pt doux">${(o.droit.suspendu || !o.droit.dateFin) ? ech(o.st.label)
+            : "Fin du droit : " + ech(fmtFR(o.droit.dateFin)) + " — " + ech(o.st.label)}</span>
+      </div>
+      <div class="actions">
+        <button class="b mini" data-action="tache-droit" data-id="${o.droit.id}">+ tâche</button>
+      </div>
+    </li>`;
+
+  const blocRapports = `
+    <div class="carte">
+      <h2>Rapports — notifications de prise en charge
+        <span class="et ${al.rapports.length ? "orange" : "vert"}">${al.rapports.length} à surveiller</span></h2>
+      ${al.rapports.length
+        ? '<ul class="liste">' + al.rapports.map(ligneAlerteRapport).join("") + "</ul>"
+        : '<p class="doux">Aucune échéance proche. Tout est en ordre.</p>'}
+    </div>`;
+
+  const blocDroits = `
+    <div class="carte">
+      <h2>Droits de visite à renouveler
+        <span class="et ${al.droits.length ? "orange" : "vert"}">${al.droits.length} à surveiller</span></h2>
+      ${al.droits.length
+        ? '<ul class="liste">' + al.droits.map(ligneAlerteDroit).join("") + "</ul>"
+        : '<p class="doux">Tous les droits de visite sont en ordre.</p>'}
+    </div>`;
+
+  const tachesJour = taches.filter(t => t.enRetard || t.pourAuj || !t.echeance).slice(0, 12);
+  const blocTaches = `
+    <div class="carte">
+      <h2>To do quotidienne
+        <button class="b mini" data-action="tache-nouvelle">+ Ajouter</button></h2>
+      ${tachesJour.length ? '<ul class="liste">' + tachesJour.map(ligneTache).join("") + "</ul>"
+                          : '<p class="doux">Rien de prévu pour aujourd\'hui.</p>'}
+    </div>`;
+
+  const blocSemaine = `
+    <div class="carte">
+      <h2>Visites de la semaine <span class="et info">Semaine ${sem.semaineCycle} du cycle</span></h2>
+      ${sem.occurrences.length
+        ? '<ul class="liste">' + sem.occurrences.map(o => `
+            <li>
+              <span class="nowrap" style="font-weight:600;min-width:130px">
+                ${ech(JOURS[numJour(parseISO(o.date))-1])} ${ech(fmtFR(o.date).slice(0,5))}</span>
+              <span class="nowrap" style="min-width:110px">${ech(heuresCreneau(o.creneau))}</span>
+              <span style="flex:1">${ech(o.droit.libelle)}
+                ${o.creneau.lieu ? '<span class="doux pt"> · ' + ech(o.creneau.lieu) + "</span>" : ""}</span>
+            </li>`).join("") + "</ul>"
+        : '<p class="doux">Aucune visite planifiée cette semaine.</p>'}
+      ${sem.aPreciser.length ? '<p class="aide">⚠︎ ' + sem.aPreciser.length +
+        " créneau(x) sans jour de semaine encodé — à compléter dans l'onglet Droits de visite.</p>" : ""}
+    </div>`;
+
+  return kpis + blocRapports + blocDroits +
+         '<div class="grille g2">' + blocSemaine + blocTaches + "</div>";
+}
+
+/* =========================================================================
+   7. VUE — Dossiers / rapports
+   ========================================================================= */
+
+function vueDossiers(){
+  const q = etat.recherche.trim().toLowerCase();
+  let liste = DB.enfants.slice();
+  if(q) liste = liste.filter(e =>
+    (nomComplet(e) + " " + (e.service||"") + " " + (e.notes||"")).toLowerCase().includes(q));
+
+  liste.sort((a,b) => {
+    if(etat.tri === "nom") return nomComplet(a).localeCompare(nomComplet(b), "fr");
+    if(etat.tri === "statut"){
+      const sa = statutEcheance(a.notifFin), sb = statutEcheance(b.notifFin);
+      return ORDRE_STATUT[sa.code] - ORDRE_STATUT[sb.code] ||
+             String(a.notifFin||"9999").localeCompare(String(b.notifFin||"9999"));
+    }
+    return String(a.notifFin||"9999").localeCompare(String(b.notifFin||"9999"));
+  });
+
+  const droitsDe = id => DB.droits.filter(d => (d.enfantIds||[]).includes(id));
+
+  const lignes = liste.map(e => {
+    const st = statutEcheance(e.notifFin);
+    const ds = droitsDe(e.id);
+    return `<tr class="l-${st.code}">
+      <td><b>${ech(nomComplet(e))}</b>${e.naissance ? '<br><span class="pt doux">né(e) le ' + ech(fmtFR(e.naissance)) + "</span>" : ""}</td>
+      <td>${e.service ? '<span class="et info">' + ech(e.service) + "</span>" : '<span class="doux">—</span>'}</td>
+      <td class="num">${ech(fmtFR(e.notifFin))}</td>
+      <td><span class="et ${st.code}">${ech(st.label)}</span></td>
+      <td class="pt">${(e.relances||[]).length
+            ? (e.relances||[]).map(r => ech(fmtFR(r))).join("<br>")
+            : '<span class="doux">—</span>'}</td>
+      <td class="pt">${ds.length
+            ? ds.map(d => { const s = statutDroit(d);
+                return '<span class="puce ' + s.code + '"></span>' + ech(d.rythme || d.libelle); }).join("<br>")
+            : '<span class="doux">—</span>'}</td>
+      <td>
+        <div class="actions">
+          <button class="b mini" data-action="relance" data-id="${e.id}">Relance</button>
+          <button class="b mini" data-action="enfant-modifier" data-id="${e.id}">Modifier</button>
+          <button class="b mini danger" data-action="enfant-supprimer" data-id="${e.id}">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+
+  return `
+  <div class="carte">
+    <div class="barre-outils">
+      <button class="b primaire" data-action="enfant-nouveau">+ Nouvel enfant</button>
+      <input type="search" id="recherche" placeholder="Rechercher un nom…" style="max-width:230px"
+             value="${ech(etat.recherche)}">
+      <label class="nowrap pt doux">Trier par
+        <select id="tri" style="width:auto;margin-left:5px">
+          <option value="date"${etat.tri==="date"?" selected":""}>date d'échéance</option>
+          <option value="statut"${etat.tri==="statut"?" selected":""}>urgence</option>
+          <option value="nom"${etat.tri==="nom"?" selected":""}>nom</option>
+        </select>
+      </label>
+      <span class="pousse doux pt">${pluriel(liste.length,"enfant")} affiché(s) sur ${DB.enfants.length}</span>
+      <button class="b" onclick="window.print()">Imprimer</button>
+    </div>
+    <div class="tableau-enveloppe">
+      <table>
+        <thead><tr>
+          <th>Enfant</th><th>Service</th><th class="num">Fin notif. prise en charge</th>
+          <th>Statut</th><th>Relances SAJ / SPJ</th><th>Droit de visite</th><th></th>
+        </tr></thead>
+        <tbody>${lignes || '<tr><td colspan="7" class="vide">Aucun dossier à afficher.</td></tr>'}</tbody>
+      </table>
+    </div>
+    <div class="legende">
+      <span><span class="puce rouge"></span>échéance dépassée</span>
+      <span><span class="puce orange"></span>moins de ${DB.parametres.seuilAlerteJours} jours</span>
+      <span><span class="puce vert"></span>en ordre</span>
+      <span><span class="puce gris"></span>date manquante</span>
+    </div>
+  </div>`;
+}
+
+/* =========================================================================
+   8. VUE — Droits de visite
+   ========================================================================= */
+
+function vueDroits(){
+  const liste = DB.droits.slice().sort((a,b) => {
+    const sa = statutDroit(a), sb = statutDroit(b);
+    return ORDRE_STATUT[sa.code] - ORDRE_STATUT[sb.code] ||
+           String(a.dateFin||"9999").localeCompare(String(b.dateFin||"9999"));
+  });
+
+  const lignes = liste.map(d => {
+    const st = statutDroit(d);
+    const cr = (d.creneaux||[]).map(c =>
+      '<div>' + ech(libelleCreneau(c)) +
+      (c.type === "vacances" ? "" : " · <b>" + ech(heuresCreneau(c)) + "</b>") +
+      (c.lieu ? ' <span class="doux">(' + ech(c.lieu) + ")</span>" : "") + "</div>").join("");
+    return `<tr class="l-${st.code}">
+      <td><b>${ech(d.libelle)}</b>
+        ${(d.enfantIds||[]).length ? '<br><span class="pt doux">' + ech(nomsEnfants(d.enfantIds)) + "</span>" : ""}</td>
+      <td>${ech(d.rythme || "—")}</td>
+      <td class="num">${d.suspendu ? '<span class="doux">—</span>' : ech(fmtFR(d.dateFin))}</td>
+      <td><span class="et ${st.code}">${ech(st.label)}</span></td>
+      <td class="pt">${cr || '<span class="doux">Aucun créneau encodé</span>'}</td>
+      <td>
+        <div class="actions">
+          <button class="b mini" data-action="droit-modifier" data-id="${d.id}">Modifier</button>
+          <button class="b mini danger" data-action="droit-supprimer" data-id="${d.id}">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+
+  return `
+  <div class="carte">
+    <div class="barre-outils">
+      <button class="b primaire" data-action="droit-nouveau">+ Nouveau droit de visite</button>
+      <span class="pousse doux pt">${pluriel(DB.droits.length,"droit")} encodé(s)</span>
+      <button class="b" onclick="window.print()">Imprimer</button>
+    </div>
+    <div class="tableau-enveloppe">
+      <table>
+        <thead><tr>
+          <th>Concerne</th><th>Rythme</th><th class="num">Date de fin</th>
+          <th>Statut</th><th>Créneaux</th><th></th>
+        </tr></thead>
+        <tbody>${lignes || '<tr><td colspan="6" class="vide">Aucun droit de visite encodé.</td></tr>'}</tbody>
+      </table>
+    </div>
+    <div class="legende">
+      <span><span class="puce rouge"></span>plus de droit valable, à remettre</span>
+      <span><span class="puce orange"></span>à remettre bientôt</span>
+      <span><span class="puce vert"></span>en ordre</span>
+      <span><span class="puce suspendu"></span>suspendu</span>
+    </div>
+  </div>`;
+}
+
+/* =========================================================================
+   9. VUE — Planning
+   ========================================================================= */
+
+function vuePlanning(){
+  return etat.vuePlanning === "cycle" ? planningCycle() : planningSemaine();
+}
+
+function planningSemaine(){
+  const lundi = ajJours(lundiDe(new Date()), etat.semaineOffset * 7);
+  const lundiISO = dISO(lundi);
+  const sem = occurrencesSemaine(lundiISO);
+  const auj = aujourdHui();
+
+  const cases = JOURS.map((nom, i) => {
+    const d = ajJours(lundi, i);
+    const dISOj = dISO(d);
+    const items = sem.occurrences.filter(o => o.date === dISOj);
+    return `<div class="jour">
+      <div class="tete ${dISOj === auj ? "auj" : ""}">
+        <span>${ech(nom)}</span><span>${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}</span>
+      </div>
+      ${items.length ? items.map(o => `
+        <div class="creneau">
+          <span class="h">${ech(o.creneau.debut || "?")}</span>
+          <span>${ech(o.droit.libelle)}<br>
+            <span class="pt doux">${ech(heuresCreneau(o.creneau))}${o.creneau.lieu ? " · " + ech(o.creneau.lieu) : ""}</span>
+          </span>
+        </div>`).join("") : '<div class="rien">—</div>'}
+    </div>`;
+  }).join("");
+
+  const titre = etat.semaineOffset === 0 ? "Cette semaine"
+    : (etat.semaineOffset === 1 ? "Semaine prochaine"
+    : (etat.semaineOffset === -1 ? "Semaine dernière"
+    : "Semaine du " + fmtFR(lundiISO)));
+
+  const extra = [];
+  if(sem.vacances.length) extra.push(`
+    <div class="carte">
+      <h3>Congés / vacances scolaires</h3>
+      <ul class="liste">${sem.vacances.map(o => `<li><span style="flex:1"><b>${ech(o.droit.libelle)}</b>
+        <span class="doux pt"> · ${ech(o.droit.rythme || "")}${o.creneau.lieu ? " · " + ech(o.creneau.lieu) : ""}</span></span></li>`).join("")}</ul>
+    </div>`);
+  if(sem.aPreciser.length) extra.push(`
+    <div class="carte">
+      <h3>Créneaux sans jour encodé</h3>
+      <ul class="liste">${sem.aPreciser.map(o => `<li><span style="flex:1"><b>${ech(o.droit.libelle)}</b>
+        <span class="doux pt"> · ${ech(libelleCreneau(o.creneau))} · ${ech(heuresCreneau(o.creneau))}</span></span>
+        <button class="b mini" data-action="droit-modifier" data-id="${o.droit.id}">Compléter</button></li>`).join("")}</ul>
+    </div>`);
+
+  return `
+  <div class="carte">
+    <div class="barre-outils">
+      <button class="b" data-action="sem" data-delta="-1">←</button>
+      <button class="b" data-action="sem" data-delta="0">Aujourd'hui</button>
+      <button class="b" data-action="sem" data-delta="1">→</button>
+      <b style="margin-left:6px">${ech(titre)}</b>
+      <span class="et info">du ${ech(fmtFR(lundiISO))} au ${ech(fmtFR(dISO(ajJours(lundi,6))))}</span>
+      <span class="et info">Semaine ${sem.semaineCycle} du cycle</span>
+      <span class="pousse"></span>
+      <button class="b" data-action="vue-planning" data-v="cycle">Voir le cycle de 4 semaines</button>
+      <button class="b" onclick="window.print()">Imprimer</button>
+    </div>
+    <div class="semaine">${cases}</div>
+  </div>` + extra.join("");
+}
+
+function planningCycle(){
+  const blocs = [1,2,3,4].map(n => {
+    const items = [];
+    DB.droits.forEach(d => (d.creneaux||[]).forEach(c => {
+      if(c.type === "cycle4" && c.semaine === n) items.push({ d, c });
+      if(c.type === "hebdo") items.push({ d, c });
+    }));
+    items.sort((a,b) => String(a.c.debut).localeCompare(String(b.c.debut)));
+    return `<tr>
+      <td><b>Semaine ${n}</b></td>
+      <td>${items.length ? items.map(({d,c}) =>
+        (c.jour ? ech(JOURS[c.jour-1]) + " " : '<span class="doux">(jour ?)</span> ') +
+        "<b>" + ech(heuresCreneau(c)) + "</b> — " + ech(d.libelle)).join("<br>")
+        : '<span class="doux">—</span>'}</td>
+    </tr>`;
+  }).join("");
+
+  const mensuels = [];
+  DB.droits.forEach(d => (d.creneaux||[]).forEach(c => {
+    if(c.type === "mensuel") mensuels.push({ d, c });
+  }));
+  mensuels.sort((a,b) => (a.c.occurrence||1) - (b.c.occurrence||1) ||
+                          String(a.c.debut).localeCompare(String(b.c.debut)));
+
+  const vac = [];
+  DB.droits.forEach(d => (d.creneaux||[]).forEach(c => { if(c.type === "vacances") vac.push({ d, c }); }));
+
+  return `
+  <div class="carte">
+    <div class="barre-outils">
+      <button class="b" data-action="vue-planning" data-v="semaine">← Vue semaine</button>
+      <span class="pousse doux pt">Cycle démarré le ${ech(fmtFR(DB.parametres.debutCycle))} (modifiable dans Données)</span>
+      <button class="b" onclick="window.print()">Imprimer</button>
+    </div>
+    <h2>Cycle de 4 semaines</h2>
+    <div class="tableau-enveloppe">
+      <table><thead><tr><th style="width:130px">Semaine</th><th>Visites</th></tr></thead>
+      <tbody>${blocs}</tbody></table>
+    </div>
+    <h2 style="margin-top:20px">Rendez-vous mensuels</h2>
+    <div class="tableau-enveloppe">
+      <table><thead><tr><th style="width:200px">Quand</th><th>Visites</th></tr></thead><tbody>
+        ${mensuels.length ? mensuels.map(({d,c}) => `<tr>
+          <td><b>${ech(libelleCreneau(c))}</b></td>
+          <td>${ech(heuresCreneau(c))} — ${ech(d.libelle)}</td></tr>`).join("")
+          : '<tr><td colspan="2" class="vide">Aucun.</td></tr>'}
+      </tbody></table>
+    </div>
+    <h2 style="margin-top:20px">Congés / vacances</h2>
+    ${vac.length ? '<ul class="liste">' + vac.map(({d,c}) =>
+        "<li><span style=\"flex:1\"><b>" + ech(d.libelle) + "</b><span class=\"doux pt\"> · " +
+        ech(d.rythme || "") + (c.lieu ? " · " + ech(c.lieu) : "") + "</span></span></li>").join("") + "</ul>"
+      : '<p class="doux">Aucun droit de visite prévu pendant les congés.</p>'}
+  </div>`;
+}
+
+/* =========================================================================
+   10. VUE — Tâches
+   ========================================================================= */
+
+function ligneTache(t){
+  const cls = t.enRetard ? "rouge" : (t.pourAuj ? "orange" : "gris");
+  return `<li>
+    <input type="checkbox" data-action="tache-bascule" data-id="${t.id}" ${t.fait ? "checked" : ""}
+           style="width:auto;margin-top:3px" aria-label="Terminer">
+    <div style="flex:1">
+      <span class="${t.fait ? "tache-faite" : ""}">${ech(t.texte)}</span>
+      ${t.enfantId ? '<span class="doux pt"> · ' + ech(nomComplet(enfantParId(t.enfantId))) + "</span>" : ""}
+      ${t.echeance && !t.fait
+        ? '<br><span class="et ' + cls + '">' +
+          (t.enRetard ? "En retard — " : (t.pourAuj ? "Aujourd'hui — " : "")) + ech(fmtFR(t.echeance)) + "</span>"
+        : ""}
+    </div>
+    <div class="actions">
+      <button class="b mini" data-action="tache-modifier" data-id="${t.id}">Modifier</button>
+      <button class="b mini danger" data-action="tache-supprimer" data-id="${t.id}">✕</button>
+    </div>
+  </li>`;
+}
+
+function vueTaches(){
+  const enCours = tachesEnCours();
+  const faites = DB.taches.filter(t => t.fait)
+    .sort((a,b) => String(b.faitLe||"").localeCompare(String(a.faitLe||"")));
+
+  const groupes = [
+    ["En retard",   enCours.filter(t => t.enRetard)],
+    ["Aujourd'hui", enCours.filter(t => t.pourAuj)],
+    ["À venir",     enCours.filter(t => t.echeance && t.echeance > aujourdHui())],
+    ["Sans date",   enCours.filter(t => !t.echeance)]
+  ];
+
+  return `
+  <div class="carte">
+    <div class="barre-outils">
+      <button class="b primaire" data-action="tache-nouvelle">+ Nouvelle tâche</button>
+      <span class="pousse doux pt">${pluriel(enCours.length,"tâche")} en cours · ${faites.length} terminée(s)</span>
+      <button class="b" data-action="taches-basculer-faites">${etat.tachesFaites ? "Masquer" : "Afficher"} les tâches faites</button>
+      <button class="b" onclick="window.print()">Imprimer</button>
+    </div>
+    ${groupes.map(([titre, l]) => l.length
+      ? '<h3 style="margin-top:14px">' + titre + " (" + l.length + ')</h3><ul class="liste">' +
+        l.map(ligneTache).join("") + "</ul>"
+      : "").join("") || '<p class="doux">Aucune tâche en cours. 🎉</p>'}
+    ${etat.tachesFaites && faites.length
+      ? '<h3 style="margin-top:18px">Terminées</h3><ul class="liste">' + faites.map(ligneTache).join("") +
+        '</ul><button class="b danger" style="margin-top:10px" data-action="taches-purger">Supprimer les tâches terminées</button>'
+      : ""}
+  </div>`;
+}
+
+/* =========================================================================
+   11. VUE — Données / paramètres
+   ========================================================================= */
+
+function vueDonnees(){
+  return `
+  <div class="grille g2">
+    <div class="carte">
+      <h2>Paramètres</h2>
+      <label class="champ">
+        <span>Alerte orange combien de jours avant l'échéance ?</span>
+        <input type="number" id="p-seuil" min="1" max="365" value="${DB.parametres.seuilAlerteJours}">
+      </label>
+      <label class="champ">
+        <span>Lundi de départ du cycle « Semaine 1 »</span>
+        <input type="date" id="p-cycle" value="${ech(DB.parametres.debutCycle)}">
+        <p class="aide">Sert à savoir si la semaine en cours est la 1, 2, 3 ou 4 du cycle des visites.
+           Actuellement : semaine <b>${semaineDuCycle(dISO(lundiDe(new Date())))}</b>.</p>
+      </label>
+      <button class="b primaire" data-action="params-enregistrer">Enregistrer</button>
+    </div>
+
+    <div class="carte">
+      <h2>Sauvegarde</h2>
+      <p class="doux pt">Les données sont conservées dans ce navigateur, sur cet ordinateur uniquement.
+         Elles ne sont envoyées nulle part. Faites une copie régulièrement.</p>
+      <div class="actions" style="margin-top:12px">
+        <button class="b primaire" data-action="export-json">⬇ Exporter (fichier de sauvegarde)</button>
+        <button class="b" data-action="import-json">⬆ Restaurer une sauvegarde</button>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <button class="b" data-action="export-csv-enfants">Exporter les dossiers (CSV / Excel)</button>
+        <button class="b" data-action="export-csv-droits">Exporter les droits (CSV / Excel)</button>
+      </div>
+      <hr style="border:0;border-top:1px solid var(--bord);margin:16px 0">
+      <div class="actions">
+        <button class="b danger" data-action="tout-effacer">Tout effacer</button>
+        <button class="b" data-action="recharger-exemple">Recharger les données de départ</button>
+      </div>
+      <p class="aide">Contenu actuel : ${pluriel(DB.enfants.length,"enfant")},
+         ${pluriel(DB.droits.length,"droit")} de visite, ${pluriel(DB.taches.length,"tâche")}.</p>
+    </div>
+  </div>
+
+  <div class="carte">
+    <h2>Mode d'emploi rapide</h2>
+    <ul class="pt" style="padding-left:20px;line-height:1.7">
+      <li><b>Tableau de bord</b> : ce qu'il faut traiter aujourd'hui — notifications de prise en charge
+          dépassées ou proches, droits de visite à remettre, visites de la semaine et to do.</li>
+      <li><b>Dossiers / rapports</b> : la liste des enfants, la date de fin de la notification de prise en
+          charge et les relances SAJ / SPJ. Le bouton <i>Relance</i> ajoute la date du jour en un clic.</li>
+      <li><b>Droits de visite</b> : rythme, date de fin, suspension et créneaux (semaine 1 à 4 du cycle,
+          n-ième jour du mois, chaque semaine, congés ou date unique).</li>
+      <li><b>Planning</b> : la semaine réelle calculée à partir des créneaux, et la vue du cycle complet.</li>
+      <li>Chaque tableau est <b>imprimable</b> (bouton Imprimer) pour être glissé dans un dossier papier.</li>
+    </ul>
+  </div>`;
+}
+
+/* =========================================================================
+   12. MODALE
+   ========================================================================= */
+
+let soumission = null;   // fonction appelée à la validation du formulaire
+let annulation = null;   // fonction appelée si l'utilisateur ferme la modale
+
+function ouvrirModale(titre, corps, onValider, largeur, onAnnuler){
+  soumission = onValider;
+  annulation = onAnnuler || null;
+  document.getElementById("zone-modale").innerHTML = `
+    <div class="voile" data-fermer="1">
+      <form class="modale" id="form-modale" ${largeur ? 'style="max-width:' + largeur + 'px"' : ""}>
+        <header><h2>${ech(titre)}</h2></header>
+        <div class="corps">${corps}</div>
+        <div class="pied">
+          <button type="button" class="b" data-fermer="1">Annuler</button>
+          <button type="submit" class="b primaire">Enregistrer</button>
+        </div>
+      </form>
+    </div>`;
+  const f = document.getElementById("form-modale");
+  f.addEventListener("submit", ev => {
+    ev.preventDefault();
+    if(soumission && soumission(f) !== false){ annulation = null; fermerModale(); }
+  });
+  const prem = f.querySelector("input,select,textarea");
+  if(prem) prem.focus();
+}
+function fermerModale(){
+  const retour = annulation;
+  soumission = null;
+  annulation = null;
+  document.getElementById("zone-modale").innerHTML = "";
+  if(retour) retour();
+}
+
+const val = (f, n) => { const e = f.elements[n]; return e ? String(e.value).trim() : ""; };
+const coche = (f, n) => { const e = f.elements[n]; return !!(e && e.checked); };
+
+function champsEnfants(selection){
+  const sel = new Set(selection || []);
+  if(!DB.enfants.length) return '<p class="doux pt">Aucun enfant encodé pour le moment.</p>';
+  return '<div class="cases">' + DB.enfants.slice()
+    .sort((a,b) => nomComplet(a).localeCompare(nomComplet(b), "fr"))
+    .map(e => '<label><input type="checkbox" name="enf" value="' + e.id + '"' +
+              (sel.has(e.id) ? " checked" : "") + "> " + ech(nomComplet(e)) + "</label>").join("") + "</div>";
+}
+function lus(f, nom){
+  return Array.from(f.querySelectorAll('input[name="' + nom + '"]:checked')).map(i => i.value);
+}
+
+/* --- Enfant --- */
+function formEnfant(e){
+  e = e || { id:null, prenom:"", nom:"", service:"", naissance:"", notifFin:"", relances:[], notes:"" };
+  const corps = `
+    <div class="ligne c2">
+      <label class="champ"><span>Prénom</span><input type="text" name="prenom" required value="${ech(e.prenom)}"></label>
+      <label class="champ"><span>Nom</span><input type="text" name="nom" value="${ech(e.nom)}"></label>
+    </div>
+    <div class="ligne c2">
+      <label class="champ"><span>Service</span>
+        <select name="service">
+          ${["","SAJ","SPJ","TJ","Autre"].map(s =>
+            '<option value="' + s + '"' + (e.service === s ? " selected" : "") + ">" + (s || "—") + "</option>").join("")}
+        </select></label>
+      <label class="champ"><span>Date de naissance</span><input type="date" name="naissance" value="${ech(e.naissance)}"></label>
+    </div>
+    <label class="champ"><span>Fin de la notification de prise en charge</span>
+      <input type="date" name="notifFin" value="${ech(e.notifFin)}">
+      <p class="aide">Rouge dès que la date est passée, orange ${DB.parametres.seuilAlerteJours} jours avant.</p>
+    </label>
+    <label class="champ"><span>Dates de relance SAJ / SPJ (une par ligne, format JJ/MM/AAAA)</span>
+      <textarea name="relances" rows="3">${ech((e.relances||[]).map(fmtFR).join("\n"))}</textarea></label>
+    <label class="champ"><span>Notes</span><textarea name="notes" rows="3">${ech(e.notes)}</textarea></label>`;
+
+  ouvrirModale(e.id ? "Modifier le dossier" : "Nouvel enfant", corps, f => {
+    const relances = val(f,"relances").split("\n").map(s => s.trim()).filter(Boolean)
+      .map(s => {
+        const m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+        if(m){
+          let a = m[3]; if(a.length === 2) a = (Number(a) > 60 ? "19" : "20") + a;
+          return a + "-" + m[2].padStart(2,"0") + "-" + m[1].padStart(2,"0");
+        }
+        return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : null;
+      }).filter(Boolean).sort();
+    const donnee = {
+      id: e.id || uid(),
+      prenom: val(f,"prenom"), nom: val(f,"nom"), service: val(f,"service"),
+      naissance: val(f,"naissance"), notifFin: val(f,"notifFin"),
+      relances, notes: val(f,"notes")
+    };
+    if(e.id) Object.assign(enfantParId(e.id), donnee);
+    else DB.enfants.push(donnee);
+    maj();
+  });
+}
+
+/* --- Droit de visite --- */
+function formDroit(d){
+  d = d || { id:null, libelle:"", enfantIds:[], rythme:"", dateFin:"",
+             suspendu:false, suspenduDepuis:"", notes:"", creneaux:[] };
+  const brouillon = JSON.parse(JSON.stringify(d));
+
+  function corps(){
+    return `
+    <div class="ligne c2">
+      <label class="champ"><span>Concerne (enfant ou fratrie)</span>
+        <input type="text" name="libelle" required value="${ech(brouillon.libelle)}" placeholder="Ex. Theismann"></label>
+      <label class="champ"><span>Rythme</span>
+        <input type="text" name="rythme" value="${ech(brouillon.rythme)}" placeholder="Ex. 2x 1h/mois"></label>
+    </div>
+    <div class="ligne c2">
+      <label class="champ"><span>Date de fin du droit</span>
+        <input type="date" name="dateFin" value="${ech(brouillon.dateFin)}"></label>
+      <label class="champ"><span>Suspendu depuis le</span>
+        <input type="date" name="suspenduDepuis" value="${ech(brouillon.suspenduDepuis)}"></label>
+    </div>
+    <label class="champ" style="display:flex;gap:8px;align-items:center">
+      <input type="checkbox" name="suspendu" style="width:auto"${brouillon.suspendu ? " checked" : ""}>
+      <span style="margin:0">Droit de visite actuellement suspendu</span></label>
+    <label class="champ"><span>Enfants concernés</span>${champsEnfants(brouillon.enfantIds)}</label>
+    <label class="champ"><span>Notes</span><textarea name="notes" rows="2">${ech(brouillon.notes)}</textarea></label>
+
+    <h3 style="margin-top:14px">Créneaux de visite</h3>
+    <div id="liste-creneaux">${brouillon.creneaux.map(ligneCreneau).join("") ||
+      '<p class="doux pt">Aucun créneau. Ajoutez-en un ci-dessous.</p>'}</div>
+    <button type="button" class="b" data-c="ajouter" style="margin-top:8px">+ Ajouter un créneau</button>`;
+  }
+
+  function ligneCreneau(c){
+    return `<div style="border:1px solid var(--bord);border-radius:8px;padding:9px;margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+        <div style="flex:1"><b>${ech(libelleCreneau(c))}</b>
+          ${c.type === "vacances" ? "" : '<br><span class="pt doux">' + ech(heuresCreneau(c)) + "</span>"}
+          ${c.lieu ? '<span class="pt doux"> · ' + ech(c.lieu) + "</span>" : ""}</div>
+        <div class="actions">
+          <button type="button" class="b mini" data-c="editer" data-cid="${c.id}">Modifier</button>
+          <button type="button" class="b mini danger" data-c="suppr" data-cid="${c.id}">✕</button>
+        </div>
+      </div></div>`;
+  }
+
+  /** Recopie la saisie en cours dans le brouillon (avant de redessiner ou d'ouvrir une sous-fenêtre). */
+  function memoriser(){
+    const f = document.getElementById("form-modale");
+    if(!f) return;
+    brouillon.libelle = val(f,"libelle"); brouillon.rythme = val(f,"rythme");
+    brouillon.dateFin = val(f,"dateFin"); brouillon.suspenduDepuis = val(f,"suspenduDepuis");
+    brouillon.suspendu = coche(f,"suspendu"); brouillon.notes = val(f,"notes");
+    brouillon.enfantIds = lus(f,"enf");
+  }
+  function rafraichir(){
+    memoriser();
+    document.getElementById("form-modale").querySelector(".corps").innerHTML = corps();
+  }
+
+  ouvrirModale(d.id ? "Modifier le droit de visite" : "Nouveau droit de visite", corps(), f => {
+    const donnee = {
+      id: d.id || uid(),
+      libelle: val(f,"libelle"), rythme: val(f,"rythme"), dateFin: val(f,"dateFin"),
+      suspendu: coche(f,"suspendu"), suspenduDepuis: val(f,"suspenduDepuis"),
+      notes: val(f,"notes"), enfantIds: lus(f,"enf"), creneaux: brouillon.creneaux
+    };
+    if(d.id) Object.assign(DB.droits.find(x => x.id === d.id), donnee);
+    else DB.droits.push(donnee);
+    maj();
+  }, 700);
+
+  document.getElementById("form-modale").addEventListener("click", ev => {
+    const b = ev.target.closest("[data-c]");
+    if(!b) return;
+    ev.preventDefault();
+    const act = b.dataset.c;
+    const cid = b.dataset.cid;
+
+    if(act === "suppr"){
+      brouillon.creneaux = brouillon.creneaux.filter(x => x.id !== cid);
+      rafraichir();
+      return;
+    }
+    memoriser();   // la sous-fenêtre remplace l'affichage : on garde la saisie en cours
+    if(act === "ajouter"){
+      formCreneau(null,
+        c => { brouillon.creneaux.push(c); formDroit(brouillon); },
+        () => formDroit(brouillon));
+    }else if(act === "editer"){
+      formCreneau(brouillon.creneaux.find(x => x.id === cid),
+        mod => {
+          const cible = brouillon.creneaux.find(x => x.id === cid);
+          if(cible) Object.assign(cible, mod);
+          formDroit(brouillon);
+        },
+        () => formDroit(brouillon));
+    }
+  });
+}
+
+/* --- Créneau : sous-fenêtre ; à la sortie on ré-ouvre le droit de visite --- */
+function formCreneau(c, retour, annuler){
+  c = c || { id:uid(), type:"cycle4", semaine:1, occurrence:1, jour:null, date:"",
+             debut:"14:00", fin:"15:00", lieu:"" };
+
+  const corps = `
+    <label class="champ"><span>Type de créneau</span>
+      <select name="type">
+        <option value="cycle4"${c.type==="cycle4"?" selected":""}>Semaine du cycle (1 à 4)</option>
+        <option value="mensuel"${c.type==="mensuel"?" selected":""}>N-ième jour du mois (ex. 1er mardi)</option>
+        <option value="hebdo"${c.type==="hebdo"?" selected":""}>Toutes les semaines</option>
+        <option value="vacances"${c.type==="vacances"?" selected":""}>Congés / vacances scolaires</option>
+        <option value="ponctuel"${c.type==="ponctuel"?" selected":""}>Date unique</option>
+      </select></label>
+    <div class="ligne c3">
+      <label class="champ"><span>Semaine du cycle</span>
+        <select name="semaine">${[1,2,3,4].map(n =>
+          '<option value="' + n + '"' + (c.semaine === n ? " selected" : "") + ">Semaine " + n + "</option>").join("")}</select></label>
+      <label class="champ"><span>Occurrence dans le mois</span>
+        <select name="occurrence">${[1,2,3,4,5].map(n =>
+          '<option value="' + n + '"' + ((c.occurrence||1) === n ? " selected" : "") + ">" +
+          (n === 1 ? "1er" : n + "e") + " du mois</option>").join("")}</select></label>
+      <label class="champ"><span>Jour</span>
+        <select name="jour"><option value="">— à préciser —</option>${JOURS.map((j,i) =>
+          '<option value="' + (i+1) + '"' + (c.jour === i+1 ? " selected" : "") + ">" + j + "</option>").join("")}</select></label>
+    </div>
+    <label class="champ"><span>Date</span><input type="date" name="date" value="${ech(c.date)}"></label>
+    <div class="ligne c3">
+      <label class="champ"><span>Heure de début</span><input type="time" name="debut" value="${ech(c.debut)}"></label>
+      <label class="champ"><span>Heure de fin</span><input type="time" name="fin" value="${ech(c.fin)}"></label>
+      <label class="champ"><span>Lieu</span><input type="text" name="lieu" value="${ech(c.lieu)}"></label>
+    </div>`;
+
+  ouvrirModale("Créneau de visite", corps, f => {
+    const t = val(f,"type");
+    const res = {
+      id: c.id, type: t,
+      semaine: Number(val(f,"semaine")) || 1,
+      occurrence: Number(val(f,"occurrence")) || 1,
+      jour: val(f,"jour") ? Number(val(f,"jour")) : null,
+      date: val(f,"date"),
+      debut: val(f,"debut"), fin: val(f,"fin"), lieu: val(f,"lieu")
+    };
+    if(t === "ponctuel" && !res.date){ alert("Indiquez la date du rendez-vous."); return false; }
+    annulation = null;      // la validation ne doit pas déclencher le retour « annulation »
+    retour(res);            // ré-ouvre la fenêtre du droit de visite
+    return false;
+  }, 560, annuler);
+
+  // adapte l'affichage des champs au type choisi
+  const f = document.getElementById("form-modale");
+  const adapter = () => {
+    const t = f.elements.type.value;
+    const aff = (nom, ok) => {
+      const el = f.elements[nom];
+      if(el && el.closest("label.champ")) el.closest("label.champ").style.display = ok ? "" : "none";
+    };
+    aff("semaine",    t === "cycle4");
+    aff("occurrence", t === "mensuel");
+    aff("jour",       t === "cycle4" || t === "mensuel" || t === "hebdo");
+    aff("date",       t === "ponctuel");
+    aff("debut",      t !== "vacances");
+    aff("fin",        t !== "vacances");
+  };
+  f.elements.type.addEventListener("change", adapter);
+  adapter();
+}
+
+/* =========================================================================
+   13. TÂCHES — formulaire
+   ========================================================================= */
+
+function formTache(t){
+  t = t || { id:null, texte:"", echeance:aujourdHui(), enfantId:"", fait:false };
+  const corps = `
+    <label class="champ"><span>Tâche</span>
+      <input type="text" name="texte" required value="${ech(t.texte)}" placeholder="Ex. Téléphoner au SPJ pour la notification"></label>
+    <div class="ligne c2">
+      <label class="champ"><span>Échéance</span><input type="date" name="echeance" value="${ech(t.echeance)}"></label>
+      <label class="champ"><span>Dossier lié</span>
+        <select name="enfantId"><option value="">—</option>${DB.enfants.slice()
+          .sort((a,b) => nomComplet(a).localeCompare(nomComplet(b),"fr"))
+          .map(e => '<option value="' + e.id + '"' + (t.enfantId === e.id ? " selected" : "") + ">" +
+                    ech(nomComplet(e)) + "</option>").join("")}</select></label>
+    </div>`;
+  ouvrirModale(t.id ? "Modifier la tâche" : "Nouvelle tâche", corps, f => {
+    const donnee = { id: t.id || uid(), texte: val(f,"texte"), echeance: val(f,"echeance"),
+                     enfantId: val(f,"enfantId"), fait: t.fait || false, faitLe: t.faitLe || "" };
+    if(t.id) Object.assign(DB.taches.find(x => x.id === t.id), donnee);
+    else DB.taches.push(donnee);
+    maj();
+  }, 560);
+}
+
+function ajouterTache(texte, enfantId){
+  DB.taches.push({ id:uid(), texte, echeance:aujourdHui(), enfantId:enfantId || "", fait:false, faitLe:"" });
+  maj();
+}
+
+/* =========================================================================
+   14. IMPORT / EXPORT
+   ========================================================================= */
+
+function telecharger(nom, contenu, type){
+  const blob = new Blob([contenu], { type: type || "application/json;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function csv(lignes){
+  const e = v => '"' + String(v == null ? "" : v).replace(/"/g,'""') + '"';
+  // \uFEFF = marque d'ordre d'octets : Excel reconnait alors l'UTF-8 (accents corrects)
+  return "\uFEFF" + lignes.map(l => l.map(e).join(";")).join("\r\n");
+}
+function exportCsvEnfants(){
+  const dt = s => s ? fmtFR(s) : "";     // cellule vide plutôt que « — » dans le tableur
+  const l = [["Prénom","Nom","Service","Naissance","Fin notification","Statut","Relances","Notes"]];
+  DB.enfants.forEach(e => l.push([e.prenom, e.nom, e.service, dt(e.naissance), dt(e.notifFin),
+    statutEcheance(e.notifFin).label, (e.relances||[]).map(fmtFR).join(" / "), e.notes]));
+  telecharger("dossiers-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8");
+}
+function exportCsvDroits(){
+  const l = [["Concerne","Enfants","Rythme","Date de fin","Statut","Créneaux","Notes"]];
+  DB.droits.forEach(d => l.push([d.libelle, nomsEnfants(d.enfantIds), d.rythme,
+    d.dateFin ? fmtFR(d.dateFin) : "",
+    statutDroit(d).label,
+    (d.creneaux||[]).map(c => libelleCreneau(c) + (c.type === "vacances" ? "" : " " + heuresCreneau(c))).join(" / "),
+    d.notes]));
+  telecharger("droits-de-visite-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8");
+}
+
+document.getElementById("fichier-import").addEventListener("change", function(){
+  const f = this.files && this.files[0];
+  if(!f) return;
+  const lect = new FileReader();
+  lect.onload = () => {
+    try{
+      const d = JSON.parse(lect.result);
+      if(!d || !Array.isArray(d.enfants)) throw new Error("Fichier non reconnu");
+      if(!confirm("Remplacer toutes les données actuelles par celles du fichier ?")) return;
+      DB = Object.assign(baseVide(), d);
+      DB.parametres = Object.assign(baseVide().parametres, d.parametres || {});
+      maj();
+      alert("Sauvegarde restaurée.");
+    }catch(e){ alert("Fichier illisible : " + e.message); }
+  };
+  lect.readAsText(f);
+  this.value = "";
+});
+
+/* =========================================================================
+   15. ÉVÉNEMENTS
+   ========================================================================= */
+
+document.getElementById("nav").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-onglet]");
+  if(!b) return;
+  onglet = b.dataset.onglet;
+  rendre();
+});
+
+document.getElementById("zone-modale").addEventListener("click", ev => {
+  if(ev.target.dataset && ev.target.dataset.fermer) fermerModale();
+});
+document.addEventListener("keydown", ev => { if(ev.key === "Escape") fermerModale(); });
+
+document.getElementById("vue").addEventListener("input", ev => {
+  if(ev.target.id === "recherche"){
+    etat.recherche = ev.target.value;
+    const pos = ev.target.selectionStart;
+    rendre();
+    const n = document.getElementById("recherche");
+    if(n){ n.focus(); n.setSelectionRange(pos, pos); }
+  }
+});
+document.getElementById("vue").addEventListener("change", ev => {
+  if(ev.target.id === "tri"){ etat.tri = ev.target.value; rendre(); }
+});
+
+document.getElementById("vue").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-action]");
+  if(!b) return;
+  const id = b.dataset.id;
+  const act = b.dataset.action;
+
+  switch(act){
+    /* --- enfants --- */
+    case "enfant-nouveau":  formEnfant(null); break;
+    case "enfant-modifier": formEnfant(enfantParId(id)); break;
+    case "enfant-supprimer": {
+      const e = enfantParId(id);
+      if(confirm("Supprimer définitivement le dossier de " + nomComplet(e) + " ?")){
+        DB.enfants = DB.enfants.filter(x => x.id !== id);
+        DB.droits.forEach(d => d.enfantIds = (d.enfantIds||[]).filter(x => x !== id));
+        DB.taches.forEach(t => { if(t.enfantId === id) t.enfantId = ""; });
+        maj();
+      }
+      break;
+    }
+    case "relance": {
+      const e = enfantParId(id);
+      const auj = aujourdHui();
+      e.relances = e.relances || [];
+      if(e.relances.includes(auj)){ alert("Une relance est déjà notée pour aujourd'hui."); break; }
+      e.relances.push(auj); e.relances.sort();
+      maj();
+      break;
+    }
+    /* --- droits --- */
+    case "droit-nouveau":  formDroit(null); break;
+    case "droit-modifier": formDroit(DB.droits.find(d => d.id === id)); break;
+    case "droit-supprimer": {
+      const d = DB.droits.find(x => x.id === id);
+      if(confirm("Supprimer le droit de visite « " + d.libelle + " » ?")){
+        DB.droits = DB.droits.filter(x => x.id !== id);
+        maj();
+      }
+      break;
+    }
+    /* --- planning --- */
+    case "sem":
+      etat.semaineOffset = b.dataset.delta === "0" ? 0 : etat.semaineOffset + Number(b.dataset.delta);
+      rendre();
+      break;
+    case "vue-planning": etat.vuePlanning = b.dataset.v; rendre(); break;
+    /* --- tâches --- */
+    case "tache-nouvelle":  formTache(null); break;
+    case "tache-modifier":  formTache(DB.taches.find(t => t.id === id)); break;
+    case "tache-supprimer":
+      DB.taches = DB.taches.filter(t => t.id !== id); maj(); break;
+    case "tache-bascule": {
+      const t = DB.taches.find(x => x.id === id);
+      t.fait = !t.fait; t.faitLe = t.fait ? aujourdHui() : "";
+      maj();
+      break;
+    }
+    case "taches-basculer-faites": etat.tachesFaites = !etat.tachesFaites; rendre(); break;
+    case "taches-purger":
+      if(confirm("Supprimer toutes les tâches terminées ?")){
+        DB.taches = DB.taches.filter(t => !t.fait); maj();
+      }
+      break;
+    case "tache-rapport": {
+      const e = enfantParId(id);
+      ajouterTache("Relancer le service pour la notification de prise en charge — " + nomComplet(e), id);
+      break;
+    }
+    case "tache-droit": {
+      const d = DB.droits.find(x => x.id === id);
+      ajouterTache("Redemander / renouveler le droit de visite — " + d.libelle,
+                   (d.enfantIds || [])[0] || "");
+      break;
+    }
+    /* --- données --- */
+    case "params-enregistrer": {
+      const s = Number(document.getElementById("p-seuil").value);
+      DB.parametres.seuilAlerteJours = (s > 0 && s < 400) ? s : 30;
+      DB.parametres.debutCycle = document.getElementById("p-cycle").value || "2026-01-05";
+      maj();
+      alert("Paramètres enregistrés.");
+      break;
+    }
+    case "export-json":
+      telecharger("sauvegarde-dossiers-" + aujourdHui() + ".json", JSON.stringify(DB, null, 2));
+      break;
+    case "import-json": document.getElementById("fichier-import").click(); break;
+    case "export-csv-enfants": exportCsvEnfants(); break;
+    case "export-csv-droits":  exportCsvDroits(); break;
+    case "tout-effacer":
+      if(confirm("Effacer TOUTES les données ? Exportez d'abord une sauvegarde si nécessaire.") &&
+         confirm("Confirmez-vous définitivement l'effacement ?")){
+        DB = baseVide(); maj();
+      }
+      break;
+    case "recharger-exemple":
+      if(confirm("Remplacer les données actuelles par les données de départ (celles du tableau Excel) ?")){
+        DB = donneesInitiales(); maj();
+      }
+      break;
+  }
+});
+
+/* =========================================================================
+   16. DONNÉES DE DÉPART (reprises du tableau Excel)
+   ========================================================================= */
+
+function donneesInitiales(){
+  const E = (id, prenom, nom, notifFin, relances) =>
+    ({ id, prenom, nom, service:"", naissance:"", notifFin, relances:relances || [], notes:"" });
+
+  const enfants = [
+    E("e1","Sofia","INFANTINO","2026-04-25",["2026-06-02"]),
+    E("e2","Guyliano","BERTOLINI","2026-04-30",["2026-06-02"]),
+    E("e3","Malone","BIHAIN","2026-06-02"),
+    E("e4","Eléana","PEIXOTO","2026-06-12"),
+    E("e5","Lucas","THEISMANN","2026-06-25"),
+    E("e6","Célia","THEISMANN","2026-06-25"),
+    E("e7","Théo","DE BRUYN","2026-08-18"),
+    E("e8","Sandy","FIERAIN","2026-10-14"),
+    E("e9","Timi","LEMET","2026-11-01"),
+    E("e10","David","LEMET","2026-11-02"),
+    E("e11","Alessandro","MAKA","2026-11-04"),
+    E("e12","Océanna","MAKA","2026-11-04"),
+    E("e13","Lionel","MAKA","2026-11-04"),
+    E("e14","Safia","CREPIN","2026-11-04"),
+    E("e15","Dyana","GASPAR","2026-11-12"),
+    E("e16","Kendjy","MARECHAL","2026-12-01"),
+    E("e17","Joackim","BRUGNEROTTO","2026-12-16"),
+    E("e18","Tellyoh","DESBESSEL","2027-01-30"),
+    E("e19","Mélina","LEFEVRE","2027-03-31"),
+    E("e20","Mathéo","TOURNEUR","2027-04-09"),
+    E("e21","Eléonore","HOUEE-WAUTIER","2027-04-27"),
+    E("e22","Théa","NEUFORGE","2027-05-06")
+  ];
+
+  // c : créneau du cycle de 4 semaines (jour non renseigné dans le tableau d'origine)
+  const c4 = (semaine, debut, fin) =>
+    ({ id:uid(), type:"cycle4", semaine, occurrence:1, jour:null, date:"", debut, fin, lieu:"" });
+  const cm = (occurrence, jour, debut, fin) =>
+    ({ id:uid(), type:"mensuel", semaine:1, occurrence, jour, date:"", debut, fin, lieu:"" });
+  const cv = () =>
+    ({ id:uid(), type:"vacances", semaine:1, occurrence:1, jour:null, date:"", debut:"", fin:"", lieu:"" });
+
+  const droits = [
+    { id:"d1", libelle:"Joackim", enfantIds:["e17"], rythme:"2x 1h/mois", dateFin:"2026-08-19",
+      suspendu:false, suspenduDepuis:"", notes:"",
+      creneaux:[c4(1,"09:30","10:30"), c4(3,"13:30","14:30")] },
+    { id:"d2", libelle:"Dyana", enfantIds:["e15"], rythme:"2x 1h/mois", dateFin:"2040-01-01",
+      suspendu:false, suspenduDepuis:"", notes:"", creneaux:[] },
+    { id:"d3", libelle:"Maka", enfantIds:["e11","e12","e13"], rythme:"4h/mois", dateFin:"2040-01-01",
+      suspendu:false, suspenduDepuis:"", notes:"", creneaux:[] },
+    { id:"d4", libelle:"Lemet", enfantIds:["e9","e10"], rythme:"1h/mois", dateFin:"",
+      suspendu:true, suspenduDepuis:"2026-05-20", notes:"",
+      creneaux:[c4(4,"14:00","15:00"), cv()] },
+    { id:"d5", libelle:"Theismann", enfantIds:["e5","e6"], rythme:"2x 1h/mois", dateFin:"2026-08-18",
+      suspendu:false, suspenduDepuis:"", notes:"",
+      creneaux:[cm(1,2,"16:00","17:00"), cm(3,2,"15:30","17:00")] },
+    { id:"d6", libelle:"Malone", enfantIds:["e3"], rythme:"1h/mois", dateFin:"2026-06-03",
+      suspendu:false, suspenduDepuis:"", notes:"", creneaux:[c4(1,"12:45","13:45")] },
+    { id:"d7", libelle:"Eléana", enfantIds:["e4"], rythme:"1h/mois", dateFin:"2026-06-24",
+      suspendu:false, suspenduDepuis:"", notes:"", creneaux:[c4(2,"14:00","15:00")] },
+    { id:"d8", libelle:"Infantino", enfantIds:["e1"], rythme:"2h/vacances", dateFin:"2026-05-08",
+      suspendu:false, suspenduDepuis:"", notes:"", creneaux:[cv()] },
+    { id:"d9", libelle:"Mélina", enfantIds:["e19"], rythme:"2x 1h/mois", dateFin:"2026-08-19",
+      suspendu:false, suspenduDepuis:"", notes:"",
+      creneaux:[c4(2,"15:00","16:00"), c4(4,"15:00","16:00"), cv()] },
+    { id:"d10", libelle:"Tellyoh", enfantIds:["e18"], rythme:"2x 1h/mois", dateFin:"2026-08-26",
+      suspendu:false, suspenduDepuis:"", notes:"",
+      creneaux:[c4(1,"15:00","16:00"), c4(3,"15:00","16:00")] },
+    { id:"d11", libelle:"Théo / Louna", enfantIds:["e7"], rythme:"Pendant les congés", dateFin:"",
+      suspendu:false, suspenduDepuis:"", notes:"Louna n'est pas encore encodée dans les dossiers.",
+      creneaux:[cv()] }
+  ];
+
+  return {
+    version: 1,
+    parametres: { seuilAlerteJours: 30, debutCycle: "2026-01-05" },
+    enfants, droits,
+    taches: [
+      { id:uid(), texte:"Exemple : vérifier les notifications de prise en charge dépassées",
+        echeance:aujourdHui(), enfantId:"", fait:false, faitLe:"" }
+    ]
+  };
+}
+
+/* =========================================================================
+   17. DÉMARRAGE
+   ========================================================================= */
+
+charger();
+rendre();
+</script>
+</body>
+</html>
