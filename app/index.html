@@ -329,9 +329,15 @@ const NOM_FICHIER    = "donnees-dossiers.json";
 const DOSSIER_SAUV   = "sauvegardes";
 const NB_SAUVEGARDES = 60;
 
+/* Deux modes :
+   — NATIF : le programme est installé, il écrit directement sur le disque ;
+   — navigateur : la page demande l'accès à un dossier (Chrome / Edge). */
+const NATIF = !!(window.programme && window.programme.natif);
+
 const FS = {
-  dispo: typeof window.showDirectoryPicker === "function",
-  dossier:null, enAttente:null, nom:"", dernier:null, erreur:"",
+  natif: NATIF,
+  dispo: NATIF || typeof window.showDirectoryPicker === "function",
+  dossier:null, enAttente:null, nom:"", chemin:"", dernier:null, erreur:"",
   enCours:false, aRefaire:false, dernierBackup:0
 };
 
@@ -369,9 +375,55 @@ function idbEffacer(cle){
 }
 
 const heureCourte = d => String(d.getHours()).padStart(2,"0") + "h" + String(d.getMinutes()).padStart(2,"0");
+const nomDeChemin = c => String(c||"").replace(/[\\/]+$/,"").split(/[\\/]/).pop() || c;
+
+/* ------------------------------ mode programme installé ------------------ */
+
+async function natifDemarrer(){
+  const r = await window.programme.lire();
+  FS.chemin = r.dossier || "";
+  FS.nom = nomDeChemin(FS.chemin);
+  FS.dossier = FS.chemin;
+  if(!r.ok){
+    FS.erreur = r.erreur || "lecture impossible";
+  }else if(r.contenu){
+    try{
+      const d = JSON.parse(r.contenu);
+      if(!d || !Array.isArray(d.enfants)) throw new Error("contenu inattendu");
+      DB = normaliser(d);
+      try{ localStorage.setItem(CLE, JSON.stringify(DB)); }catch(e){}
+    }catch(e){ FS.erreur = "Fichier illisible (" + e.message + ")"; }
+  }else{
+    await fsEcrire();          // premier lancement : on crée le fichier
+  }
+  rendre();
+}
+async function natifChangerDossier(){
+  const r = await window.programme.changerDossier();
+  FS.chemin = r.dossier || "";
+  FS.nom = nomDeChemin(FS.chemin);
+  FS.dossier = FS.chemin;
+  if(r.ok) await fsEcrire();   // on dépose les données dans le nouveau dossier
+  rendre();
+}
+async function natifRelire(){
+  const r = await window.programme.lire();
+  if(r.ok && r.contenu){
+    try{
+      const d = JSON.parse(r.contenu);
+      if(d && Array.isArray(d.enfants)){
+        DB = normaliser(d);
+        try{ localStorage.setItem(CLE, JSON.stringify(DB)); }catch(e){}
+      }
+    }catch(e){ alert("Fichier illisible : " + e.message); }
+  }
+  rendre();
+}
+
+/* ------------------------------ mode navigateur -------------------------- */
 
 async function fsReconnecter(silencieux){
-  if(!FS.dispo) return;
+  if(!FS.dispo || NATIF) return;
   let h = null;
   try{ h = await idbLire("dossier"); }catch(e){ return; }
   if(!h) return;
@@ -440,20 +492,32 @@ async function fsEcrire(){
   if(FS.enCours){ FS.aRefaire = true; return; }
   FS.enCours = true;
   const contenu = JSON.stringify(DB, null, 2);
-  try{
-    const fh = await FS.dossier.getFileHandle(NOM_FICHIER, { create:true });
-    const flux = await fh.createWritable();
-    await flux.write(contenu);
-    await flux.close();
-    FS.dernier = new Date();
-    FS.erreur = "";
-    await fsSauvegardeDuJour(contenu);
-  }catch(e){ FS.erreur = e.message || "écriture impossible"; }
+  if(NATIF){
+    const r = await window.programme.ecrire(contenu);
+    if(r.ok){
+      FS.dernier = new Date(r.heure);
+      FS.erreur = "";
+      FS.chemin = r.dossier; FS.nom = nomDeChemin(r.dossier); FS.dossier = r.dossier;
+    }else{
+      FS.erreur = r.erreur || "écriture impossible";
+    }
+  }else{
+    try{
+      const fh = await FS.dossier.getFileHandle(NOM_FICHIER, { create:true });
+      const flux = await fh.createWritable();
+      await flux.write(contenu);
+      await flux.close();
+      FS.dernier = new Date();
+      FS.erreur = "";
+      await fsSauvegardeDuJour(contenu);
+    }catch(e){ FS.erreur = e.message || "écriture impossible"; }
+  }
   FS.enCours = false;
   majEtatStockage();
   if(FS.aRefaire){ FS.aRefaire = false; fsPlanifierEcriture(); }
 }
 async function fsSauvegardeDuJour(contenu, forcer){
+  if(NATIF){ await window.programme.sauvegarder(contenu || JSON.stringify(DB,null,2)); return; }
   if(!forcer && Date.now() - FS.dernierBackup < 120000) return;
   FS.dernierBackup = Date.now();
   try{
@@ -475,6 +539,18 @@ function majEtatStockage(){
   const n = document.getElementById("etat-stockage");
   if(!n) return;
   let couleur, texte, bouton = "";
+  if(NATIF){
+    if(FS.erreur){
+      couleur = "rouge"; texte = "Enregistrement bloqué";
+      bouton = '<button class="b mini" data-fs="aide">Voir</button>';
+    }else{
+      couleur = "vert";
+      texte = "<b>" + ech(FS.nom) + "</b>" + (FS.dernier ? " · enregistré à " + heureCourte(FS.dernier) : "");
+      bouton = '<button class="b mini" data-fs="ouvrir">Ouvrir le dossier</button>';
+    }
+    n.innerHTML = '<span class="puce ' + couleur + '"></span><span>' + texte + "</span>" + bouton;
+    return;
+  }
   if(!FS.dispo){
     couleur = "orange"; texte = "Enregistré dans le navigateur";
     bouton = '<button class="b mini" data-fs="aide">Pourquoi ?</button>';
@@ -1196,6 +1272,29 @@ function vueTaches(){
    ========================================================================= */
 
 function blocStockage(){
+  if(NATIF){
+    if(FS.erreur) return `<div class="encadre souci">
+      <div class="titre">L'enregistrement ne fonctionne pas</div>
+      ${ech(FS.erreur)}<br>Dossier visé : <code>${ech(FS.chemin)}</code><br>
+      Le dossier est peut-être protégé ou indisponible. Choisissez-en un autre.
+      <div class="actions" style="margin-top:10px">
+        <button class="b primaire" data-action="fs-choisir">Changer de dossier</button>
+        <button class="b" data-action="fs-maintenant">Réessayer</button></div></div>`;
+    return `<div class="encadre ok">
+      <div class="titre">✓ Enregistrement automatique</div>
+      Chaque modification est écrite immédiatement dans :<br>
+      <code>${ech(FS.chemin)}\\${NOM_FICHIER}</code><br>
+      ${FS.dernier ? "Dernier enregistrement à " + heureCourte(FS.dernier) + "."
+                   : "Aucune modification depuis l'ouverture."}
+      Une copie datée est déposée chaque jour dans <code>${DOSSIER_SAUV}</code>
+      (${NB_SAUVEGARDES} derniers jours conservés).
+      <div class="actions" style="margin-top:10px">
+        <button class="b" data-action="fs-ouvrir">Ouvrir le dossier</button>
+        <button class="b" data-action="fs-maintenant">Enregistrer maintenant</button>
+        <button class="b" data-action="fs-relire">Recharger depuis le fichier</button>
+        <button class="b" data-action="fs-choisir">Changer de dossier</button>
+      </div></div>`;
+  }
   if(!FS.dispo) return `<div class="encadre attention">
     <div class="titre">Ce navigateur n'écrit pas sur le disque</div>
     Vos données sont conservées dans le navigateur uniquement. Pour un enregistrement dans un vrai
@@ -1657,7 +1756,8 @@ function formExportWord(enfantUnique){
       ? nomComplet(enfantUnique).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")
       : "tous") + "-" + aujourdHui() + ".docx";
     telecharger(nom, data,
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "Document Word");
   }, 520);
 }
 
@@ -1665,13 +1765,38 @@ function formExportWord(enfantUnique){
    15. IMPORT / EXPORT
    ========================================================================= */
 
-function telecharger(nom, contenu, type){
+function telecharger(nom, contenu, type, description){
+  if(NATIF){
+    window.programme.enregistrerSous(nom, contenu, description).then(r => {
+      if(r && r.erreur) alert("Enregistrement impossible : " + r.erreur);
+    });
+    return;
+  }
   const blob = new Blob([contenu], { type: type || "application/json;charset=utf-8" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = nom;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+/** Applique une sauvegarde relue depuis un fichier. */
+function appliquerImport(texte){
+  try{
+    const d = JSON.parse(texte);
+    if(!d || !Array.isArray(d.enfants)) throw new Error("fichier non reconnu");
+    if(!confirm("Remplacer toutes les données actuelles par celles du fichier ?")) return;
+    DB = normaliser(d);
+    maj();
+    alert("Sauvegarde restaurée." + (FS.dossier ? " Le fichier de travail a été mis à jour." : ""));
+  }catch(e){ alert("Fichier illisible : " + e.message); }
+}
+function importerSauvegarde(){
+  if(NATIF){
+    window.programme.choisirFichier().then(r => { if(r && r.ok) appliquerImport(r.contenu); });
+    return;
+  }
+  document.getElementById("fichier-import").click();
 }
 function csv(lignes){
   const e = v => '"' + String(v == null ? "" : v).replace(/"/g,'""') + '"';
@@ -1690,7 +1815,7 @@ function exportCsvEnfants(){
     (e.visites||[]).map(v => libelleParent(v) + (v.frequence ? " : " + v.frequence : "") +
       (estISO(v.dateFin) ? " jusqu'au " + fmtFR(v.dateFin) : "") + (v.suspendu ? " (suspendu)" : "")).join(" / "),
     e.notes]));
-  telecharger("dossiers-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8");
+  telecharger("dossiers-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8", "Tableur CSV");
 }
 function exportCsvRapports(){
   const l = [["Échéance","Mois","Type","Enfant","Service"]];
@@ -1702,23 +1827,14 @@ function exportCsvRapports(){
   }));
   lignes.sort((a,b) => a[0].localeCompare(b[0]));
   lignes.forEach(x => l.push([fmtFR(x[0]), x[1], x[2], x[3], x[4]]));
-  telecharger("rapports-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8");
+  telecharger("rapports-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8", "Tableur CSV");
 }
 
 document.getElementById("fichier-import").addEventListener("change", function(){
   const f = this.files && this.files[0];
   if(!f) return;
   const lect = new FileReader();
-  lect.onload = () => {
-    try{
-      const d = JSON.parse(lect.result);
-      if(!d || !Array.isArray(d.enfants)) throw new Error("fichier non reconnu");
-      if(!confirm("Remplacer toutes les données actuelles par celles du fichier ?")) return;
-      DB = normaliser(d);
-      maj();
-      alert("Sauvegarde restaurée." + (FS.dossier ? " Le fichier du disque a été mis à jour." : ""));
-    }catch(e){ alert("Fichier illisible : " + e.message); }
-  };
+  lect.onload = () => appliquerImport(lect.result);
   lect.readAsText(f);
   this.value = "";
 });
@@ -1740,7 +1856,8 @@ document.addEventListener("keydown", ev => { if(ev.key === "Escape") fermerModal
 document.getElementById("etat-stockage").addEventListener("click", ev => {
   const b = ev.target.closest("[data-fs]");
   if(!b) return;
-  if(b.dataset.fs === "choisir")     fsChoisir().then(rendre);
+  if(b.dataset.fs === "choisir")     (NATIF ? natifChangerDossier() : fsChoisir().then(rendre));
+  if(b.dataset.fs === "ouvrir")      window.programme.ouvrirDossier();
   if(b.dataset.fs === "reconnecter") fsReconnecter(false).then(rendre);
   if(b.dataset.fs === "aide"){ onglet = "donnees"; rendre(); }
 });
@@ -1876,7 +1993,10 @@ document.getElementById("vue").addEventListener("click", ev => {
       break;
 
     /* --- enregistrement disque --- */
-    case "fs-choisir":     fsChoisir().then(rendre); break;
+    case "fs-choisir":
+      (NATIF ? natifChangerDossier() : fsChoisir().then(rendre));
+      break;
+    case "fs-ouvrir":      window.programme.ouvrirDossier(); break;
     case "fs-reconnecter": fsReconnecter(false).then(rendre); break;
     case "fs-maintenant":
       fsEcrire().then(() => fsSauvegardeDuJour(JSON.stringify(DB,null,2), true)).then(rendre);
@@ -1884,8 +2004,8 @@ document.getElementById("vue").addEventListener("click", ev => {
     case "fs-relire":
       if(confirm("Recharger les données depuis le fichier du disque ? Les modifications non " +
                  "encore enregistrées seront perdues.")){
-        DB.initial = true;
-        fsLire().then(rendre);
+        if(NATIF){ natifRelire(); }
+        else { DB.initial = true; fsLire().then(rendre); }
       }
       break;
     case "fs-oublier":
@@ -1906,9 +2026,10 @@ document.getElementById("vue").addEventListener("click", ev => {
       break;
     }
     case "export-json":
-      telecharger("sauvegarde-dossiers-" + aujourdHui() + ".json", JSON.stringify(DB,null,2));
+      telecharger("sauvegarde-dossiers-" + aujourdHui() + ".json", JSON.stringify(DB,null,2),
+                  null, "Sauvegarde");
       break;
-    case "import-json": document.getElementById("fichier-import").click(); break;
+    case "import-json": importerSauvegarde(); break;
     case "export-csv-enfants":  exportCsvEnfants(); break;
     case "export-csv-rapports": exportCsvRapports(); break;
     case "tout-effacer":
@@ -2004,7 +2125,18 @@ function donneesInitiales(){
 
 charger();
 rendre();
-fsReconnecter(true).catch(() => {});
+
+if(NATIF){
+  natifDemarrer().catch(e => { FS.erreur = e.message; rendre(); });
+  window.programme.surMenu(action => {
+    if(action === "export-json")
+      telecharger("sauvegarde-dossiers-" + aujourdHui() + ".json", JSON.stringify(DB,null,2),
+                  null, "Sauvegarde");
+    if(action === "dossier-change") natifChangerDossier();
+  });
+}else{
+  fsReconnecter(true).catch(() => {});
+}
 </script>
 </body>
 </html>

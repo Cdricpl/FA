@@ -1,0 +1,72 @@
+name: Installateur Windows
+
+# Compile le programme pour Windows et publie l'installateur dans une release.
+# Se lance à la main depuis l'onglet Actions, ou automatiquement sur un tag v*.
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  construire:
+    runs-on: windows-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Installer les dépendances
+        run: npm install --no-audit --no-fund
+
+      - name: Construire l'installateur et la version portable
+        run: npx electron-builder --win --publish never
+
+      - name: Relever le numéro de version
+        id: version
+        shell: bash
+        run: echo "v=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Déposer les fichiers construits
+        uses: actions/upload-artifact@v4
+        with:
+          name: installateur-windows
+          path: |
+            dist/*.exe
+            dist/*.blockmap
+          if-no-files-found: error
+
+      - name: Publier la release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.v }}
+          name: Gestion des dossiers ${{ steps.version.outputs.v }}
+          body: |
+            ## Installation
+
+            1. Téléchargez **Gestion-des-dossiers-${{ steps.version.outputs.v }}-nsis.exe**
+            2. Double-cliquez dessus et suivez l'assistant.
+            3. Le programme s'installe pour votre compte utilisateur : **aucun droit
+               administrateur n'est nécessaire**. Un raccourci est créé sur le bureau
+               et dans le menu Démarrer.
+
+            Windows peut afficher un avertissement « Windows a protégé votre ordinateur »
+            parce que le programme n'est pas signé par un éditeur payant :
+            cliquez sur **Informations complémentaires**, puis **Exécuter quand même**.
+
+            La version **portable** ne s'installe pas : elle se lance directement,
+            depuis une clé USB par exemple.
+
+            ## Où sont les données
+
+            Dans `Documents\Gestion des dossiers`, avec une copie datée par jour dans
+            le sous-dossier `sauvegardes`. Le dossier est modifiable depuis le menu
+            *Fichier → Changer de dossier de données*.
+          files: dist/*.exe
+          fail_on_unmatched_files: true

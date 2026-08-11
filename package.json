@@ -1,0 +1,54 @@
+{
+  "name": "gestion-dossiers",
+  "version": "1.0.0",
+  "productName": "Gestion des dossiers",
+  "description": "Suivi des dossiers d'enfants : notifications de prise en charge, rapports semestriels et annuels, droits de visite et notes de rencontres.",
+  "main": "electron/main.js",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win",
+    "dist:portable": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "be.dossiers.gestion",
+    "productName": "Gestion des dossiers",
+    "copyright": "Usage personnel",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "app/**/*"
+    ],
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "icon": "build/icone.ico",
+      "artifactName": "Gestion-des-dossiers-${version}-${target}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Gestion des dossiers",
+      "installerLanguages": ["fr_FR"],
+      "language": "1036",
+      "deleteAppDataOnUninstall": false,
+      "uninstallDisplayName": "Gestion des dossiers"
+    },
+    "portable": {
+      "artifactName": "Gestion-des-dossiers-${version}-portable.${ext}"
+    }
+  }
+}
