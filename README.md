@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.6.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.7.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -92,6 +92,15 @@ Quatre blocs :
 4. **Suivi des rencontres, par enfant** — un bloc par enfant : date, intervenant, heures,
    **✓ Présent / ✕ Absent en un clic**, et la **note qui s'écrit directement dans le tableau**
    (elle s'enregistre en quittant la case). Aucun passage par une fenêtre de modification.
+
+**Programmer plusieurs dates d'un coup** : le bouton *Plusieurs dates* ouvre un tableau de
+dates. Un remplissage rapide propose une série — toutes les semaines, toutes les deux
+semaines ou tous les mois — que vous corrigez ligne par ligne avant d'enregistrer. Les
+horaires sont repris du schéma de récurrence.
+
+**Rencontres sans encadrement** : cochez la case sur le droit de visite quand les rencontres
+se déroulent sans votre présence. Il n'y a alors rien à programmer : la fiche de l'enfant
+reste verte et il ne figure plus dans la liste des familles à recontacter.
 
 Le champ **Rencontre avec** propose Papa, Maman, Les deux parents, Grands-parents et
 Fratrie en un clic, mais accepte aussi n'importe quel texte. Aucun champ n'est obligatoire :

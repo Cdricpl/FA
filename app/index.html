@@ -305,6 +305,7 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
   max-height:170px;overflow:auto;border:1px solid var(--bord);border-radius:9px;padding:9px}
 .cases label{display:flex;gap:7px;align-items:center;font-size:13.5px}
 .cases input{width:auto;margin:0}
+.ce-libre{display:inline-block;font-size:11.5px;color:var(--vert);font-weight:600}
 .ce-groupe{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--accent)}
 .ce-prenom{font-size:13px;color:var(--doux)}
 .ce-prog{font-size:12px;font-weight:600;margin-top:9px}
@@ -510,6 +511,7 @@ function normaliser(d){
       v.rencontres = Array.isArray(v.rencontres) ? v.rencontres : [];
       v.creneaux    = Array.isArray(v.creneaux)    ? v.creneaux    : [];
       v.partageAvec = Array.isArray(v.partageAvec) ? v.partageAvec : [];
+      v.sansEncadrement = !!v.sansEncadrement;
       v.rencontres.forEach(r => { if(!r.presence) r.presence = "venu"; });
     });
   });
@@ -1403,14 +1405,17 @@ function categorieParent(v){
 
 /** Dernière rencontre programmée pour un enfant, tous intervenants confondus. */
 function derniereProgrammee(enf){
+  const droits = visitesDe(enf);
   let d = "";
-  visitesDe(enf).forEach(({v}) => (v.rencontres||[]).forEach(r => {
+  droits.forEach(({v}) => (v.rencontres||[]).forEach(r => {
     if(estISO(r.date) && r.date > d) d = r.date;
   }));
+  if(d >= aujourdHui()) return { date:d, code:"vert", texte:"Prochaine le " + fmtFR(d) };
+  // rien à organiser quand toutes les rencontres se passent sans encadrement
+  if(droits.length && droits.every(({v}) => v.sansEncadrement))
+    return { date:d, code:"vert", texte:"Sans encadrement" };
   if(!d) return { date:"", code:"orange", texte:"À programmer" };
-  if(d < aujourdHui()) return { date:d, code:"orange",
-    texte:"Dernière le " + fmtFR(d) + " — à reprogrammer" };
-  return { date:d, code:"vert", texte:"Prochaine le " + fmtFR(d) };
+  return { date:d, code:"orange", texte:"Dernière le " + fmtFR(d) + " — à reprogrammer" };
 }
 
 /** Les enfants couverts par un droit de visite : le titulaire et ceux
@@ -1464,6 +1469,7 @@ function vueVisites(){
           <div class="ce-prenom">${ech(e.prenom)}</div></div></div>
       ${visitesDe(e).map(({e:o,v}) => `<div class="ce-ligne">
         <b>${ech(libelleParent(v))}</b>${v.frequence ? " · " + ech(v.frequence) : ""}
+        ${v.sansEncadrement ? '<br><span class="ce-libre">sans encadrement</span>' : ""}
         ${(v.partageAvec||[]).length ? '<br><span class="ce-groupe">' + ic("enfants",12) +
           " regroupé : " + ech(libelleDroit(o, v)) + "</span>" : ""}
         <button class="b mini" data-action="visite-modifier" data-id="${o.id}"
@@ -1473,7 +1479,7 @@ function vueVisites(){
       </div>`).join("")}
       <div class="ce-prog ${p.code}"><span class="puce ${p.code}"></span>${ech(p.texte)}</div>
       <button class="b mini primaire" style="width:100%;justify-content:center;margin-top:9px"
-              data-action="rencontre-enfant" data-id="${e.id}">${ic("plus",13)} Programmer</button>
+              data-action="rencontres-enfant" data-id="${e.id}">${ic("plus",13)} Programmer des dates</button>
     </div>`;
   }).join("");
 
@@ -1569,8 +1575,10 @@ function vueVisites(){
             ${lignes.length ? "· " + venus + " honorée(s), " + absents + " manquée(s)" : ""}</div>
         </div>
         <span class="et ${p.code}">${ech(p.texte)}</span>
-        <button class="b mini primaire" data-action="rencontre-enfant" data-id="${e.id}">
+        <button class="b mini" data-action="rencontre-enfant" data-id="${e.id}">
           ${ic("plus",13)} Rencontre</button>
+        <button class="b mini primaire" data-action="rencontres-enfant" data-id="${e.id}">
+          ${ic("plus",13)} Plusieurs dates</button>
       </div>
       ${lignes.length ? `<div class="tableau-enveloppe"><table>
         <thead><tr><th class="num">Date</th><th>Intervenant</th><th class="num">Début</th>
@@ -1632,8 +1640,12 @@ function vueVisites(){
     <div class="carte">
       <div class="tete">${ic("horloge",18)}<h2>Prochaines rencontres</h2></div>
       ${listeProchaines}
-      <button class="b" style="width:100%;justify-content:center;margin-top:12px"
-              data-action="rencontre-rapide">${ic("plus",15)} Programmer une rencontre</button>
+      <div class="actions" style="margin-top:12px">
+        <button class="b" style="flex:1;justify-content:center"
+                data-action="rencontre-rapide">${ic("plus",15)} Une rencontre</button>
+        <button class="b primaire" style="flex:1;justify-content:center"
+                data-action="rencontres-rapide">${ic("plus",15)} Plusieurs dates</button>
+      </div>
     </div>
   </div>
 
@@ -1734,7 +1746,8 @@ function formNotifRecue(e){
 
 function formVisite(e, v){
   const neuf = !v;
-  v = v || { id:null, parent:"", frequence:"", creneaux:[], partageAvec:[] };
+  v = v || { id:null, parent:"", frequence:"", creneaux:[], partageAvec:[],
+             sansEncadrement:false };
   const creneauDe = n => (v.creneaux||[]).find(c => c.semaine === n) || { debut:"", fin:"" };
   const rangees = [1,2,3,4].map(n => `
     <tr><td style="padding:5px 8px 5px 0"><b>Semaine ${n}</b></td>
@@ -1756,6 +1769,12 @@ function formVisite(e, v){
         donnent leur couleur au schéma de récurrence.</p></label>
     <label class="champ"><span>Fréquence des rencontres</span>
       <input type="text" name="frequence" value="${ech(v.frequence)}" placeholder="Ex. 2x 1h/mois"></label>
+    <label class="champ" style="display:flex;gap:9px;align-items:flex-start">
+      <input type="checkbox" name="sansEncadrement" style="width:auto;margin-top:3px"${
+        v.sansEncadrement ? " checked" : ""}>
+      <span style="margin:0">Rencontres <b>sans encadrement</b>
+        <span class="aide" style="display:block;margin:2px 0 0">Les rencontres se déroulent sans
+          votre présence : il n'y a rien à programmer, la fiche reste verte.</span></span></label>
     <label class="champ"><span>Regrouper avec un autre enfant</span>
       <div class="cases" id="zone-groupe"></div>
       <p class="aide">Pour une fratrie placée dans la même famille d'accueil : la rencontre
@@ -1787,7 +1806,8 @@ function formVisite(e, v){
     });
     const partageAvec = Array.from(f.querySelectorAll('input[name="grp"]:checked'))
       .map(i => i.value).filter(id => id !== (c ? c.id : ""));
-    const d = { parent:val(f,"parent"), frequence:val(f,"frequence"), creneaux, partageAvec };
+    const d = { parent:val(f,"parent"), frequence:val(f,"frequence"), creneaux, partageAvec,
+                sansEncadrement:coche(f,"sansEncadrement") };
     if(neuf) c.visites.push(Object.assign({ id:uid(), rencontres:[] }, d));
     else Object.assign(c.visites.find(x => x.id === v.id), d);
     maj();
@@ -1844,6 +1864,102 @@ function formRencontre(e, v, r){
     else Object.assign(liste.rencontres.find(x => x.id === r.id), d);
     maj();
   }, 600);
+}
+
+/** Programmer plusieurs rencontres d'un coup, à la main ou par répétition. */
+function formRencontresMultiples(e, v){
+  const heures = (v && (v.creneaux || [])[0]) || { debut:"", fin:"" };
+
+  const ligne = i => `<tr>
+      <td style="padding:4px 8px 4px 0;color:var(--doux);font-size:12.5px">${i+1}.</td>
+      <td style="padding:4px 6px 4px 0"><input type="date" name="dt${i}"></td>
+      <td style="padding:4px 6px"><input type="time" name="db${i}" value="${ech(heures.debut)}"></td>
+      <td style="padding:4px 0"><input type="time" name="fn${i}" value="${ech(heures.fin)}"></td>
+    </tr>`;
+
+  const choix = (e && v) ? '<p class="pt doux" style="margin-top:0">' + ech(nomComplet(e)) +
+      " — rencontres avec <b>" + ech(libelleParent(v)) + "</b></p>"
+    : `<label class="champ"><span>Droit de visite concerné</span>
+        <select name="cible"><option value="">— choisir —</option>${
+          DB.enfants.slice().sort(parNom).map(x => (x.visites||[]).map(w =>
+            '<option value="' + x.id + "|" + w.id + '">' + ech(libelleDroit(x, w)) + " — " +
+            ech(libelleParent(w)) + "</option>").join("")).join("")}</select></label>`;
+
+  const corps = choix + `
+    <div class="encadre">
+      <div class="titre">Remplissage rapide</div>
+      <div class="ligne c3" style="margin-top:8px">
+        <label class="champ" style="margin:0"><span>Première rencontre</span>
+          <input type="date" name="depart" value="${ech(aujourdHui())}"></label>
+        <label class="champ" style="margin:0"><span>Puis</span>
+          <select name="rythme">
+            <option value="7">toutes les semaines</option>
+            <option value="14">toutes les 2 semaines</option>
+            <option value="mois" selected>tous les mois</option>
+            <option value="0">même jour, à ajuster</option>
+          </select></label>
+        <label class="champ" style="margin:0"><span>Combien</span>
+          <select name="combien">${[2,3,4,5,6,8,10,12].map(n =>
+            '<option value="' + n + '"' + (n === 6 ? " selected" : "") + ">" + n +
+            " rencontres</option>").join("")}</select></label>
+      </div>
+      <button type="button" class="b" id="btn-remplir" style="margin-top:10px">Remplir le tableau</button>
+      <p class="aide">Les dates proposées sont modifiables une par une juste en dessous.</p>
+    </div>
+
+    <label class="champ"><span>Dates des rencontres</span>
+      <table style="width:100%"><thead><tr>
+        <th></th><th style="font-size:11px">Date</th><th style="font-size:11px">Début</th>
+        <th style="font-size:11px">Fin</th></tr></thead>
+        <tbody id="corps-dates">${[0,1,2,3,4,5].map(ligne).join("")}</tbody></table>
+      <button type="button" class="b mini" id="btn-lignes" style="margin-top:8px">+ 3 lignes</button>
+      <p class="aide">Les lignes laissées vides sont ignorées. Toutes les rencontres sont créées
+        en « prévue » : vous cocherez Présent ou Absent après coup.</p></label>`;
+
+  ouvrirModale("Programmer plusieurs rencontres", corps, f => {
+    let cibleE = e, cibleV = v;
+    if(!cibleE || !cibleV){
+      const [ie, iv] = String(val(f,"cible")).split("|");
+      cibleE = enfantParId(ie);
+      cibleV = cibleE && (cibleE.visites||[]).find(x => x.id === iv);
+      if(!cibleV){ alert("Choisissez le droit de visite concerné."); return false; }
+    }
+    const liste = enfantParId(cibleE.id).visites.find(x => x.id === cibleV.id);
+    let n = 0;
+    for(let i = 0; f.elements["dt"+i]; i++){
+      const d = val(f,"dt"+i);
+      if(!estISO(d)) continue;
+      liste.rencontres.push({ id:uid(), date:d, debut:val(f,"db"+i), fin:val(f,"fn"+i),
+                              presence:"prevue", note:"" });
+      n++;
+    }
+    if(!n){ alert("Aucune date encodée."); return false; }
+    maj();
+    alert(n === 1 ? "1 rencontre programmée." : n + " rencontres programmées.");
+  }, 640);
+
+  /* --- ajout de lignes sans perdre la saisie déjà faite --- */
+  const form = document.getElementById("form-modale");
+  document.getElementById("btn-lignes").addEventListener("click", () => {
+    const tb = document.getElementById("corps-dates");
+    for(let k = 0; k < 3; k++) tb.insertAdjacentHTML("beforeend", ligne(tb.children.length));
+  });
+
+  /* --- remplissage automatique du tableau --- */
+  document.getElementById("btn-remplir").addEventListener("click", () => {
+    const depart = val(form,"depart");
+    if(!estISO(depart)){ alert("Indiquez la date de la première rencontre."); return; }
+    const rythme = val(form,"rythme");
+    const combien = Number(val(form,"combien")) || 6;
+    const tb = document.getElementById("corps-dates");
+    while(tb.children.length < combien) tb.insertAdjacentHTML("beforeend", ligne(tb.children.length));
+    let d = depart;
+    for(let i = 0; i < combien; i++){
+      form.elements["dt"+i].value = d;
+      if(rythme === "mois")      d = decalerMois(d, 1);
+      else if(rythme !== "0")    d = decalerJours(d, Number(rythme));
+    }
+  });
 }
 
 function formTache(t){
@@ -2396,6 +2512,14 @@ function actionner(b){
 
     /* --- rencontres --- */
     case "rencontre-rapide":   formRencontre(null, null, null); break;
+    case "rencontres-rapide":  formRencontresMultiples(null, null); break;
+    case "rencontres-enfant": {
+      const vs = visitesDe(e);
+      if(!vs.length){ alert("Ajoutez d'abord un droit de visite pour " + nomComplet(e) + "."); break; }
+      if(vs.length === 1) formRencontresMultiples(vs[0].e, vs[0].v);
+      else formRencontresMultiples(null, null);
+      break;
+    }
     case "rencontre-modifier": formRencontre(e, v, (v.rencontres||[]).find(x => x.id === rid)); break;
     case "rencontre-supprimer":
       if(confirm("Supprimer cette rencontre et sa note ?")){
