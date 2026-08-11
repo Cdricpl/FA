@@ -1,72 +1,81 @@
-# Gestion de mes dossiers
+# Gestion des dossiers
 
-Programme de suivi des dossiers d'enfants : notifications de prise en charge, rapports
-semestriels et annuels, droits de visite par parent, notes de rencontres exportables en Word,
-et to do quotidienne.
+Programme de suivi des dossiers d'enfants : notifications de prise en charge,
+rapports semestriels et annuels, droits de visite par parent, notes de rencontres
+exportables en Word, et to do quotidienne.
 
-Un seul fichier, aucune installation, aucune connexion internet. Tout reste sur votre ordinateur.
+Programme Windows installable. Tout reste sur votre ordinateur : aucune connexion
+internet, aucun compte, aucune donnée envoyée où que ce soit.
 
 ---
 
-## Installation (une seule fois)
+## Installation
 
-1. Copiez **`index.html`** et **`Lancer le programme.bat`** dans un dossier de vos *Documents*.
-2. Double-cliquez sur **`Lancer le programme.bat`** : le programme s'ouvre dans sa propre
-   fenêtre, sans barre d'adresse ni onglets.
-   *(Clic droit sur ce fichier → « Envoyer vers » → « Bureau (créer un raccourci) » pour avoir
-   une icône sur votre bureau.)*
-3. Allez dans l'onglet **Données** → **« Choisir mon dossier de données »** et désignez un
-   dossier, par exemple `Documents\Mes dossiers`.
+1. Ouvrez la page **[Releases](../../releases)** du dépôt.
+2. Téléchargez **`Gestion-des-dossiers-1.0.0-nsis.exe`**.
+3. Double-cliquez et suivez l'assistant.
 
-C'est fait. À partir de là, **chaque modification est écrite immédiatement dans un vrai fichier**
-sur votre disque. Rien à enregistrer à la main.
+L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
+n'est nécessaire**. Un raccourci est créé sur le bureau et dans le menu Démarrer.
 
-> Si vous préférez, un simple double-clic sur `index.html` fonctionne aussi.
-> Utilisez **Chrome** ou **Edge** : ce sont les seuls navigateurs capables d'écrire dans un fichier.
+> **Windows a protégé votre ordinateur** — cet avertissement apparaît au premier
+> lancement parce que le programme n'est pas signé par un certificat d'éditeur payant.
+> Cliquez sur **Informations complémentaires**, puis **Exécuter quand même**.
+> Il ne réapparaîtra plus ensuite.
+
+Une version **portable** est aussi disponible : elle ne s'installe pas, elle se lance
+directement, y compris depuis une clé USB.
 
 ### Où sont mes données
 
-Dans le dossier que vous avez choisi :
+Dans **`Documents\Gestion des dossiers`** :
 
 ```
-Mes dossiers\
-   donnees-dossiers.json          ← vos données, mises à jour en direct
+Documents\Gestion des dossiers\
+   donnees-dossiers.json          ← vos données, écrites à chaque modification
    sauvegardes\
       donnees-2026-08-11.json     ← une copie par jour, 60 jours conservés
       donnees-2026-08-10.json
-      ...
 ```
 
-Ce dossier peut être dans OneDrive : vous aurez alors une copie hors du PC.
-Une copie de secours reste aussi dans le navigateur, ce qui permet au programme de rattraper
-le fichier si l'ordinateur s'éteint au mauvais moment.
+Il n'y a **rien à enregistrer à la main** et aucune autorisation à redonner :
+chaque modification part sur le disque dans la seconde. Le fichier est écrit d'abord
+en version temporaire puis renommé, si bien qu'une coupure de courant ne peut pas
+laisser un fichier à moitié écrit.
 
-À chaque nouvelle ouverture, Chrome/Edge demande une fois l'autorisation d'accéder au dossier :
-un clic sur **Reconnecter**, puis **Modifier les fichiers**. C'est une sécurité du navigateur,
-elle ne peut pas être supprimée.
+Menu **Fichier** → *Ouvrir le dossier de données* pour y accéder, ou
+*Changer de dossier de données* pour le déplacer, par exemple dans OneDrive afin
+d'avoir une copie hors du PC.
 
 ---
 
 ## Les six onglets
 
 ### Tableau de bord
-Ce qu'il faut traiter aujourd'hui : notifications dépassées ou proches, rapports à préparer,
-droits de visite à renouveler, to do du jour.
+Ce qu'il faut traiter aujourd'hui : notifications dépassées ou proches, rapports à
+préparer, droits de visite à renouveler, to do du jour.
 
 ### Enfants
-La liste de tous les dossiers, avec pour chacun la date de formalisation, le statut, les
-relances, les deux prochaines échéances de rapport et les droits de visite.
-Cliquez sur un nom pour ouvrir sa **fiche**.
+La liste de tous les dossiers. Cliquez sur un nom pour ouvrir sa **fiche**, qui
+regroupe tout :
 
-La fiche d'un enfant regroupe tout :
-
-* **Notification de prise en charge** — la date d'échéance et son statut. Le bouton
-  **« Reconduire d'un an »** décale l'échéance d'un an et garde l'ancienne en historique.
-  Si le SAJ / SPJ oublie de vous l'envoyer, l'échéance passe en rouge : notez alors vos
+* **Notification de prise en charge** — l'échéance et son statut. Le bouton
+  **« Reconduire d'un an »** décale l'échéance et garde l'ancienne en historique.
+  Si le SAJ / SPJ oublie de l'envoyer, l'échéance passe en rouge : notez alors vos
   relances avec **« Noter une relance aujourd'hui »**.
 * **Rapports d'évolution** — les deux prochaines échéances, calculées automatiquement.
-  Bouton **« Marquer comme envoyé »** : l'échéance suivante se place toute seule un an plus tard.
+  Bouton **« Marquer comme envoyé »** : l'échéance suivante se place un an plus tard.
 * **Droits de visite et rencontres** — voir plus bas.
+
+Code couleur, identique partout :
+
+| Couleur | Signification |
+|---------|---------------|
+| 🔴 rouge | échéance dépassée |
+| 🟠 orange | échéance proche (délai réglable) |
+| 🟢 vert | en ordre |
+| ⚪ gris | date manquante |
+| 🟣 violet | droit de visite suspendu |
 
 ### Rapports
 Le calendrier des douze prochains mois, dans la présentation de votre tableau Excel :
@@ -76,35 +85,34 @@ Le calendrier des douze prochains mois, dans la présentation de votre tableau E
 | **Formalisations — rapport annuel** | à la date de formalisation |
 | **Rapports d'évolution — semestriel** | exactement six mois plus tôt |
 
-Tout est recalculé à partir de la seule date de formalisation, et se décale automatiquement
-à chaque reconduction. En dessous, la liste **« À préparer maintenant »** reprend ce qui tombe
-dans les 45 prochains jours (délai réglable) ainsi que les retards de moins de deux mois.
+Tout est recalculé à partir de la seule date de formalisation, et se décale
+automatiquement à chaque reconduction. En dessous, **« À préparer maintenant »**
+reprend ce qui tombe dans les 45 prochains jours (délai réglable) ainsi que les
+retards de moins de deux mois.
 
 ### Visites
 Un droit de visite **par parent** : si l'enfant voit son papa et sa maman séparément,
-encodez-en deux. Pour chacun : le parent concerné, la **fréquence** (`2x 1h/mois`, `4h/mois`,
-`2h/vacances`…), la date de fin du droit, une éventuelle suspension et le lieu habituel.
+encodez-en deux. Pour chacun : le parent concerné, la **fréquence** (`2x 1h/mois`,
+`4h/mois`, `2h/vacances`…), la date de fin du droit, une éventuelle suspension et le
+lieu habituel.
 
-Pour chaque rencontre, vous encodez :
-
-* la **date** ;
-* si le parent est **venu**, **absent**, ou si la rencontre a été **annulée** ;
-* une **note de synthèse** libre.
-
-Le programme compte automatiquement les rencontres honorées et manquées.
+Pour chaque rencontre : la **date**, si le parent est **venu**, **absent** ou si la
+rencontre a été **annulée**, et une **note de synthèse**. Le programme compte les
+rencontres honorées et manquées.
 
 ### À faire
 La to do quotidienne, regroupée en *En retard* / *Aujourd'hui* / *À venir* / *Sans date*.
 
 ### Données
-Le dossier d'enregistrement, les réglages des délais d'alerte, les sauvegardes et les exports.
+Le dossier d'enregistrement, les délais d'alerte, les sauvegardes et les exports.
 
 ---
 
 ## Export Word des notes de visite
 
-Bouton **« Exporter les notes en Word »**, depuis la fiche d'un enfant ou depuis l'onglet Visites.
-Vous choisissez une période (facultative) et vous obtenez un fichier `.docx` structuré :
+Bouton **« Exporter les notes en Word »**, depuis la fiche d'un enfant ou depuis
+l'onglet Visites. Vous choisissez une période (facultative) et l'endroit où
+enregistrer, et vous obtenez un `.docx` structuré :
 
 ```
 Notes de visites
@@ -121,28 +129,53 @@ Sofia INFANTINO — SPJ
       Maman ne s'est pas présentée, pas de nouvelles. Sofia déçue.
 ```
 
-Prêt à être repris dans votre rapport. Les autres exports (CSV) rouvrent les tableaux dans Excel.
+Prêt à être repris dans votre rapport. Les exports CSV rouvrent les tableaux dans Excel.
 
 ---
 
 ## Données de départ
 
 Au premier lancement, le programme contient déjà vos deux tableaux : les **22 enfants**,
-leur **service** (SAJ / SPJ), leur **date de formalisation**, les relances déjà notées et les
-**15 droits de visite** connus avec leur fréquence et leur date de fin.
+leur **service** (SAJ / SPJ), leur **date de formalisation**, les relances déjà notées et
+les **15 droits de visite** connus avec leur fréquence et leur date de fin.
 
-Trois points à compléter de votre côté :
+Trois points à compléter :
 
-1. **Le parent concerné par chaque droit de visite.** Vos tableaux indiquaient l'enfant ou la
-   fratrie, pas le parent : les droits repris s'affichent donc « Parent à préciser ». Ouvrez
-   la fiche de l'enfant, cliquez sur *Modifier*, et indiquez Papa ou Maman — en créant un
-   second droit de visite si les deux parents voient l'enfant séparément.
-2. **Les droits de fratrie ont été recopiés sur chaque enfant** (Maka, Lemet, Theismann), pour
-   que vous puissiez écrire une note de rencontre différente par enfant.
-3. **Quelques dates diffèrent entre vos deux fichiers** (Mathéo, Sofia, Timi, Dyana, Eléonore,
-   les Maka : de un à six jours d'écart, un an pour Mathéo). J'ai retenu celles du premier
-   tableau, celui des notifications. Vérifiez-les et corrigez au besoin : cette date pilote à
-   la fois l'alerte de notification et les deux échéances de rapport.
+1. **Le parent concerné par chaque droit de visite.** Vos tableaux indiquaient l'enfant
+   ou la fratrie, pas le parent : les droits repris s'affichent « Parent à préciser ».
+2. **Les droits de fratrie ont été recopiés sur chaque enfant** (Maka, Lemet, Theismann),
+   pour que vous puissiez écrire une note de rencontre différente par enfant.
+3. **Quelques dates diffèrent entre vos deux fichiers** (Mathéo, Sofia, Timi, Dyana,
+   Eléonore, les Maka : un à six jours d'écart, un an pour Mathéo). J'ai retenu celles du
+   tableau des notifications. Cette date pilote à la fois l'alerte de notification et les
+   deux échéances de rapport : vérifiez-la.
 
-Vous pouvez tout modifier, tout effacer ou recharger ces données de départ depuis l'onglet
-**Données**.
+Tout est modifiable, effaçable et rechargeable depuis l'onglet **Données**.
+
+---
+
+## Pour les curieux : comment c'est fait
+
+| Dossier | Contenu |
+|---------|---------|
+| `app/` | toute l'interface, dans un seul fichier HTML sans bibliothèque externe |
+| `electron/` | la fenêtre, le menu et l'accès au disque |
+| `build/` | l'icône du programme |
+| `.github/workflows/` | la compilation automatique de l'installateur Windows |
+
+L'export Word est produit sans aucune dépendance : un `.docx` est une archive ZIP
+contenant du XML, les deux sont écrits à la main dans `app/index.html`.
+
+Le fichier `app/index.html` fonctionne aussi tout seul dans Chrome ou Edge, sans
+rien installer — pratique pour dépanner sur un autre ordinateur. Il demande alors
+l'accès à un dossier au lieu d'écrire directement.
+
+### Reconstruire l'installateur
+
+Onglet **Actions** du dépôt → *Installateur Windows* → **Run workflow**. Le résultat
+est publié dans les **Releases**. En local, sur une machine Windows :
+
+```bash
+npm install
+npm run dist
+```
