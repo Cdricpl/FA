@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.8.1-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.9.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -95,8 +95,9 @@ Quatre blocs :
    créneaux, colorés selon l'intervenant : Papa en bleu, Maman en rose, Fratrie en violet.
 3. **Prochaines rencontres** — les rendez-vous à venir, avec leur pastille de date.
 4. **Suivi des rencontres, par enfant** — un bloc par enfant : date, intervenant, heures,
-   **✓ Présent / ✕ Absent en un clic**, et la **note qui s'écrit directement dans le tableau**
-   (elle s'enregistre en quittant la case). Aucun passage par une fenêtre de modification.
+   **✓ Présent / ✕ Absent en un clic**, et la **note qui s'écrit directement dans le tableau** :
+   cliquez sur la note, écrivez, quittez la case — c'est enregistré. Échap annule la saisie.
+   Les dix dernières rencontres de chaque enfant sont affichées, le reste sur demande.
 
 **Programmer plusieurs dates d'un coup** : le bouton *Plusieurs dates* ouvre un tableau de
 dates. Un remplissage rapide propose une série — toutes les semaines, toutes les deux

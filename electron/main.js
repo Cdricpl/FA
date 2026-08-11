@@ -155,12 +155,6 @@ async function changerDossier(depuisMenu){
 
 /* --------------------------------------------------------------- passerelle */
 
-ipcMain.handle("app:infos", () => ({
-  version: app.getVersion(),
-  dossier: dossierDonnees(),
-  fichier: fichierDonnees()
-}));
-
 ipcMain.handle("donnees:lire", async () => {
   try{
     const contenu = await fsp.readFile(fichierDonnees(), "utf8");
@@ -224,11 +218,6 @@ ipcMain.handle("fichier:choisir", async () => {
   try{
     return { ok:true, contenu: await fsp.readFile(r.filePaths[0], "utf8"), chemin:r.filePaths[0] };
   }catch(e){ return { ok:false, erreur:e.message }; }
-});
-
-ipcMain.handle("boite:message", async (ev, options) => {
-  const r = await dialog.showMessageBox(fenetre, Object.assign({ type:"info", buttons:["OK"] }, options));
-  return r.response;
 });
 
 /* ------------------------------------------------------------- cycle de vie */

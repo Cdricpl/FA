@@ -156,12 +156,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:now
 .et.orange{background:var(--orange-f);color:var(--orange)}
 .et.rouge{background:var(--rouge-f);color:var(--rouge)}
 .et.gris{background:var(--gris-f);color:var(--gris)}
-.et.suspendu{background:var(--violet-f);color:var(--violet)}
 .et.info{background:var(--accent-doux);color:var(--accent)}
 .puce{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .puce.vert{background:var(--vert)} .puce.orange{background:#e08a1e}
 .puce.rouge{background:var(--rouge)} .puce.gris{background:var(--gris)}
-.puce.suspendu{background:var(--violet)} .puce.info{background:var(--accent)}
+.puce.info{background:var(--accent)}
 
 /* ---------- Boutons ---------- */
 button.b{display:inline-flex;align-items:center;gap:6px;background:var(--carte);color:var(--texte);
@@ -240,30 +239,16 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .mois .rien-mois{padding:10px 13px;color:var(--doux);font-size:12.5px;font-style:italic}
 
 /* ---------- Droits de visite ---------- */
-.bloc{border:1px solid var(--bord);border-radius:12px;padding:14px 16px;margin-bottom:12px;background:var(--fond)}
-.bloc .chapeau{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
-.bloc .chapeau .t{font-weight:700}
-.rencontre{display:flex;gap:11px;padding:9px 0;border-top:1px solid var(--bord);align-items:flex-start}
-.rencontre .d{min-width:96px;font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;white-space:nowrap}
-.rencontre .n{flex:1;white-space:pre-wrap;font-size:13.5px}
-
-/* ---------- Droits de visite ---------- */
-.deux-tiers,.un-tiers{min-width:0}
 @media(min-width:1100px){
   .grille.dv{grid-template-columns:2fr 1fr}
 }
 .bandeau-enfants{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 8px}
 .carte-enfant{flex:none;width:212px;border:1px solid var(--bord);border-radius:12px;padding:13px 14px;
   background:var(--vert-f);border-color:rgba(31,138,76,.35)}
-.carte-enfant.suspendu{background:var(--rouge-f);border-color:rgba(192,43,43,.35)}
 .ce-haut{display:flex;align-items:center;gap:10px;margin-bottom:9px}
 .ce-nom{font-weight:700;font-size:15px;line-height:1.1}
-.ce-nom-famille{font-size:11.5px;color:var(--doux);text-transform:uppercase;letter-spacing:.03em}
 .ce-ligne{font-size:12.5px;color:var(--doux);line-height:1.6}
 .ce-ligne b{color:var(--texte)}
-.ce-etat{font-size:12.5px;font-weight:600;margin-top:8px}
-.ce-fin{font-size:12px;color:var(--doux);margin-top:2px}
-.ce-actions{display:flex;gap:5px;margin-top:10px}
 
 .schema{display:grid;gap:10px;grid-template-columns:1fr}
 @media(min-width:620px){.schema{grid-template-columns:1fr 1fr}}
@@ -280,14 +265,12 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 @media (prefers-color-scheme: dark){
   .creneau.maman{background:#3a2029;border-color:rgba(240,138,138,.3)}
   .carte-enfant{background:rgba(31,138,76,.14)}
-  .carte-enfant.suspendu{background:rgba(192,43,43,.16)}
 }
 .creneau.barre{opacity:.72}
 .cr-haut{display:flex;align-items:center;gap:7px}
 .cr-nom{font-weight:700;font-size:13.5px}
 .cr-h{font-size:13px;font-variant-numeric:tabular-nums;margin:3px 0 1px}
 .cr-bas{font-size:12px;color:var(--doux);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.cr-susp{color:var(--rouge);font-weight:600}
 
 .proch{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid var(--bord)}
 .proch:first-of-type{border-top:0}
@@ -330,39 +313,11 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .bascule .non:hover{background:var(--rouge-f);color:var(--rouge)}
 .bascule .oui.actif{background:var(--vert);color:#fff;font-weight:700}
 .bascule .non.actif{background:var(--rouge);color:#fff;font-weight:700}
-textarea.note-vive{font-size:13px;padding:6px 8px;border-radius:8px;min-height:44px}
-
-/* ---------- Rencontres ---------- */
-.separateur-mois{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--doux);
-  font-weight:600;margin:18px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--bord)}
-.separateur-mois:first-of-type{margin-top:4px}
-.rdv{border:1px solid var(--bord);border-left:6px solid var(--gris);border-radius:12px;
-  background:var(--carte);padding:14px 16px;margin-bottom:11px}
-.rdv.vert{border-left-color:var(--vert)} .rdv.rouge{border-left-color:var(--rouge)}
-.rdv.info{border-left-color:var(--accent)} .rdv.orange{border-left-color:#e08a1e}
-.rdv-haut{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
-.rdv-qui{flex:1;min-width:160px}
-.rdv-nom{font-weight:700;font-size:15.5px}
-.rdv-parent{font-size:13px;color:var(--doux)}
-.rdv-parent b{color:var(--texte)}
-.rdv-date{text-align:right;font-size:13px;white-space:nowrap}
-.rdv-date .j{font-weight:600}
-.rdv-date .h{color:var(--doux);display:flex;gap:5px;align-items:center;justify-content:flex-end;margin-top:2px}
-.badge{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:20px;
-  font-weight:700;font-size:13px;white-space:nowrap}
-.badge .sym{font-size:15px;line-height:1}
-.badge.vert{background:var(--vert-f);color:var(--vert)}
-.badge.rouge{background:var(--rouge-f);color:var(--rouge)}
-.badge.info{background:var(--accent-doux);color:var(--accent)}
-.badge.orange{background:var(--orange-f);color:var(--orange)}
-.badge.gris{background:var(--gris-f);color:var(--gris)}
-.rdv-note{margin-top:11px;padding:11px 13px;background:var(--fond);border-radius:9px;
-  font-size:13.5px;white-space:pre-wrap;line-height:1.5}
-.rdv-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
-@media(max-width:640px){
-  .rdv-date{text-align:left}
-  .rdv-date .h{justify-content:flex-start}
-}
+.note-vive{font-size:13px;padding:7px 9px;border:1px solid transparent;border-radius:8px;
+  min-height:38px;white-space:pre-wrap;cursor:text;line-height:1.45}
+.note-vive:hover{border-color:var(--bord);background:var(--fond)}
+.note-vive:focus{outline:2px solid var(--accent);outline-offset:-1px}
+textarea.note-vive{border-color:var(--bord);background:var(--carte);width:100%;min-height:60px}
 
 /* ---------- Divers ---------- */
 .doux{color:var(--doux)} .pt{font-size:12.5px} .nowrap{white-space:nowrap}
@@ -380,7 +335,7 @@ code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px
   body{background:#fff}
   .appli{display:block}
   main,.entete{padding:0}
-  .carte,.fiche,.bloc,.mois{break-inside:avoid;box-shadow:none;border-color:#bbb}
+  .carte,.fiche,.mois,.suivi-enfant,.carte-enfant{break-inside:avoid;box-shadow:none;border-color:#bbb}
   .et{border:1px solid #999}
 }
 </style>
@@ -461,10 +416,6 @@ function fmtLong(s){
   const d = parseISO(s);
   return JOURS[(d.getDay()+6)%7] + " " + d.getDate() + " " + MOIS[d.getMonth()] + " " + d.getFullYear();
 }
-function fmtMoisAnnee(s){
-  const d = parseISO(s);
-  return MOIS[d.getMonth()] + " " + d.getFullYear();
-}
 function joursEntre(a,b){ return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
 
 /** Décale une date de n mois, en ramenant au dernier jour du mois si besoin. */
@@ -488,7 +439,7 @@ const CLE = "fa-dossiers-v2";
 let DB = null;
 let onglet = "accueil";
 let etat = { recherche:"", tri:"nom", tachesFaites:false, anneeRapports:0,
-             filtreNotif:"tout", filtreVisite:"tout" };
+             filtreNotif:"tout", filtreVisite:"tout", ouvertes:{} };
 
 function baseVide(){
   return {
@@ -537,6 +488,14 @@ function sauver(){
   fsPlanifierEcriture();
 }
 function maj(){ DB.initial = false; sauver(); rendre(); }
+
+/* Redessin groupé : plusieurs clics rapprochés ne provoquent qu'un seul
+   redessin, une fois l'utilisateur arrêté. */
+let minuteurRendu = null;
+function rendreBientot(){
+  clearTimeout(minuteurRendu);
+  minuteurRendu = setTimeout(() => { minuteurRendu = null; rendre(); }, 350);
+}
 
 const enfantParId = id => DB.enfants.find(e => e.id === id);
 const nomComplet  = e => e ? ((e.nom||"") + " " + (e.prenom||"")).trim() : "";
@@ -854,7 +813,7 @@ function jourCourt(iso){
    5. ÉCHÉANCES : notification, rapports, droits de visite
    ========================================================================= */
 
-const ORDRE_STATUT = { rouge:0, orange:1, suspendu:2, gris:3, vert:4 };
+const ORDRE_STATUT = { rouge:0, orange:1, gris:2, vert:3 };
 
 function statutEcheance(date, seuil){
   if(!estISO(date)) return { code:"gris", label:"Date à encoder", jours:null };
@@ -1021,8 +980,13 @@ const prenomUtilisateur = () => (DB.parametres.utilisateur.nom || "").trim().spl
 
 let remonterEnHaut = false;   // vrai uniquement quand on change d'écran
 
+/* La position de défilement est suivie au fil de l'eau : la lire pendant un
+   redessin obligerait le navigateur à recalculer toute la mise en page. */
+let positionPage = 0;
+window.addEventListener("scroll", () => { positionPage = window.scrollY; }, { passive:true });
+
 function rendre(){
-  const positionAvant = window.scrollY;
+  const positionAvant = positionPage;
   const aFaire = tachesEnCours().filter(t => t.enRetard || t.pourAuj).length;
   const aReclamer = DB.enfants.filter(e => statutNotif(e).code === "rouge").length;
   const u = DB.parametres.utilisateur;
@@ -1060,8 +1024,12 @@ function rendre(){
       ? "enregistrement automatique dans <b>" + ech(FS.nom) + "</b>"
       : "voir <b>Paramètres</b> pour choisir le dossier");
   majEtatStockage();
-  if(remonterEnHaut){ remonterEnHaut = false; window.scrollTo({ top:0 }); }
-  else window.scrollTo({ top:positionAvant });
+  // Le repositionnement force un recalcul complet de la mise en page : on le
+  // repousse après l'affichage, et on ne le fait que s'il est nécessaire.
+  requestAnimationFrame(() => {
+    if(remonterEnHaut){ remonterEnHaut = false; positionPage = 0; window.scrollTo(0, 0); }
+    else if(Math.abs(window.scrollY - positionAvant) > 1) window.scrollTo(0, positionAvant);
+  });
 }
 
 /* =========================================================================
@@ -1542,6 +1510,7 @@ function pastilleDate(iso){
 function vueVisites(){
   const auj = aujourdHui();
   const q = etat.recherche.trim().toLowerCase();
+  const total = toutesRencontres();
 
   const droits = [];
   DB.enfants.slice().sort(parNom).forEach(e => (e.visites||[]).forEach(v => droits.push({ e, v })));
@@ -1604,7 +1573,7 @@ function vueVisites(){
   </div>`;
 
   /* ------------------------------------------------ 3. prochaines rencontres */
-  const prochaines = toutesRencontres()
+  const prochaines = total
     .filter(o => estISO(o.rencontre.date) && o.rencontre.date >= auj)
     .sort((a,b) => a.rencontre.date.localeCompare(b.rencontre.date) ||
                    String(a.rencontre.debut||"").localeCompare(String(b.rencontre.debut||"")))
@@ -1630,7 +1599,6 @@ function vueVisites(){
     (f !== "venu"      || r.presence === "venu") &&
     (f !== "absent"    || r.presence === "absent");
 
-  const total = toutesRencontres();
   const compte = {
     tout:      total.length,
     avenir:    total.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue").length,
@@ -1652,6 +1620,8 @@ function vueVisites(){
     const p = derniereProgrammee(e);
     const venus = lignes.filter(x => x.r.presence === "venu").length;
     const absents = lignes.filter(x => x.r.presence === "absent").length;
+    const tout = !!etat.ouvertes[e.id];
+    const visibles = tout ? lignes : lignes.slice(0, 10);
 
     return `<div class="suivi-enfant">
       <div class="se-tete">
@@ -1670,7 +1640,7 @@ function vueVisites(){
       ${lignes.length ? `<div class="tableau-enveloppe"><table>
         <thead><tr><th class="num">Date</th><th>Intervenant</th><th class="num">Début</th>
           <th class="num">Fin</th><th style="text-align:center">Le parent</th><th>Note</th><th></th></tr></thead>
-        <tbody>${lignes.map(({o,v,r}) => `<tr>
+        <tbody>${visibles.map(({o,v,r}) => `<tr>
           <td class="num nowrap">${ech(fmtFR(r.date))}${
             aCompleter(r) ? '<br><span class="et orange">à compléter</span>' : ""}</td>
           <td>${ech(libelleParent(v))}${(v.partageAvec||[]).length
@@ -1685,16 +1655,21 @@ function vueVisites(){
                     data-action="presence" data-p="absent" data-id="${o.id}" data-vid="${v.id}"
                     data-rid="${r.id}" title="Le parent n'est pas venu">✕ Absent</button>
           </div></td>
-          <td style="min-width:240px"><textarea class="note-vive" rows="2"
-              data-note="1" data-id="${o.id}" data-vid="${v.id}" data-rid="${r.id}"
-              placeholder="Note de synthèse…">${ech(r.note)}</textarea></td>
+          <td style="min-width:240px"><div class="note-vive" data-note="1"
+              data-id="${o.id}" data-vid="${v.id}" data-rid="${r.id}" tabindex="0"
+              title="Cliquez pour écrire">${r.note ? ech(r.note)
+                : '<span class="doux">Note de synthèse…</span>'}</div></td>
           <td><div class="actions">
             <button class="b mini" data-action="rencontre-modifier" data-id="${o.id}"
                     data-vid="${v.id}" data-rid="${r.id}" title="Modifier">✎</button>
             <button class="b mini danger" data-action="rencontre-supprimer" data-id="${o.id}"
                     data-vid="${v.id}" data-rid="${r.id}" title="Supprimer">🗑</button>
           </div></td>
-        </tr>`).join("")}</tbody></table></div>`
+        </tr>`).join("")}</tbody></table></div>` +
+        (lignes.length > 10
+          ? '<button class="b mini" style="margin-top:10px" data-action="deplier" data-id="' + e.id +
+            '">' + (tout ? "Réduire" : "Voir les " + lignes.length + " rencontres") + "</button>"
+          : "")
         : '<p class="rien" style="padding:0 2px">Aucune rencontre' +
           (f === "tout" ? " encodée." : " pour ce filtre.") + "</p>"}
     </div>`;
@@ -2517,14 +2492,40 @@ document.getElementById("vue").addEventListener("input", ev => {
 });
 document.getElementById("vue").addEventListener("change", ev => {
   if(ev.target.id === "tri"){ etat.tri = ev.target.value; rendre(); }
-  if(ev.target.dataset && ev.target.dataset.note){
-    const d = ev.target.dataset;
-    const e = enfantParId(d.id);
-    const v = e && (e.visites||[]).find(x => x.id === d.vid);
-    const r = v && (v.rencontres||[]).find(x => x.id === d.rid);
-    if(r && r.note !== ev.target.value){ r.note = ev.target.value; maj(); }
-  }
+
 });
+
+/* --- Note de rencontre : le texte devient une zone de saisie au clic, et
+       redevient du texte une fois quittée. Cela évite de créer des centaines
+       de zones de saisie en même temps, qui ralentissaient beaucoup l'écran. --- */
+function ouvrirNote(zone){
+  const d = zone.dataset;
+  const e = enfantParId(d.id);
+  const v = e && (e.visites||[]).find(x => x.id === d.vid);
+  const r = v && (v.rencontres||[]).find(x => x.id === d.rid);
+  if(!r) return;
+
+  const champ = document.createElement("textarea");
+  champ.className = "note-vive";
+  champ.value = r.note || "";
+  champ.rows = 3;
+  champ.placeholder = "Note de synthèse…";
+  zone.replaceWith(champ);
+  champ.focus();
+
+  const terminer = () => {
+    champ.removeEventListener("blur", terminer);
+    const change = (r.note || "") !== champ.value;
+    if(change){ r.note = champ.value; DB.initial = false; sauver(); }
+    zone.innerHTML = r.note ? ech(r.note) : '<span class="doux">Note de synthèse…</span>';
+    champ.replaceWith(zone);
+    if(change) rendreBientot();
+  };
+  champ.addEventListener("blur", terminer);
+  champ.addEventListener("keydown", ev => {
+    if(ev.key === "Escape"){ ev.stopPropagation(); champ.value = r.note || ""; champ.blur(); }
+  });
+}
 
 function actionner(b){
   const id = b.dataset.id, vid = b.dataset.vid, rid = b.dataset.rid;
@@ -2594,7 +2595,13 @@ function actionner(b){
       if(!r) break;
       // un second clic sur le même choix remet la rencontre en « prévue »
       r.presence = (r.presence === b.dataset.p) ? "prevue" : b.dataset.p;
-      maj();
+      DB.initial = false;
+      sauver();
+      // retour visuel immédiat ; le reste de l'écran suit juste après
+      const groupe = b.parentElement;
+      groupe.querySelector(".oui").classList.toggle("actif", r.presence === "venu");
+      groupe.querySelector(".non").classList.toggle("actif", r.presence === "absent");
+      rendreBientot();
       break;
     }
     case "rencontre-enfant": {
@@ -2604,6 +2611,10 @@ function actionner(b){
       else formRencontre(null, null, null);
       break;
     }
+    case "deplier":
+      etat.ouvertes[id] = !etat.ouvertes[id];
+      rendre();
+      break;
     case "filtre-visite":
       etat.filtreVisite = b.dataset.f; etat.listeComplete = false; rendre(); break;
 
@@ -2689,6 +2700,8 @@ function actionner(b){
   }
 }
 document.getElementById("vue").addEventListener("click", ev => {
+  const note = ev.target.closest("[data-note]");
+  if(note){ ouvrirNote(note); return; }
   const b = ev.target.closest("[data-action]");
   if(b){ actionner(b); return; }
   const o = ev.target.closest("[data-onglet]");
