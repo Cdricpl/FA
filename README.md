@@ -1,6 +1,7 @@
 # Gestion des dossiers
 
-Programme Windows de suivi des dossiers d'enfants. Quatre onglets, rien de plus.
+Programme Windows de suivi des dossiers d'enfants : notifications de prise en charge,
+rapports semestriels et annuels, droits de visite et notes de rencontres.
 Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 
 ---
@@ -8,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.1.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.2.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -24,13 +25,18 @@ directement, y compris depuis une clé USB.
 
 ---
 
-## Les quatre onglets
+## Les écrans
 
-### 1. À faire
+### Accueil
+Un aperçu du jour : quatre tuiles de comptage (rapports à préparer, tâches à faire,
+notifications à réclamer, visites à venir), les tâches du jour, les prochaines rencontres,
+les enfants suivis, des accès rapides et les notifications à réclamer.
+
+### À faire
 La to do quotidienne, regroupée en *En retard* / *Aujourd'hui* / *À venir* / *Sans date*.
 Une tâche peut être rattachée à un enfant.
 
-### 2. Enfants
+### Enfants
 La fiche de chaque enfant, à compléter :
 
 * prénom et nom ;
@@ -42,7 +48,7 @@ Les **dates des deux rapports** s'affichent automatiquement à partir de cette d
 le **rapport annuel** tombe à la date de notification, le **rapport semestriel** six mois
 plus tôt. Un bandeau signale les fiches encore incomplètes.
 
-### 3. Notifications de prise en charge
+### Notifications de prise en charge
 La vue visuelle : une carte par enfant, pour voir d'un coup d'œil si la notification
 est arrivée ou non.
 
@@ -59,7 +65,19 @@ Sur chaque carte : **Notification reçue** (encode la nouvelle échéance, propo
 plus tard, et repasse la carte au vert), **Relance** (note la date du jour), et
 **+ tâche** (crée la tâche de relance dans l'onglet À faire).
 
-### 4. Droits de visite
+### Rapports
+
+Le calendrier des douze prochains mois, dans la présentation de votre tableau Excel :
+
+| Ligne | Quand |
+|-------|-------|
+| **Formalisations — rapport annuel** | à la date de notification |
+| **Rapports d'évolution — semestriel** | exactement six mois plus tôt |
+
+Boutons pour reculer ou avancer de douze mois, et une liste « À préparer maintenant »
+sous le calendrier.
+
+### Droits de visite
 Un droit de visite **par parent** : si l'enfant voit son papa et sa maman séparément,
 encodez-en deux. Pour chacun : le parent, la **fréquence** (`2x 1h/mois`, `4h/mois`,
 `2h/vacances`…), la date de fin, une éventuelle suspension et le lieu.
@@ -87,7 +105,7 @@ Sofia INFANTINO — SPJ
 
 ## Réglages et sauvegarde
 
-Bouton **Réglages** en haut à droite (ou menu *Fichier*) : dossier d'enregistrement,
+Bouton **Paramètres** en bas de la barre latérale (ou menu *Fichier*) : dossier d'enregistrement,
 délais d'alerte, sauvegarde, restauration, export CSV, remise à zéro.
 
 ### Où sont mes données
