@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.4.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.5.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -39,7 +39,7 @@ Une tâche peut être rattachée à un enfant.
 ### Enfants
 La fiche de chaque enfant, à compléter :
 
-* prénom et nom ;
+* prénom et nom — affichés **NOM Prénom** et classés par nom de famille ;
 * **date de naissance** (l'âge se calcule tout seul) ;
 * **autorité** : SAJ ou SPJ ;
 * **date de la notification de prise en charge** ;
@@ -82,17 +82,21 @@ Boutons pour reculer ou avancer de douze mois.
 ### Droits de visite
 Quatre blocs :
 
-1. **Enfants concernés** — une carte par droit de visite : l'enfant, la fréquence,
-   avec qui, l'état (● Actif ou ● Suspendu) et la date de fin.
-2. **Schéma de récurrence (mensuel)** — les quatre semaines du mois côte à côte, avec
-   les créneaux de chaque enfant, colorés selon l'intervenant : Papa en bleu, Maman en
-   rose, Fratrie en violet. Un droit suspendu porte un ⚠. Les créneaux s'encodent dans
-   « Modifier » sur la carte de l'enfant.
+1. **Enfants concernés** — une carte par enfant : l'intervenant, la fréquence, et surtout
+   **la dernière rencontre programmée**. En vert quand une rencontre est à venir, en orange
+   quand la dernière est passée ou qu'il n'y en a aucune : c'est le signal qu'il faut
+   rappeler la famille. Un bandeau récapitule les enfants concernés.
+2. **Schéma de récurrence (mensuel)** — les quatre semaines du mois côte à côte, avec les
+   créneaux, colorés selon l'intervenant : Papa en bleu, Maman en rose, Fratrie en violet.
 3. **Prochaines rencontres** — les rendez-vous à venir, avec leur pastille de date.
-4. **Suivi des rencontres** — le tableau : date, enfant, intervenant, type, heure de
-   début et de fin, statut (Prévu, Terminé, À compléter, Suspendu), une case
-   **A eu lieu ?** à cocher, la note de synthèse, et les boutons modifier / supprimer.
-   Filtres comptés et recherche portant aussi sur le texte des notes.
+4. **Suivi des rencontres, par enfant** — un bloc par enfant : date, intervenant, heures,
+   **✓ Présent / ✕ Absent en un clic**, et la **note qui s'écrit directement dans le tableau**
+   (elle s'enregistre en quittant la case). Aucun passage par une fenêtre de modification.
+
+**Regrouper une fratrie** : quand deux enfants sont placés dans la même famille d'accueil,
+cochez-les dans « Regrouper avec un autre enfant » sur le droit de visite. La rencontre ne
+s'encode alors qu'une fois et apparaît dans le suivi de chacun, avec la même note.
+Célia et Lucas THEISMANN sont déjà regroupés.
 
 Bouton **Notes en Word** : un `.docx` structuré, un chapitre par enfant, filtrable par
 période, prêt à être repris dans vos rapports.

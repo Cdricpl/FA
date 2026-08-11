@@ -297,6 +297,33 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .proch-nom{font-weight:600;font-size:13.5px}
 .proch-det{font-size:12px;color:var(--doux)}
 
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px;
+  max-height:170px;overflow:auto;border:1px solid var(--bord);border-radius:9px;padding:9px}
+.cases label{display:flex;gap:7px;align-items:center;font-size:13.5px}
+.cases input{width:auto;margin:0}
+.ce-groupe{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--accent)}
+.ce-prenom{font-size:13px;color:var(--doux)}
+.ce-prog{font-size:12px;font-weight:600;margin-top:9px}
+.ce-prog.vert{color:var(--vert)} .ce-prog.orange{color:var(--orange)} .ce-prog.rouge{color:var(--rouge)}
+.carte-enfant.vert{background:var(--vert-f);border-color:rgba(31,138,76,.3)}
+.carte-enfant.orange{background:var(--orange-f);border-color:rgba(224,138,30,.35)}
+.carte-enfant.rouge{background:var(--rouge-f);border-color:rgba(192,43,43,.3)}
+.cr-prenom{font-size:12px;color:var(--doux);margin-top:1px}
+
+.suivi-enfant{border:1px solid var(--bord);border-radius:12px;padding:13px 15px;margin-bottom:14px;
+  background:var(--carte)}
+.se-tete{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:10px}
+.se-nom{font-weight:700;font-size:15px}
+.bascule{display:inline-flex;border:1px solid var(--bord);border-radius:8px;overflow:hidden}
+.bascule button{border:0;background:var(--carte);color:var(--doux);font:inherit;font-size:12.5px;
+  padding:5px 10px;cursor:pointer;white-space:nowrap}
+.bascule button + button{border-left:1px solid var(--bord)}
+.bascule .oui:hover{background:var(--vert-f);color:var(--vert)}
+.bascule .non:hover{background:var(--rouge-f);color:var(--rouge)}
+.bascule .oui.actif{background:var(--vert);color:#fff;font-weight:700}
+.bascule .non.actif{background:var(--rouge);color:#fff;font-weight:700}
+textarea.note-vive{font-size:13px;padding:6px 8px;border-radius:8px;min-height:44px}
+
 /* ---------- Rencontres ---------- */
 .separateur-mois{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--doux);
   font-weight:600;margin:18px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--bord)}
@@ -477,7 +504,8 @@ function normaliser(d){
     if(e.notifRecue === undefined) e.notifRecue = true;
     e.visites.forEach(v => {
       v.rencontres = Array.isArray(v.rencontres) ? v.rencontres : [];
-      v.creneaux   = Array.isArray(v.creneaux)   ? v.creneaux   : [];
+      v.creneaux    = Array.isArray(v.creneaux)    ? v.creneaux    : [];
+      v.partageAvec = Array.isArray(v.partageAvec) ? v.partageAvec : [];
       v.rencontres.forEach(r => { if(!r.presence) r.presence = "venu"; });
     });
   });
@@ -501,10 +529,9 @@ function sauver(){
 function maj(){ DB.initial = false; sauver(); rendre(); }
 
 const enfantParId = id => DB.enfants.find(e => e.id === id);
-const nomComplet  = e => e ? ((e.prenom||"") + " " + (e.nom||"")).trim() : "";
+const nomComplet  = e => e ? ((e.nom||"") + " " + (e.prenom||"")).trim() : "";
 /** Classement par nom de famille, puis par prénom. */
-const parNom = (a,b) =>
-  ((a.nom||"") + " " + (a.prenom||"")).localeCompare((b.nom||"") + " " + (b.prenom||""), "fr");
+const parNom = (a,b) => nomComplet(a).localeCompare(nomComplet(b), "fr");
 
 /* =========================================================================
    3. ENREGISTREMENT DANS UN VRAI FICHIER SUR LE DISQUE
@@ -787,7 +814,7 @@ function ic(nom, taille){
 const COULEURS = ["#2f6fb0","#1f8a4c","#b4632a","#7143b8","#0f7c8a","#b03a5b","#4a6480","#a06a12"];
 function avatar(e, taille){
   const p = (e.prenom || "").trim(), n = (e.nom || "").trim();
-  const ini = ((p[0] || "") + (n[0] || p[1] || "")).toUpperCase() || "?";
+  const ini = ((n[0] || "") + (p[0] || n[1] || "")).toUpperCase() || "?";
   const cle = nomComplet(e) || "?";
   let h = 0;
   for(let i = 0; i < cle.length; i++) h = (h * 31 + cle.charCodeAt(i)) >>> 0;
@@ -877,12 +904,6 @@ function rapportsAPreparer(){
 }
 
 /* --- Droits de visite --- */
-function statutVisite(v){
-  if(v.suspendu) return { code:"suspendu",
-    label:"Suspendu" + (estISO(v.suspenduDepuis) ? " depuis le " + fmtFR(v.suspenduDepuis) : "") };
-  if(!estISO(v.dateFin)) return { code:"gris", label:"Sans date de fin" };
-  return statutEcheance(v.dateFin);
-}
 const libelleParent = v => v.parent && v.parent.trim() ? v.parent.trim() : "Parent à préciser";
 const PRESENCES = {
   prevue:  { label:"Rencontre prévue",  court:"Prévue",  code:"info"  },
@@ -1361,7 +1382,7 @@ function vueRapports(){
    12. VUE — Droits de visite
    ========================================================================= */
 
-/* --- Catégorie du parent : donne sa couleur et son pictogramme au planning --- */
+/* --- Catégorie de l'intervenant : donne sa couleur et son pictogramme --- */
 const CATEGORIES = {
   papa:    { label:"Papa",    icone:"personne", classe:"papa"    },
   maman:   { label:"Maman",   icone:"personne", classe:"maman"   },
@@ -1370,20 +1391,47 @@ const CATEGORIES = {
 };
 function categorieParent(v){
   const t = (v.parent || "").toLowerCase();
-  if(/papa|p[eè]re/.test(t))            return "papa";
-  if(/maman|m[eè]re/.test(t))           return "maman";
-  if(/fratrie|fr[eè]re|s(oe|œ)ur/.test(t)) return "fratrie";
+  if(/papa|p[eè]re/.test(t))                return "papa";
+  if(/maman|m[eè]re/.test(t))               return "maman";
+  if(/fratrie|fr[eè]re|s(oe|œ)ur/.test(t))  return "fratrie";
   return "autre";
 }
 
-/** État d'une rencontre dans le suivi : prévu, terminé, à compléter, suspendu. */
-function statutRencontre(v, r){
-  if(v.suspendu && (!estISO(v.suspenduDepuis) || r.date >= v.suspenduDepuis))
-    return { code:"rouge", label:"Suspendu" };
-  if(r.presence === "annulee") return { code:"gris",   label:"Annulée" };
-  if(r.presence !== "prevue")  return { code:"vert",   label:"Terminé" };
-  if(estISO(r.date) && r.date < aujourdHui()) return { code:"orange", label:"À compléter" };
-  return { code:"info", label:"Prévu" };
+/** Dernière rencontre programmée pour un enfant, tous intervenants confondus. */
+function derniereProgrammee(enf){
+  let d = "";
+  visitesDe(enf).forEach(({v}) => (v.rencontres||[]).forEach(r => {
+    if(estISO(r.date) && r.date > d) d = r.date;
+  }));
+  if(!d) return { date:"", code:"orange", texte:"À programmer" };
+  if(d < aujourdHui()) return { date:d, code:"orange",
+    texte:"Dernière le " + fmtFR(d) + " — à reprogrammer" };
+  return { date:d, code:"vert", texte:"Prochaine le " + fmtFR(d) };
+}
+
+/** Les enfants couverts par un droit de visite : le titulaire et ceux
+    avec qui il est regroupé (fratrie placée dans la même famille d'accueil). */
+function enfantsDuDroit(e, v){
+  const l = [e];
+  (v.partageAvec||[]).forEach(id => { const x = enfantParId(id); if(x) l.push(x); });
+  return l;
+}
+/** « THEISMANN Célia + Lucas » quand le nom de famille est commun. */
+function libelleDroit(e, v){
+  const l = enfantsDuDroit(e, v);
+  if(l.length === 1) return nomComplet(e);
+  const memeNom = l.every(x => (x.nom||"") === (e.nom||""));
+  return memeNom ? (e.nom + " " + l.map(x => x.prenom).join(" + "))
+                 : l.map(nomComplet).join(" + ");
+}
+/** Droits qui concernent un enfant : les siens et ceux qui l'incluent. */
+function visitesDe(enf){
+  const l = (enf.visites||[]).map(v => ({ e:enf, v }));
+  DB.enfants.forEach(e => {
+    if(e.id === enf.id) return;
+    (e.visites||[]).forEach(v => { if((v.partageAvec||[]).includes(enf.id)) l.push({ e, v }); });
+  });
+  return l;
 }
 
 /** Pastille de date « MAR / 20 / MAI ». */
@@ -1401,26 +1449,27 @@ function vueVisites(){
 
   const droits = [];
   DB.enfants.slice().sort(parNom).forEach(e => (e.visites||[]).forEach(v => droits.push({ e, v })));
+  const avecDroit = DB.enfants.slice().sort(parNom).filter(e => visitesDe(e).length);
 
   /* ------------------------------------------------ 1. enfants concernés */
-  const cartesEnfants = droits.map(({e,v}) => {
-    const s = statutVisite(v);
-    const suspendu = !!v.suspendu;
-    return `<div class="carte-enfant ${suspendu ? "suspendu" : "actif"}">
+  const cartesEnfants = avecDroit.map(e => {
+    const p = derniereProgrammee(e);
+    return `<div class="carte-enfant ${p.code}">
       <div class="ce-haut">${avatar(e, 40)}
-        <div><div class="ce-nom">${ech(e.prenom || nomComplet(e))}</div>
-          <div class="ce-nom-famille">${ech(e.nom)}</div></div></div>
-      <div class="ce-ligne">Fréquence : <b>${ech(v.frequence || "—")}</b></div>
-      <div class="ce-ligne">Avec : <b>${ech(libelleParent(v))}</b></div>
-      <div class="ce-etat"><span class="puce ${suspendu ? "rouge" : "vert"}"></span>
-        ${suspendu ? "Suspendu" : "Actif"}</div>
-      <div class="ce-fin">${suspendu
-        ? "Depuis : " + ech(fmtFR(v.suspenduDepuis))
-        : "Fin : " + ech(fmtFR(v.dateFin))}</div>
-      <div class="ce-actions">
-        <button class="b mini" data-action="visite-modifier" data-id="${e.id}" data-vid="${v.id}">Modifier</button>
-        <button class="b mini danger" data-action="visite-supprimer" data-id="${e.id}" data-vid="${v.id}">✕</button>
-      </div>
+        <div><div class="ce-nom">${ech(e.nom)}</div>
+          <div class="ce-prenom">${ech(e.prenom)}</div></div></div>
+      ${visitesDe(e).map(({e:o,v}) => `<div class="ce-ligne">
+        <b>${ech(libelleParent(v))}</b>${v.frequence ? " · " + ech(v.frequence) : ""}
+        ${(v.partageAvec||[]).length ? '<br><span class="ce-groupe">' + ic("enfants",12) +
+          " regroupé : " + ech(libelleDroit(o, v)) + "</span>" : ""}
+        <button class="b mini" data-action="visite-modifier" data-id="${o.id}"
+                data-vid="${v.id}" title="Modifier ce droit de visite">✎</button>
+        <button class="b mini danger" data-action="visite-supprimer" data-id="${o.id}"
+                data-vid="${v.id}" title="Supprimer ce droit de visite">✕</button>
+      </div>`).join("")}
+      <div class="ce-prog ${p.code}"><span class="puce ${p.code}"></span>${ech(p.texte)}</div>
+      <button class="b mini primaire" style="width:100%;justify-content:center;margin-top:9px"
+              data-action="rencontre-enfant" data-id="${e.id}">${ic("plus",13)} Programmer</button>
     </div>`;
   }).join("");
 
@@ -1441,21 +1490,20 @@ function vueVisites(){
       <div class="sem-corps">
         ${items.length ? items.map(({e,v,c}) => {
           const cat = categorieParent(v);
-          return `<div class="creneau ${CATEGORIES[cat].classe}${v.suspendu ? " barre" : ""}">
+          return `<div class="creneau ${CATEGORIES[cat].classe}">
             <div class="cr-haut">${ic(CATEGORIES[cat].icone, 15)}
-              <span class="cr-nom">${ech(e.prenom || nomComplet(e))}</span></div>
+              <span class="cr-nom">${ech(e.nom)}</span></div>
+            <div class="cr-prenom">${ech(enfantsDuDroit(e,v).map(x => x.prenom).join(" + "))}</div>
             <div class="cr-h">${ech((c.debut || "?") + " – " + (c.fin || "?"))}</div>
-            <div class="cr-bas">${ech(libelleParent(v))}
-              ${v.suspendu ? '<span class="cr-susp">⚠ Suspendu</span>' : ""}</div>
+            <div class="cr-bas">${ech(libelleParent(v))}</div>
           </div>`;
         }).join("") : '<div class="sem-vide">—</div>'}
       </div>
     </div>`).join("");
 
   const legende = `<div class="legende">
-    ${Object.keys(CATEGORIES).filter(k => k !== "autre").map(k =>
+    ${["papa","maman","fratrie"].map(k =>
       '<span>' + ic(CATEGORIES[k].icone, 15) + " " + CATEGORIES[k].label + "</span>").join("")}
-    <span style="color:var(--rouge)">⚠ Droit de visite suspendu</span>
   </div>`;
 
   /* ------------------------------------------------ 3. prochaines rencontres */
@@ -1465,30 +1513,25 @@ function vueVisites(){
                    String(a.rencontre.debut||"").localeCompare(String(b.rencontre.debut||"")))
     .slice(0, 6);
 
-  const listeProchaines = prochaines.length ? prochaines.map(o => {
-    const st = statutRencontre(o.visite, o.rencontre);
-    return `<div class="proch">
+  const listeProchaines = prochaines.length ? prochaines.map(o => `
+    <div class="proch">
       ${pastilleDate(o.rencontre.date)}
       <div class="proch-txt">
-        <div class="proch-nom">${ech(nomComplet(o.enfant))}</div>
+        <div class="proch-nom">${ech(libelleDroit(o.enfant, o.visite))}</div>
         <div class="proch-det">${heuresDe(o.rencontre) || "heure à préciser"}</div>
         <div class="proch-det">${ech(libelleParent(o.visite))}</div>
       </div>
-      <span class="et ${st.code}">${ech(st.label)}</span>
-    </div>`;
-  }).join("") : '<p class="rien">Aucune rencontre programmée.</p>';
+    </div>`).join("") : '<p class="rien">Aucune rencontre programmée.</p>';
 
-  /* --------------------------------------------------- 4. suivi des rencontres */
-  let suivi = toutesRencontres();
-  if(q) suivi = suivi.filter(o => (nomComplet(o.enfant) + " " + libelleParent(o.visite) + " " +
-                                   (o.rencontre.note||"")).toLowerCase().includes(q));
+  const aReprogrammer = avecDroit.filter(e => derniereProgrammee(e).code !== "vert");
+
+  /* --------------------------------------------- 4. suivi, enfant par enfant */
   const f = etat.filtreVisite;
-  if(f === "avenir")    suivi = suivi.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue");
-  if(f === "completer") suivi = suivi.filter(o => aCompleter(o.rencontre));
-  if(f === "venu")      suivi = suivi.filter(o => o.rencontre.presence === "venu");
-  if(f === "absent")    suivi = suivi.filter(o => o.rencontre.presence === "absent");
-  suivi.sort((a,b) => b.rencontre.date.localeCompare(a.rencontre.date) ||
-                      String(b.rencontre.debut||"").localeCompare(String(a.rencontre.debut||"")));
+  const garde = r =>
+    (f !== "avenir"    || (r.date >= auj && r.presence === "prevue")) &&
+    (f !== "completer" || aCompleter(r)) &&
+    (f !== "venu"      || r.presence === "venu") &&
+    (f !== "absent"    || r.presence === "absent");
 
   const total = toutesRencontres();
   const compte = {
@@ -1502,103 +1545,108 @@ function vueVisites(){
     '<button data-action="filtre-visite" data-f="' + id + '" class="' +
     (f === id ? "actif" : "") + '">' + texte + " " + n + "</button>";
 
-  const limite = etat.listeComplete ? suivi.length : 25;
-  const lignes = suivi.slice(0, limite).map(o => {
-    const r = o.rencontre, v = o.visite, e = o.enfant;
-    const st = statutRencontre(v, r);
-    const euLieu = r.presence === "venu";
-    const decide = r.presence === "venu" || r.presence === "absent";
-    return `<tr>
-      <td class="num nowrap">${ech(fmtFR(r.date))}</td>
-      <td><div style="display:flex;align-items:center;gap:8px">${avatar(e,28)}
-        <b>${ech(nomComplet(e))}</b></div></td>
-      <td>${ech(libelleParent(v))}</td>
-      <td><span class="et gris">DV</span></td>
-      <td class="num">${ech(r.debut || "—")}</td>
-      <td class="num">${ech(r.fin || "—")}</td>
-      <td><span class="et ${st.code}">${ech(st.label)}</span></td>
-      <td style="text-align:center">
-        <input type="checkbox" data-action="rencontre-eulieu" data-id="${e.id}" data-vid="${v.id}"
-               data-rid="${r.id}" ${euLieu ? "checked" : ""} style="width:auto"
-               title="${decide ? (euLieu ? "A eu lieu" : "N'a pas eu lieu") : "À renseigner"}"
-               aria-label="La rencontre a-t-elle eu lieu ?">
-        ${(!decide) ? '<br><span class="doux" style="font-size:11px">à dire</span>' : ""}
-      </td>
-      <td class="pt" style="min-width:200px;white-space:pre-wrap">${r.note ? ech(r.note)
-        : '<span class="doux">—</span>'}</td>
-      <td><div class="actions">
-        <button class="b mini" data-action="rencontre-modifier" data-id="${e.id}"
-                data-vid="${v.id}" data-rid="${r.id}" title="Modifier">✎</button>
-        <button class="b mini danger" data-action="rencontre-supprimer" data-id="${e.id}"
-                data-vid="${v.id}" data-rid="${r.id}" title="Supprimer">🗑</button>
-      </div></td>
-    </tr>`;
+  const blocs = avecDroit.filter(e => !q || nomComplet(e).toLowerCase().includes(q)).map(e => {
+    const lignes = [];
+    visitesDe(e).forEach(({e:o, v}) => (v.rencontres||[]).forEach(r => {
+      if(garde(r)) lignes.push({ o, v, r });
+    }));
+    lignes.sort((a,b) => b.r.date.localeCompare(a.r.date) ||
+                         String(b.r.debut||"").localeCompare(String(a.r.debut||"")));
+    const p = derniereProgrammee(e);
+    const venus = lignes.filter(x => x.r.presence === "venu").length;
+    const absents = lignes.filter(x => x.r.presence === "absent").length;
+
+    return `<div class="suivi-enfant">
+      <div class="se-tete">
+        ${avatar(e, 34)}
+        <div style="flex:1">
+          <div class="se-nom">${ech(nomComplet(e))}</div>
+          <div class="pt doux">${pluriel(lignes.length,"rencontre")}
+            ${lignes.length ? "· " + venus + " honorée(s), " + absents + " manquée(s)" : ""}</div>
+        </div>
+        <span class="et ${p.code}">${ech(p.texte)}</span>
+        <button class="b mini primaire" data-action="rencontre-enfant" data-id="${e.id}">
+          ${ic("plus",13)} Rencontre</button>
+      </div>
+      ${lignes.length ? `<div class="tableau-enveloppe"><table>
+        <thead><tr><th class="num">Date</th><th>Intervenant</th><th class="num">Début</th>
+          <th class="num">Fin</th><th style="text-align:center">Le parent</th><th>Note</th><th></th></tr></thead>
+        <tbody>${lignes.map(({o,v,r}) => `<tr>
+          <td class="num nowrap">${ech(fmtFR(r.date))}${
+            aCompleter(r) ? '<br><span class="et orange">à compléter</span>' : ""}</td>
+          <td>${ech(libelleParent(v))}${(v.partageAvec||[]).length
+            ? '<br><span class="doux pt">avec ' + ech(libelleDroit(o, v)) + "</span>" : ""}</td>
+          <td class="num">${ech(r.debut || "—")}</td>
+          <td class="num">${ech(r.fin || "—")}</td>
+          <td style="text-align:center"><div class="bascule">
+            <button class="oui ${r.presence === "venu" ? "actif" : ""}"
+                    data-action="presence" data-p="venu" data-id="${o.id}" data-vid="${v.id}"
+                    data-rid="${r.id}" title="Le parent est venu">✓ Présent</button>
+            <button class="non ${r.presence === "absent" ? "actif" : ""}"
+                    data-action="presence" data-p="absent" data-id="${o.id}" data-vid="${v.id}"
+                    data-rid="${r.id}" title="Le parent n'est pas venu">✕ Absent</button>
+          </div></td>
+          <td style="min-width:240px"><textarea class="note-vive" rows="2"
+              data-note="1" data-id="${o.id}" data-vid="${v.id}" data-rid="${r.id}"
+              placeholder="Note de synthèse…">${ech(r.note)}</textarea></td>
+          <td><div class="actions">
+            <button class="b mini" data-action="rencontre-modifier" data-id="${o.id}"
+                    data-vid="${v.id}" data-rid="${r.id}" title="Modifier">✎</button>
+            <button class="b mini danger" data-action="rencontre-supprimer" data-id="${o.id}"
+                    data-vid="${v.id}" data-rid="${r.id}" title="Supprimer">🗑</button>
+          </div></td>
+        </tr>`).join("")}</tbody></table></div>`
+        : '<p class="rien" style="padding:0 2px">Aucune rencontre' +
+          (f === "tout" ? " encodée." : " pour ce filtre.") + "</p>"}
+    </div>`;
   }).join("");
 
   /* --------------------------------------------------------------- assemblage */
   return `
   <div class="carte">
     <div class="tete">${ic("enfants",18)}<h2>Enfants concernés</h2>
-      <span class="et info">${droits.length}</span>
+      <span class="et info">${avecDroit.length}</span>
       <button class="b mini pousse" data-action="visite-nouvelle">${ic("plus",14)} Droit de visite</button></div>
-    ${droits.length ? '<div class="bandeau-enfants">' + cartesEnfants + "</div>"
-                    : '<p class="rien">Aucun droit de visite encodé.</p>'}
+    ${avecDroit.length ? '<div class="bandeau-enfants">' + cartesEnfants + "</div>"
+                       : '<p class="rien">Aucun droit de visite encodé.</p>'}
+    ${aReprogrammer.length ? '<div class="encadre attention" style="margin:14px 0 0">' +
+      '<div class="titre">' + pluriel(aReprogrammer.length,"enfant") +
+      " sans rencontre à venir</div><span class='pt'>" +
+      aReprogrammer.map(e => ech(nomComplet(e))).join(", ") +
+      " — à contacter pour programmer la suite.</span></div>" : ""}
   </div>
 
   <div class="grille dv">
-    <div class="deux-tiers">
-      <div class="carte">
-        <div class="tete">${ic("visites",18)}<h2>Schéma de récurrence (mensuel)</h2></div>
-        <div class="schema">${colonnes}</div>
-        ${legende}
-        ${sansSchema.length ? '<p class="aide">Sans créneau encodé : ' +
-          sansSchema.map(({e,v}) => ech(nomComplet(e)) + " (" + ech(libelleParent(v)) + ")").join(", ") +
-          ". Ouvrez « Modifier » sur la carte de l'enfant pour indiquer les semaines et les heures.</p>" : ""}
-      </div>
+    <div class="carte">
+      <div class="tete">${ic("visites",18)}<h2>Schéma de récurrence (mensuel)</h2></div>
+      <div class="schema">${colonnes}</div>
+      ${legende}
+      ${sansSchema.length ? '<p class="aide">Sans créneau encodé : ' +
+        sansSchema.map(({e,v}) => ech(nomComplet(e))).join(", ") +
+        ". Le ✎ sur la carte de l'enfant permet d'indiquer les semaines et les heures.</p>" : ""}
     </div>
-    <div class="un-tiers">
-      <div class="carte">
-        <div class="tete">${ic("horloge",18)}<h2>Prochaines rencontres</h2></div>
-        ${listeProchaines}
-        <button class="b" style="width:100%;justify-content:center;margin-top:12px"
-                data-action="rencontre-rapide">${ic("plus",15)} Programmer une rencontre</button>
-      </div>
+    <div class="carte">
+      <div class="tete">${ic("horloge",18)}<h2>Prochaines rencontres</h2></div>
+      ${listeProchaines}
+      <button class="b" style="width:100%;justify-content:center;margin-top:12px"
+              data-action="rencontre-rapide">${ic("plus",15)} Programmer une rencontre</button>
     </div>
   </div>
 
   <div class="carte">
-    <div class="tete">${ic("taches",18)}<h2>Suivi des rencontres</h2>
-      <input type="search" id="recherche" placeholder="Rechercher…" style="max-width:220px;margin-left:auto"
-             value="${ech(etat.recherche)}">
+    <div class="tete">${ic("taches",18)}<h2>Suivi des rencontres, par enfant</h2>
+      <input type="search" id="recherche" placeholder="Rechercher un enfant…"
+             style="max-width:220px;margin-left:auto" value="${ech(etat.recherche)}">
       <button class="b mini" data-action="word">${ic("rapports",14)} Notes en Word</button>
       <button class="b mini" onclick="window.print()">Imprimer</button></div>
-    <div class="filtres" style="margin-bottom:14px">
+    <div class="filtres" style="margin-bottom:16px">
       ${filtre("tout","Toutes", compte.tout)}${filtre("avenir","À venir", compte.avenir)}
       ${filtre("completer","À compléter", compte.completer)}
-      ${filtre("venu","A eu lieu", compte.venu)}${filtre("absent","N'a pas eu lieu", compte.absent)}
+      ${filtre("venu","Présent", compte.venu)}${filtre("absent","Absent", compte.absent)}
     </div>
-    <div class="tableau-enveloppe">
-      <table>
-        <thead><tr>
-          <th class="num">Date</th><th>Enfant</th><th>Intervenant</th><th>Type</th>
-          <th class="num">Heure début</th><th class="num">Heure fin</th><th>Statut</th>
-          <th style="text-align:center">A eu lieu ?</th><th>Note</th><th></th>
-        </tr></thead>
-        <tbody>${lignes || '<tr><td colspan="10" class="vide">Aucune rencontre à afficher.</td></tr>'}</tbody>
-      </table>
-    </div>
-    <div class="barre" style="margin:14px 0 0">
-      <span class="doux pt">Total : ${pluriel(total.length,"rencontre")}</span>
-      ${suivi.length > limite
-        ? '<button class="b mini" data-action="voir-toutes-rencontres">Afficher les ' +
-          suivi.length + " lignes</button>"
-        : (etat.listeComplete && suivi.length > 25
-          ? '<button class="b mini" data-action="voir-toutes-rencontres">Réduire</button>' : "")}
-      <span class="legende pousse" style="margin:0">
-        <span><span class="et vert">✓</span> Oui, a eu lieu</span>
-        <span><span class="et rouge">✕</span> Non, n'a pas eu lieu</span>
-      </span>
-    </div>
+    ${blocs || '<p class="vide">Aucun enfant à afficher.</p>'}
+    <p class="aide">La présence et la note se saisissent directement dans le tableau :
+      un clic sur ✓ Présent ou ✕ Absent, et la note s'enregistre en quittant la case.</p>
   </div>`;
 }
 
@@ -1678,8 +1726,7 @@ function formNotifRecue(e){
 
 function formVisite(e, v){
   const neuf = !v;
-  v = v || { id:null, parent:"", frequence:"", dateFin:"", suspendu:false, suspenduDepuis:"",
-             lieu:"", creneaux:[] };
+  v = v || { id:null, parent:"", frequence:"", creneaux:[], partageAvec:[] };
   const creneauDe = n => (v.creneaux||[]).find(c => c.semaine === n) || { debut:"", fin:"" };
   const rangees = [1,2,3,4].map(n => `
     <tr><td style="padding:5px 8px 5px 0"><b>Semaine ${n}</b></td>
@@ -1697,25 +1744,29 @@ function formVisite(e, v){
              placeholder="Papa, Maman…">
       <datalist id="l-parents">${["Papa","Maman","Les deux parents","Grands-parents"]
         .map(s => '<option value="'+s+'">').join("")}</datalist></label>
-    <div class="ligne c2">
-      <label class="champ"><span>Fréquence des rencontres</span>
-        <input type="text" name="frequence" value="${ech(v.frequence)}" placeholder="Ex. 2x 1h/mois"></label>
-      <label class="champ"><span>Fin du droit de visite</span>
-        <input type="date" name="dateFin" value="${ech(v.dateFin)}"></label>
-    </div>
-    <div class="ligne c2">
-      <label class="champ"><span>Lieu habituel</span>
-        <input type="text" name="lieu" value="${ech(v.lieu)}"></label>
-      <label class="champ"><span>Suspendu depuis le</span>
-        <input type="date" name="suspenduDepuis" value="${ech(v.suspenduDepuis)}"></label>
-    </div>
-    <label class="champ" style="display:flex;gap:8px;align-items:center">
-      <input type="checkbox" name="suspendu" style="width:auto"${v.suspendu?" checked":""}>
-      <span style="margin:0">Droit de visite actuellement suspendu</span></label>
+    <label class="champ"><span>Fréquence des rencontres</span>
+      <input type="text" name="frequence" value="${ech(v.frequence)}" placeholder="Ex. 2x 1h/mois"></label>
+    <label class="champ"><span>Regrouper avec un autre enfant</span>
+      <div class="cases" id="zone-groupe"></div>
+      <p class="aide">Pour une fratrie placée dans la même famille d'accueil : la rencontre
+        n'est encodée qu'une fois et apparaît chez chacun.</p></label>
     <label class="champ"><span>Schéma de récurrence dans le mois</span>
       <table style="width:100%;max-width:340px"><tbody>${rangees}</tbody></table>
       <p class="aide">Laissez vide une semaine sans rencontre. Ces horaires alimentent le
         schéma mensuel de l'onglet Droits de visite.</p></label>`;
+  const dessinerGroupe = () => {
+    const zone = document.getElementById("zone-groupe");
+    if(!zone) return;
+    const f = document.getElementById("form-modale");
+    const titulaire = e ? e.id : (f.elements.enfantId ? f.elements.enfantId.value : "");
+    const deja = new Set(v.partageAvec || []);
+    const autres = DB.enfants.slice().sort(parNom).filter(x => x.id !== titulaire);
+    zone.innerHTML = autres.length
+      ? autres.map(x => '<label><input type="checkbox" name="grp" value="' + x.id + '"' +
+          (deja.has(x.id) ? " checked" : "") + "> " + ech(nomComplet(x)) + "</label>").join("")
+      : '<span class="doux pt">Aucun autre enfant encodé.</span>';
+  };
+
   ouvrirModale(neuf ? "Nouveau droit de visite" : "Modifier le droit de visite", corps, f => {
     const c = e || enfantParId(val(f,"enfantId"));
     if(!c){ alert("Choisissez l'enfant concerné."); return false; }
@@ -1724,13 +1775,17 @@ function formVisite(e, v){
       const deb = val(f,"d"+n), fin = val(f,"f"+n);
       if(deb || fin) creneaux.push({ semaine:n, debut:deb, fin:fin });
     });
-    const d = { parent:val(f,"parent"), frequence:val(f,"frequence"), dateFin:val(f,"dateFin"),
-                lieu:val(f,"lieu"), suspendu:coche(f,"suspendu"), suspenduDepuis:val(f,"suspenduDepuis"),
-                creneaux };
+    const partageAvec = Array.from(f.querySelectorAll('input[name="grp"]:checked'))
+      .map(i => i.value).filter(id => id !== (c ? c.id : ""));
+    const d = { parent:val(f,"parent"), frequence:val(f,"frequence"), creneaux, partageAvec };
     if(neuf) c.visites.push(Object.assign({ id:uid(), rencontres:[] }, d));
     else Object.assign(c.visites.find(x => x.id === v.id), d);
     maj();
   });
+
+  dessinerGroupe();
+  const form = document.getElementById("form-modale");
+  if(form.elements.enfantId) form.elements.enfantId.addEventListener("change", dessinerGroupe);
 }
 
 function formRencontre(e, v, r){
@@ -2138,8 +2193,7 @@ function docxVisites(enfants, du, au, toutInclure){
                    { gras:true, taille:24, avant:160, apres:40 });
       corps += par(pluriel(renc.length,"rencontre") + " : " + venus + " honorée(s), " +
                    absents + " manquée(s)" + (annulees ? ", " + annulees + " annulée(s)" : "") +
-                   (v.suspendu ? " — droit suspendu" + (estISO(v.suspenduDepuis) ? " depuis le " +
-                     fmtFR(v.suspenduDepuis) : "") : ""),
+                   "",
                    { italique:true, taille:19, couleur:"666666", apres:80 });
       renc.forEach(r => {
         total++;
@@ -2206,8 +2260,7 @@ function exportCsvEnfants(){
     e.prenom, e.nom, e.service, dt(e.naissance), dt(e.notifFin), statutNotif(e).titre,
     (e.relances||[]).map(fmtFR).join(" / "),
     dt(echeanceRapport(e,"semestriel")), dt(echeanceRapport(e,"annuel")),
-    (e.visites||[]).map(v => libelleParent(v) + (v.frequence ? " : " + v.frequence : "") +
-      (estISO(v.dateFin) ? " jusqu'au " + fmtFR(v.dateFin) : "") + (v.suspendu ? " (suspendu)" : "")).join(" / "),
+    (e.visites||[]).map(v => libelleParent(v) + (v.frequence ? " : " + v.frequence : "")).join(" / "),
     e.notes]));
   telecharger("dossiers-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8", "Tableur CSV");
 }
@@ -2246,6 +2299,13 @@ document.getElementById("vue").addEventListener("input", ev => {
 });
 document.getElementById("vue").addEventListener("change", ev => {
   if(ev.target.id === "tri"){ etat.tri = ev.target.value; rendre(); }
+  if(ev.target.dataset && ev.target.dataset.note){
+    const d = ev.target.dataset;
+    const e = enfantParId(d.id);
+    const v = e && (e.visites||[]).find(x => x.id === d.vid);
+    const r = v && (v.rencontres||[]).find(x => x.id === d.rid);
+    if(r && r.note !== ev.target.value){ r.note = ev.target.value; maj(); }
+  }
 });
 
 function actionner(b){
@@ -2299,10 +2359,19 @@ function actionner(b){
         maj();
       }
       break;
-    case "rencontre-eulieu": {
+    case "presence": {
       const r = (v.rencontres||[]).find(x => x.id === rid);
-      if(r) r.presence = (r.presence === "venu") ? "absent" : "venu";
+      if(!r) break;
+      // un second clic sur le même choix remet la rencontre en « prévue »
+      r.presence = (r.presence === b.dataset.p) ? "prevue" : b.dataset.p;
       maj();
+      break;
+    }
+    case "rencontre-enfant": {
+      const vs = visitesDe(e);
+      if(!vs.length){ alert("Ajoutez d'abord un droit de visite pour " + nomComplet(e) + "."); break; }
+      if(vs.length === 1) formRencontre(vs[0].e, vs[0].v, null);
+      else formRencontre(null, null, null);
       break;
     }
     case "filtre-visite":
@@ -2393,62 +2462,71 @@ document.getElementById("zone-modale").addEventListener("click", ev => {
    ========================================================================= */
 
 function donneesInitiales(){
-  // prénom, nom, service, date de notification, relances déjà notées
+  // prénom, nom, autorité, notification de prise en charge,
+  // date du rapport annuel (fichier « Formalisations »), relances déjà notées
   const source = [
-    ["Sofia","INFANTINO","SPJ","2026-04-25",["2026-06-02"]],
-    ["Guyliano","BERTOLINI","SPJ","2026-04-30",["2026-06-02"]],
-    ["Malone","BIHAIN","SPJ","2026-06-02",[]],
-    ["Eléana","PEIXOTO","SPJ","2026-06-12",[]],
-    ["Lucas","THEISMANN","SPJ","2026-06-25",[]],
-    ["Célia","THEISMANN","SPJ","2026-06-25",[]],
-    ["Théo","DE BRUYN","SPJ","2026-08-18",[]],
-    ["Sandy","FIERAIN","SAJ","2026-10-14",[]],
-    ["Timi","LEMET","SAJ","2026-11-01",[]],
-    ["David","LEMET","SAJ","2026-11-02",[]],
-    ["Alessandro","MAKA","SPJ","2026-11-04",[]],
-    ["Océanna","MAKA","SPJ","2026-11-04",[]],
-    ["Lionel","MAKA","SPJ","2026-11-04",[]],
-    ["Safia","CREPIN","SAJ","2026-11-04",[]],
-    ["Dyana","GASPAR","SPJ","2026-11-12",[]],
-    ["Kendjy","MARECHAL","SAJ","2026-12-01",[]],
-    ["Joackim","BRUGNEROTTO","SPJ","2026-12-16",[]],
-    ["Tellyoh","DESBESSEL","SPJ","2027-01-30",[]],
-    ["Mélina","LEFEVRE","SAJ","2027-03-31",[]],
-    ["Mathéo","TOURNEUR","SPJ","2027-04-09",[]],
-    ["Eléonore","HOUEE-WAUTIER","SAJ","2027-04-27",[]],
-    ["Théa","NEUFORGE","SAJ","2027-05-06",[]]
+    ["Sofia","INFANTINO","SPJ","2026-04-25","2026-04-24",["2026-06-02"]],
+    ["Guyliano","BERTOLINI","SPJ","2026-04-30","",["2026-06-02"]],
+    ["Malone","BIHAIN","SPJ","2026-06-02","",[]],
+    ["Eléana","PEIXOTO","SPJ","2026-06-12","",[]],
+    ["Lucas","THEISMANN","SPJ","2026-06-25","",[]],
+    ["Célia","THEISMANN","SPJ","2026-06-25","",[]],
+    ["Théo","DE BRUYN","SPJ","2026-08-18","",[]],
+    ["Sandy","FIERAIN","SAJ","2026-10-14","",[]],
+    ["Timi","LEMET","SAJ","2026-11-01","2026-11-02",[]],
+    ["David","LEMET","SAJ","2026-11-02","",[]],
+    ["Alessandro","MAKA","SPJ","2026-11-04","2026-11-10",[]],
+    ["Océanna","MAKA","SPJ","2026-11-04","2026-11-10",[]],
+    ["Lionel","MAKA","SPJ","2026-11-04","2026-11-10",[]],
+    ["Safia","CREPIN","SAJ","2026-11-04","",[]],
+    ["Dyana","GASPAR","SPJ","2026-11-12","2026-11-13",[]],
+    ["Kendjy","MARECHAL","SAJ","2026-12-01","",[]],
+    ["Joackim","BRUGNEROTTO","SPJ","2026-12-16","",[]],
+    ["Tellyoh","DESBESSEL","SPJ","2027-01-30","",[]],
+    ["Mélina","LEFEVRE","SAJ","2027-03-31","",[]],
+    ["Mathéo","TOURNEUR","SPJ","2027-04-09","2026-04-10",[]],
+    ["Eléonore","HOUEE-WAUTIER","SAJ","2027-04-27","2027-04-20",[]],
+    ["Théa","NEUFORGE","SAJ","2027-05-06","",[]]
   ];
-  // droits de visite du premier tableau : parent, fréquence, fin, suspension,
-  // puis les créneaux du mois repris du planning « Semaine 1 à 4 »
+  // droits de visite : intervenant, fréquence, puis les créneaux du mois
+  // repris du planning « Semaine 1 à 4 » du premier tableau
   const visites = {
-    "Sofia INFANTINO":     [["", "2h/vacances",        "2026-05-08", false, ""]],
-    "Malone BIHAIN":       [["", "1h/mois",            "2026-06-03", false, "", [[1,"12:45","13:45"]]]],
-    "Eléana PEIXOTO":      [["", "1h/mois",            "2026-06-24", false, "", [[2,"14:00","15:00"]]]],
-    "Lucas THEISMANN":     [["", "2x 1h/mois",         "2026-08-18", false, ""]],
-    "Célia THEISMANN":     [["", "2x 1h/mois",         "2026-08-18", false, ""]],
-    "Théo DE BRUYN":       [["", "Pendant les congés", "",           false, ""]],
-    "Timi LEMET":          [["", "1h/mois",            "",           true,  "2026-05-20", [[4,"14:00","15:00"]]]],
-    "David LEMET":         [["", "1h/mois",            "",           true,  "2026-05-20", [[4,"14:00","15:00"]]]],
-    "Alessandro MAKA":     [["", "4h/mois",            "2040-01-01", false, ""]],
-    "Océanna MAKA":        [["", "4h/mois",            "2040-01-01", false, ""]],
-    "Lionel MAKA":         [["", "4h/mois",            "2040-01-01", false, ""]],
-    "Dyana GASPAR":        [["", "2x 1h/mois",         "2040-01-01", false, ""]],
-    "Joackim BRUGNEROTTO": [["", "2x 1h/mois",         "2026-08-19", false, "", [[1,"09:30","10:30"],[3,"13:30","14:30"]]]],
-    "Tellyoh DESBESSEL":   [["", "2x 1h/mois",         "2026-08-26", false, "", [[1,"15:00","16:00"],[3,"15:00","16:00"]]]],
-    "Mélina LEFEVRE":      [["", "2x 1h/mois",         "2026-08-19", false, "", [[2,"15:00","16:00"],[4,"15:00","16:00"]]]]
+    "Sofia INFANTINO":     [["", "2h/vacances",        []]],
+    "Malone BIHAIN":       [["", "1h/mois",            [[1,"12:45","13:45"]]]],
+    "Eléana PEIXOTO":      [["", "1h/mois",            [[2,"14:00","15:00"]]]],
+    "Lucas THEISMANN":     [["", "2x 1h/mois",         []]],
+    "Célia THEISMANN":     [["", "2x 1h/mois",         []]],
+    "Théo DE BRUYN":       [["", "Pendant les congés", []]],
+    "Timi LEMET":          [["", "1h/mois",            [[4,"14:00","15:00"]]]],
+    "David LEMET":         [["", "1h/mois",            [[4,"14:00","15:00"]]]],
+    "Alessandro MAKA":     [["", "4h/mois",            []]],
+    "Océanna MAKA":        [["", "4h/mois",            []]],
+    "Lionel MAKA":         [["", "4h/mois",            []]],
+    "Dyana GASPAR":        [["", "2x 1h/mois",         []]],
+    "Joackim BRUGNEROTTO": [["", "2x 1h/mois",         [[1,"09:30","10:30"],[3,"13:30","14:30"]]]],
+    "Tellyoh DESBESSEL":   [["", "2x 1h/mois",         [[1,"15:00","16:00"],[3,"15:00","16:00"]]]],
+    "Mélina LEFEVRE":      [["", "2x 1h/mois",         [[2,"15:00","16:00"],[4,"15:00","16:00"]]]]
   };
 
-  const enfants = source.map(([prenom, nom, service, notifFin, relances]) => ({
-    id: uid(), prenom, nom, service, naissance:"", notifFin,
+
+  const enfants = source.map(([prenom, nom, service, notifFin, rapportAnnuel, relances]) => ({
+    id: uid(), prenom, nom, service, naissance:"", notifFin, rapportAnnuel,
     notifRecue: true, notifRecueLe: "",
     relances: relances.slice(), historique: [],
-    visites: (visites[prenom + " " + nom] || [])
-      .map(([parent, frequence, dateFin, suspendu, depuis, creneaux]) => ({
-        id: uid(), parent, frequence, dateFin, suspendu,
-        suspenduDepuis: depuis, lieu:"", rencontres:[],
-        creneaux: (creneaux || []).map(([semaine, debut, fin]) => ({ semaine, debut, fin }))
-      }))
+    visites: (visites[prenom + " " + nom] || []).map(([parent, frequence, creneaux]) => ({
+      id: uid(), parent, frequence, rencontres:[], partageAvec:[],
+      creneaux: (creneaux || []).map(([semaine, debut, fin]) => ({ semaine, debut, fin }))
+    }))
   }));
+
+  // Célia et Lucas THEISMANN sont placés dans la même famille d'accueil :
+  // leur droit de visite est regroupé, la rencontre ne s'encode qu'une fois.
+  const celia = enfants.find(e => e.prenom === "Célia" && e.nom === "THEISMANN");
+  const lucas = enfants.find(e => e.prenom === "Lucas" && e.nom === "THEISMANN");
+  if(celia && lucas && celia.visites.length){
+    celia.visites[0].partageAvec = [lucas.id];
+    lucas.visites = [];
+  }
 
   return {
     version: 4,
