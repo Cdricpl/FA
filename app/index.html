@@ -233,7 +233,10 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .mois>.tete-mois.courant{background:var(--accent-doux);color:var(--accent)}
 .mois .part{padding:9px 13px;border-top:1px solid var(--bord)}
 .mois .part .lib{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux);margin-bottom:4px}
-.mois .part .item{font-size:13px;padding:2px 0}
+.mois .part .item{font-size:13px;padding:3px 0;display:flex;align-items:center;gap:6px;cursor:pointer}
+.mois .part .item input{width:auto;margin:0;flex:none}
+.mois .part .item.envoye{color:var(--doux);text-decoration:line-through}
+.mois .part .item.retard{color:var(--rouge);font-weight:600}
 .mois .rien-mois{padding:10px 13px;color:var(--doux);font-size:12.5px;font-style:italic}
 
 /* ---------- Droits de visite ---------- */
@@ -505,6 +508,7 @@ function normaliser(d){
   r.enfants.forEach(e => {
     e.relances   = Array.isArray(e.relances)   ? e.relances   : [];
     e.historique = Array.isArray(e.historique) ? e.historique : [];
+    e.rapports   = Array.isArray(e.rapports)   ? e.rapports   : [];
     e.visites    = Array.isArray(e.visites)    ? e.visites    : [];
     if(e.notifRecue === undefined) e.notifRecue = true;
     e.visites.forEach(v => {
@@ -889,24 +893,73 @@ const RATTRAPAGE_RAPPORT = 60;
 const baseRapport = e => estISO(e.rapportAnnuel) ? e.rapportAnnuel
                        : (estISO(e.notifFin) ? e.notifFin : null);
 
+/** Ce rapport a-t-il été coché comme envoyé pour cette échéance ? */
+const rapportEnvoye = (e, type, echeance) =>
+  (e.rapports||[]).some(r => r.type === type && r.echeance === echeance && estISO(r.envoyeLe));
+
+/** Toutes les échéances d'un rapport comprises dans une période. */
+function occurrencesRapport(e, type, debut, fin){
+  const base = baseRapport(e);
+  if(!base) return [];
+  let d = type === "annuel" ? base : decalerMois(base, -6);
+  let garde = 0;
+  while(d > debut && garde++ < 80) d = decalerAns(d, -1);
+  const l = [];
+  garde = 0;
+  while(d <= fin && garde++ < 40){
+    if(d >= debut) l.push(d);
+    d = decalerAns(d, 1);
+  }
+  return l;
+}
+
+/** Échéance en cours : la première qui n'a pas été cochée comme envoyée.
+    Tant que rien n'a jamais été coché pour cet enfant, on ne remonte pas
+    au-delà de RATTRAPAGE_RAPPORT jours, pour ne pas réclamer d'anciens rapports. */
 function echeanceRapport(e, type){
   const base = baseRapport(e);
   if(!base) return null;
   let d = type === "annuel" ? base : decalerMois(base, -6);
-  const limite = decalerJours(aujourdHui(), -RATTRAPAGE_RAPPORT);
+  const suivi = (e.rapports||[]).some(r => r.type === type);
+  const limite = suivi ? decalerAns(aujourdHui(), -5)
+                       : decalerJours(aujourdHui(), -RATTRAPAGE_RAPPORT);
   let garde = 0;
-  while(d < limite && garde++ < 50) d = decalerAns(d, 1);
+  while(d < limite && garde++ < 80) d = decalerAns(d, 1);
+  garde = 0;
+  while(rapportEnvoye(e, type, d) && garde++ < 40) d = decalerAns(d, 1);
   return d;
 }
-function rapportsAPreparer(){
+/** Rapports en cours, non cochés, dont l'échéance tombe d'ici « jours ».
+    Sans argument : tous, y compris ceux qui sont en retard. */
+function rapportsDus(jours){
+  const limite = jours == null ? null : decalerJours(aujourdHui(), jours);
   const l = [];
   DB.enfants.forEach(e => ["semestriel","annuel"].forEach(type => {
     const d = echeanceRapport(e, type);
-    if(!d) return;
-    const st = statutEcheance(d, DB.parametres.seuilRapportJours);
-    if(st.code === "rouge" || st.code === "orange") l.push({ enfant:e, type, date:d, st });
+    if(!d || (limite && d > limite)) return;
+    l.push({ enfant:e, type, date:d, st:statutEcheance(d, DB.parametres.seuilRapportJours) });
   }));
   return l.sort((a,b) => a.date.localeCompare(b.date));
+}
+const rapportsAPreparer = () => rapportsDus(DB.parametres.seuilRapportJours);
+const rapportsEnRetard  = () => rapportsDus(null).filter(o => o.date < aujourdHui());
+const nomRapport = t => t === "annuel" ? "Rapport annuel" : "Rapport semestriel";
+
+/** Ligne cochable, utilisée dans « À faire » comme dans l'onglet Rapports. */
+function ligneRapport(o){
+  const retard = o.date < aujourdHui();
+  return `<li>
+    <input type="checkbox" data-action="rapport-envoye" data-id="${o.enfant.id}"
+           data-type="${o.type}" data-date="${o.date}" style="width:auto;margin-top:3px"
+           aria-label="Marquer le rapport comme envoyé">
+    <div style="flex:1">
+      <b>${ech(nomComplet(o.enfant))}</b>
+      <span class="doux pt">${o.enfant.service ? " · " + ech(o.enfant.service) : ""}</span><br>
+      <span class="pt doux">${ech(nomRapport(o.type))} — à rendre pour le ${ech(fmtFR(o.date))}</span>
+    </div>
+    <span class="et ${retard ? "rouge" : o.st.code}">${
+      retard ? "En retard de " + pluriel(joursEntre(o.date, aujourdHui()),"jour") : ech(o.st.label)}</span>
+  </li>`;
 }
 
 /* --- Droits de visite --- */
@@ -1149,7 +1202,23 @@ function vueTaches(){
     ["À venir",     enCours.filter(t => estISO(t.echeance) && t.echeance > aujourdHui())],
     ["Sans date",   enCours.filter(t => !estISO(t.echeance))]
   ];
-  return `
+  const rapports = rapportsDus(62);
+  const enRetard = rapports.filter(o => o.date < aujourdHui()).length;
+
+  const blocRapports = `
+    <div class="carte">
+      <div class="tete">${ic("rapports",18)}<h2>Rapports à rendre</h2>
+        <span class="et ${enRetard ? "rouge" : (rapports.length ? "orange" : "vert")}">${
+          rapports.length ? (enRetard ? enRetard + " en retard sur " + rapports.length : rapports.length)
+                          : "aucun"}</span>
+        <span class="doux pt pousse">deux prochains mois</span></div>
+      ${rapports.length ? '<ul class="liste">' + rapports.map(ligneRapport).join("") + "</ul>"
+        : '<p class="rien">Aucun rapport à rendre dans les deux prochains mois.</p>'}
+      ${rapports.length ? '<p class="aide">Cochez la case quand le rapport est envoyé :' +
+        " l'échéance suivante se place alors un an plus tard.</p>" : ""}
+    </div>`;
+
+  return blocRapports + `
   <div class="carte">
     <div class="barre">
       <button class="b primaire" data-action="tache-nouvelle">${ic("plus",15)} Nouvelle tâche</button>
@@ -1324,23 +1393,28 @@ function vueRapports(){
     const d = new Date(debut.getFullYear(), debut.getMonth()+i, 1);
     mois.push({ annee:d.getFullYear(), mois:d.getMonth(), annuels:[], semestriels:[] });
   }
-  const place = (type, e, date) => {
-    if(!date) return;
-    const d = parseISO(date);
-    const c = mois.find(m => m.annee === d.getFullYear() && m.mois === d.getMonth());
-    if(c) c[type].push({ enfant:e, date });
-  };
-  DB.enfants.forEach(e => {
-    place("annuels",     e, echeanceRapport(e,"annuel"));
-    place("semestriels", e, echeanceRapport(e,"semestriel"));
-  });
+  const premier = dISO(debut);
+  const dernier = dISO(new Date(debut.getFullYear(), debut.getMonth()+12, 0));
+  DB.enfants.forEach(e => [["annuels","annuel"],["semestriels","semestriel"]].forEach(([col,type]) => {
+    occurrencesRapport(e, type, premier, dernier).forEach(date => {
+      const d = parseISO(date);
+      const c = mois.find(m => m.annee === d.getFullYear() && m.mois === d.getMonth());
+      if(c) c[col].push({ enfant:e, date, type });
+    });
+  }));
 
   const item = o => {
-    const st = statutEcheance(o.date, DB.parametres.seuilRapportJours);
-    return '<div class="item"><span class="puce ' + st.code + '"></span>' +
+    const envoye = rapportEnvoye(o.enfant, o.type, o.date);
+    const st = envoye ? { code:"vert" } : statutEcheance(o.date, DB.parametres.seuilRapportJours);
+    const retard = !envoye && o.date < aujourdHui();
+    return '<label class="item' + (envoye ? " envoye" : (retard ? " retard" : "")) + '">' +
+      '<input type="checkbox" data-action="rapport-envoye" data-id="' + o.enfant.id +
+      '" data-type="' + o.type + '" data-date="' + o.date + '"' + (envoye ? " checked" : "") +
+      ' title="Cocher quand le rapport est envoyé">' +
+      '<span class="puce ' + (retard ? "rouge" : st.code) + '"></span>' +
       ech(nomComplet(o.enfant)) +
       (o.enfant.service ? ' <span class="doux">· ' + ech(o.enfant.service) + "</span>" : "") +
-      ' <span class="doux">· ' + ech(fmtFR(o.date).slice(0,5)) + "</span></div>";
+      ' <span class="doux">· ' + ech(fmtFR(o.date).slice(0,5)) + "</span></label>";
   };
 
   const auj = new Date();
@@ -1363,7 +1437,16 @@ function vueRapports(){
 
   const sansDate = DB.enfants.filter(e => !baseRapport(e));
 
-  return `
+  const retards = rapportsEnRetard();
+  const bandeau = retards.length ? `
+    <div class="carte">
+      <div class="tete">${ic("rapports",18)}<h2>Rapports en retard</h2>
+        <span class="et rouge">${retards.length}</span></div>
+      <ul class="liste">${retards.map(ligneRapport).join("")}</ul>
+      <p class="aide">Cochez la case quand le rapport est envoyé.</p>
+    </div>` : "";
+
+  return bandeau + `
   <div class="carte">
     <div class="barre">
       <button class="b" data-action="annee" data-delta="-1">← 12 mois avant</button>
@@ -1713,7 +1796,8 @@ function formEnfant(e){
                 naissance:val(f,"naissance"), notifFin:val(f,"notifFin"),
                 rapportAnnuel:val(f,"rapportAnnuel") };
     if(neuf) DB.enfants.push(Object.assign({ id:uid(), notifRecue:true, notifRecueLe:"",
-                                             relances:[], historique:[], visites:[] }, d));
+                                             relances:[], historique:[], rapports:[],
+                                             visites:[] }, d));
     else Object.assign(enfantParId(e.id), d);
     maj();
   });
@@ -2477,6 +2561,15 @@ function actionner(b){
       break;
 
     /* --- rapports --- */
+    case "rapport-envoye": {
+      const type = b.dataset.type, date = b.dataset.date;
+      e.rapports = e.rapports || [];
+      const existe = e.rapports.find(r => r.type === type && r.echeance === date);
+      if(existe) e.rapports = e.rapports.filter(r => r !== existe);
+      else e.rapports.push({ id:uid(), type, echeance:date, envoyeLe:aujourdHui() });
+      maj();
+      break;
+    }
     case "annee":
       etat.anneeRapports = b.dataset.delta === "0" ? 0 : etat.anneeRapports + Number(b.dataset.delta);
       rendre();
@@ -2657,7 +2750,7 @@ function donneesInitiales(){
   const enfants = source.map(([prenom, nom, service, notifFin, rapportAnnuel, relances]) => ({
     id: uid(), prenom, nom, service, naissance:"", notifFin, rapportAnnuel,
     notifRecue: true, notifRecueLe: "",
-    relances: relances.slice(), historique: [],
+    relances: relances.slice(), historique: [], rapports: [],
     visites: (visites[prenom + " " + nom] || []).map(([parent, frequence, creneaux]) => ({
       id: uid(), parent, frequence, rencontres:[], partageAvec:[],
       creneaux: (creneaux || []).map(([semaine, debut, fin]) => ({ semaine, debut, fin }))

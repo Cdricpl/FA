@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.7.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.8.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -33,8 +33,10 @@ notifications à réclamer, visites à venir), les tâches du jour, les prochain
 les enfants suivis, des accès rapides et les notifications à réclamer.
 
 ### À faire
-La to do quotidienne, regroupée en *En retard* / *Aujourd'hui* / *À venir* / *Sans date*.
-Une tâche peut être rattachée à un enfant.
+En tête, les **rapports à rendre dans les deux prochains mois**, avec leur retard éventuel
+et une case à cocher quand le rapport est envoyé. En dessous, la to do quotidienne,
+regroupée en *En retard* / *Aujourd'hui* / *À venir* / *Sans date*. Une tâche peut être
+rattachée à un enfant.
 
 ### Enfants
 La fiche de chaque enfant, à compléter :
@@ -77,6 +79,9 @@ Le calendrier des douze prochains mois, dans la présentation de votre tableau E
 | **Formalisations — rapport annuel** | à la date de notification |
 | **Rapports d'évolution — semestriel** | exactement six mois plus tôt |
 
+Chaque échéance porte une **case à cocher** : cochez-la quand le rapport est envoyé, elle
+se barre et l'échéance suivante se place un an plus tard. Un rapport dépassé et non coché
+s'affiche en rouge, et un bandeau **« Rapports en retard »** les rassemble en haut de l'écran.
 Boutons pour reculer ou avancer de douze mois.
 
 ### Droits de visite
