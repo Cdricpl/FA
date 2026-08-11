@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.5.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.6.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -92,6 +92,10 @@ Quatre blocs :
 4. **Suivi des rencontres, par enfant** — un bloc par enfant : date, intervenant, heures,
    **✓ Présent / ✕ Absent en un clic**, et la **note qui s'écrit directement dans le tableau**
    (elle s'enregistre en quittant la case). Aucun passage par une fenêtre de modification.
+
+Le champ **Rencontre avec** propose Papa, Maman, Les deux parents, Grands-parents et
+Fratrie en un clic, mais accepte aussi n'importe quel texte. Aucun champ n'est obligatoire :
+vous pouvez enregistrer un droit de visite incomplet et le préciser plus tard.
 
 **Regrouper une fratrie** : quand deux enfants sont placés dans la même famille d'accueil,
 cochez-les dans « Regrouper avec un autre enfant » sur le droit de visite. La rencontre ne

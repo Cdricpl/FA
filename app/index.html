@@ -297,6 +297,10 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .proch-nom{font-weight:600;font-size:13.5px}
 .proch-det{font-size:12px;color:var(--doux)}
 
+.choix-rapides{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.choix-rapides button{border:1px solid var(--bord);background:var(--carte);color:var(--doux);
+  border-radius:20px;padding:5px 13px;font:inherit;font-size:13px;cursor:pointer}
+.choix-rapides button:hover{background:var(--accent-doux);border-color:var(--accent);color:var(--accent)}
 .cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px;
   max-height:170px;overflow:auto;border:1px solid var(--bord);border-radius:9px;padding:9px}
 .cases label{display:flex;gap:7px;align-items:center;font-size:13.5px}
@@ -480,7 +484,7 @@ const CLE = "fa-dossiers-v2";
 let DB = null;
 let onglet = "accueil";
 let etat = { recherche:"", tri:"nom", tachesFaites:false, anneeRapports:0,
-             filtreNotif:"tout", filtreVisite:"tout", listeComplete:false };
+             filtreNotif:"tout", filtreVisite:"tout" };
 
 function baseVide(){
   return {
@@ -1049,7 +1053,7 @@ function vueAccueil(){
       <div class="tete">${ic("visites",18)}<h2>Droits de visite à venir</h2></div>
       ${visites.length ? '<ul class="liste">' + visites.slice(0,5).map(o => `<li>
         ${avatar(o.enfant, 36)}
-        <span style="flex:1"><b>${ech(nomComplet(o.enfant))}</b>
+        <span style="flex:1"><b>${ech(libelleDroit(o.enfant, o.visite))}</b>
           <span class="doux"> — ${ech(libelleParent(o.visite))}</span></span>
         <span class="nowrap pt" style="text-align:right">
           ${ech(jourCourt(o.rencontre.date))}
@@ -1667,7 +1671,7 @@ function formEnfant(e){
   const corps = `
     <div class="ligne c2">
       <label class="champ"><span>Prénom</span>
-        <input type="text" name="prenom" required value="${ech(e.prenom)}"></label>
+        <input type="text" name="prenom" value="${ech(e.prenom)}"></label>
       <label class="champ"><span>Nom</span>
         <input type="text" name="nom" value="${ech(e.nom)}"></label>
     </div>
@@ -1689,6 +1693,10 @@ function formEnfant(e){
     <div class="encadre"><div class="titre">Dates des rapports</div>
       <span class="pt">${apercu}</span></div>`;
   ouvrirModale(neuf ? "Nouvel enfant" : "Modifier " + nomComplet(e), corps, f => {
+    if(!val(f,"prenom") && !val(f,"nom")){
+      alert("Indiquez au moins le prénom ou le nom de l'enfant.");
+      return false;
+    }
     const d = { prenom:val(f,"prenom"), nom:val(f,"nom"), service:val(f,"service"),
                 naissance:val(f,"naissance"), notifFin:val(f,"notifFin"),
                 rapportAnnuel:val(f,"rapportAnnuel") };
@@ -1706,7 +1714,7 @@ function formNotifRecue(e){
     <p class="pt doux" style="margin-top:0">${ech(nomComplet(e))}
       ${e.service ? "— " + ech(e.service) : ""}</p>
     <label class="champ"><span>Échéance de la notification reçue</span>
-      <input type="date" name="notifFin" required value="${ech(propose)}">
+      <input type="date" name="notifFin" value="${ech(propose)}">
       <p class="aide">Une notification est en principe reconduite d'un an. Échéance actuelle :
         ${estISO(e.notifFin) ? "<b>" + ech(fmtFR(e.notifFin)) + "</b>" : "aucune"}.</p></label>
     <label class="champ"><span>Reçue le</span>
@@ -1735,15 +1743,17 @@ function formVisite(e, v){
     </tr>`).join("");
   const choixEnfant = e ? "" : `
     <label class="champ"><span>Enfant</span>
-      <select name="enfantId" required><option value="">— choisir —</option>${DB.enfants.slice()
+      <select name="enfantId"><option value="">— choisir —</option>${DB.enfants.slice()
         .sort(parNom).map(x => '<option value="'+x.id+'">' + ech(nomComplet(x)) +
         "</option>").join("")}</select></label>`;
   const corps = choixEnfant + `
     <label class="champ"><span>Rencontre avec</span>
-      <input type="text" name="parent" list="l-parents" required value="${ech(v.parent)}"
-             placeholder="Papa, Maman…">
-      <datalist id="l-parents">${["Papa","Maman","Les deux parents","Grands-parents"]
-        .map(s => '<option value="'+s+'">').join("")}</datalist></label>
+      <input type="text" name="parent" value="${ech(v.parent)}"
+             placeholder="Papa, Maman, Grands-parents…">
+      <div class="choix-rapides">${["Papa","Maman","Les deux parents","Grands-parents","Fratrie"]
+        .map(x => '<button type="button" data-choix="' + x + '">' + x + "</button>").join("")}</div>
+      <p class="aide">Cliquez sur un choix ou tapez autre chose. Papa, Maman et Fratrie
+        donnent leur couleur au schéma de récurrence.</p></label>
     <label class="champ"><span>Fréquence des rencontres</span>
       <input type="text" name="frequence" value="${ech(v.frequence)}" placeholder="Ex. 2x 1h/mois"></label>
     <label class="champ"><span>Regrouper avec un autre enfant</span>
@@ -1786,6 +1796,8 @@ function formVisite(e, v){
   dessinerGroupe();
   const form = document.getElementById("form-modale");
   if(form.elements.enfantId) form.elements.enfantId.addEventListener("change", dessinerGroupe);
+  form.querySelectorAll("[data-choix]").forEach(b =>
+    b.addEventListener("click", () => { form.elements.parent.value = b.dataset.choix; }));
 }
 
 function formRencontre(e, v, r){
@@ -1793,7 +1805,7 @@ function formRencontre(e, v, r){
   r = r || { id:null, date:aujourdHui(), debut:"", fin:"", presence:"prevue", note:"" };
   const choix = (e && v) ? "" : `
     <label class="champ"><span>Droit de visite concerné</span>
-      <select name="cible" required><option value="">— choisir —</option>${
+      <select name="cible"><option value="">— choisir —</option>${
         DB.enfants.slice().sort(parNom).map(x => (x.visites||[]).map(w =>
           '<option value="' + x.id + "|" + w.id + '">' + ech(nomComplet(x)) + " — " +
           ech(libelleParent(w)) + "</option>").join("")).join("")}</select></label>`;
@@ -1801,7 +1813,7 @@ function formRencontre(e, v, r){
       ech(nomComplet(e)) + " — rencontre avec <b>" + ech(libelleParent(v)) + "</b></p>" : "") + `
     <div class="ligne c3">
       <label class="champ"><span>Date</span>
-        <input type="date" name="date" required value="${ech(r.date)}"></label>
+        <input type="date" name="date" value="${ech(r.date)}"></label>
       <label class="champ"><span>De</span>
         <input type="time" name="debut" value="${ech(r.debut)}"></label>
       <label class="champ"><span>À</span>
@@ -1839,7 +1851,7 @@ function formTache(t){
   t = t || { id:null, texte:"", echeance:aujourdHui(), enfantId:"" };
   const corps = `
     <label class="champ"><span>Tâche</span>
-      <input type="text" name="texte" required value="${ech(t.texte)}"
+      <input type="text" name="texte" value="${ech(t.texte)}"
              placeholder="Ex. Téléphoner au SPJ pour la notification"></label>
     <div class="ligne c2">
       <label class="champ"><span>Échéance</span>
@@ -1850,6 +1862,7 @@ function formTache(t){
                     ech(nomComplet(e)) + "</option>").join("")}</select></label>
     </div>`;
   ouvrirModale(neuf ? "Nouvelle tâche" : "Modifier la tâche", corps, f => {
+    if(!val(f,"texte")){ alert("Écrivez le texte de la tâche."); return false; }
     const d = { texte:val(f,"texte"), echeance:val(f,"echeance"), enfantId:val(f,"enfantId") };
     if(neuf) DB.taches.push(Object.assign({ id:uid(), fait:false, faitLe:"" }, d));
     else Object.assign(DB.taches.find(x => x.id === t.id), d);
@@ -2165,7 +2178,7 @@ function docxVisites(enfants, du, au, toutInclure){
   const dans = d => (!du || d >= du) && (!au || d <= au);
   if(!toutInclure){
     enfants = enfants.filter(e =>
-      (e.visites||[]).some(v => (v.rencontres||[]).some(r => dans(r.date))));
+      visitesDe(e).some(({v}) => (v.rencontres||[]).some(r => dans(r.date))));
   }
   let corps = "";
   corps += par("Notes de visites", { gras:true, taille:34, apres:40 });
@@ -2175,7 +2188,8 @@ function docxVisites(enfants, du, au, toutInclure){
 
   let total = 0;
   enfants.slice().sort(parNom).forEach(e => {
-    const visites = (e.visites||[]).filter(v => (v.rencontres||[]).some(r => dans(r.date)));
+    const visites = visitesDe(e).map(x => x.v)
+      .filter(v => (v.rencontres||[]).some(r => dans(r.date)));
     corps += par(nomComplet(e) + (e.service ? "  —  " + e.service : ""),
                  { gras:true, taille:28, avant:240, apres:60, bordure:true });
     if(!visites.length){
@@ -2260,7 +2274,7 @@ function exportCsvEnfants(){
     e.prenom, e.nom, e.service, dt(e.naissance), dt(e.notifFin), statutNotif(e).titre,
     (e.relances||[]).map(fmtFR).join(" / "),
     dt(echeanceRapport(e,"semestriel")), dt(echeanceRapport(e,"annuel")),
-    (e.visites||[]).map(v => libelleParent(v) + (v.frequence ? " : " + v.frequence : "")).join(" / "),
+    visitesDe(e).map(({v}) => libelleParent(v) + (v.frequence ? " : " + v.frequence : "")).join(" / "),
     e.notes]));
   telecharger("dossiers-" + aujourdHui() + ".csv", csv(l), "text/csv;charset=utf-8", "Tableur CSV");
 }
@@ -2321,6 +2335,9 @@ function actionner(b){
       if(confirm("Supprimer définitivement le dossier de " + nomComplet(e) +
                  ", ses rencontres et ses notes ?")){
         DB.enfants = DB.enfants.filter(x => x.id !== id);
+        DB.enfants.forEach(x => (x.visites||[]).forEach(v => {
+          v.partageAvec = (v.partageAvec||[]).filter(i => i !== id);
+        }));
         DB.taches.forEach(t => { if(t.enfantId === id) t.enfantId = ""; });
         maj();
       }
@@ -2376,11 +2393,8 @@ function actionner(b){
     }
     case "filtre-visite":
       etat.filtreVisite = b.dataset.f; etat.listeComplete = false; rendre(); break;
-    case "voir-toutes-rencontres":
-      etat.listeComplete = !etat.listeComplete; rendre(); break;
 
     /* --- rencontres --- */
-    case "rencontre-nouvelle": formRencontre(e, v, null); break;
     case "rencontre-rapide":   formRencontre(null, null, null); break;
     case "rencontre-modifier": formRencontre(e, v, (v.rencontres||[]).find(x => x.id === rid)); break;
     case "rencontre-supprimer":
@@ -2417,6 +2431,13 @@ function actionner(b){
     case "fs-reconnecter": fsReconnecter(false).then(rendre); break;
     case "fs-maintenant":
       fsEcrire().then(() => fsSauvegardeDuJour(JSON.stringify(DB,null,2), true)).then(rendre);
+      break;
+    case "fs-oublier":
+      fermerModale();
+      if(confirm("Ne plus enregistrer dans ce dossier ? Le fichier existant n'est pas supprimé.")){
+        FS.dossier = null; FS.enAttente = null; FS.nom = ""; FS.dernier = null; FS.erreur = "";
+        idbEffacer("dossier").then(rendre);
+      }
       break;
     case "fs-relire":
       fermerModale();
