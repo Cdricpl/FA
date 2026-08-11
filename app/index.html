@@ -173,6 +173,8 @@ button.b.danger{color:var(--rouge)}
 button.b.danger:hover{background:var(--rouge-f);border-color:var(--rouge)}
 button.b.mini{padding:3px 9px;font-size:12.5px}
 .actions{display:flex;gap:6px;flex-wrap:wrap}
+td .actions{flex-wrap:nowrap;justify-content:flex-end}
+td:last-child{white-space:nowrap}
 .barre{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
 
 /* ---------- Formulaires ---------- */
@@ -241,6 +243,38 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .rencontre{display:flex;gap:11px;padding:9px 0;border-top:1px solid var(--bord);align-items:flex-start}
 .rencontre .d{min-width:96px;font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;white-space:nowrap}
 .rencontre .n{flex:1;white-space:pre-wrap;font-size:13.5px}
+
+/* ---------- Rencontres ---------- */
+.separateur-mois{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--doux);
+  font-weight:600;margin:18px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--bord)}
+.separateur-mois:first-of-type{margin-top:4px}
+.rdv{border:1px solid var(--bord);border-left:6px solid var(--gris);border-radius:12px;
+  background:var(--carte);padding:14px 16px;margin-bottom:11px}
+.rdv.vert{border-left-color:var(--vert)} .rdv.rouge{border-left-color:var(--rouge)}
+.rdv.info{border-left-color:var(--accent)} .rdv.orange{border-left-color:#e08a1e}
+.rdv-haut{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+.rdv-qui{flex:1;min-width:160px}
+.rdv-nom{font-weight:700;font-size:15.5px}
+.rdv-parent{font-size:13px;color:var(--doux)}
+.rdv-parent b{color:var(--texte)}
+.rdv-date{text-align:right;font-size:13px;white-space:nowrap}
+.rdv-date .j{font-weight:600}
+.rdv-date .h{color:var(--doux);display:flex;gap:5px;align-items:center;justify-content:flex-end;margin-top:2px}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:20px;
+  font-weight:700;font-size:13px;white-space:nowrap}
+.badge .sym{font-size:15px;line-height:1}
+.badge.vert{background:var(--vert-f);color:var(--vert)}
+.badge.rouge{background:var(--rouge-f);color:var(--rouge)}
+.badge.info{background:var(--accent-doux);color:var(--accent)}
+.badge.orange{background:var(--orange-f);color:var(--orange)}
+.badge.gris{background:var(--gris-f);color:var(--gris)}
+.rdv-note{margin-top:11px;padding:11px 13px;background:var(--fond);border-radius:9px;
+  font-size:13.5px;white-space:pre-wrap;line-height:1.5}
+.rdv-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
+@media(max-width:640px){
+  .rdv-date{text-align:left}
+  .rdv-date .h{justify-content:flex-start}
+}
 
 /* ---------- Divers ---------- */
 .doux{color:var(--doux)} .pt{font-size:12.5px} .nowrap{white-space:nowrap}
@@ -366,7 +400,7 @@ const CLE = "fa-dossiers-v2";
 let DB = null;
 let onglet = "accueil";
 let etat = { recherche:"", tri:"date", tachesFaites:false, anneeRapports:0,
-             filtreNotif:"tout", rencontresOuvertes:{} };
+             filtreNotif:"tout", filtreVisite:"tout", listeComplete:false };
 
 function baseVide(){
   return {
@@ -414,7 +448,9 @@ function maj(){ DB.initial = false; sauver(); rendre(); }
 
 const enfantParId = id => DB.enfants.find(e => e.id === id);
 const nomComplet  = e => e ? ((e.prenom||"") + " " + (e.nom||"")).trim() : "";
-const parNom = (a,b) => nomComplet(a).localeCompare(nomComplet(b), "fr");
+/** Classement par nom de famille, puis par prénom. */
+const parNom = (a,b) =>
+  ((a.nom||"") + " " + (a.prenom||"")).localeCompare((b.nom||"") + " " + (b.prenom||""), "fr");
 
 /* =========================================================================
    3. ENREGISTREMENT DANS UN VRAI FICHIER SUR LE DISQUE
@@ -761,9 +797,15 @@ function statutNotif(e){
 /* --- Rapports : l'annuel à la date de formalisation, le semestriel six mois plus tôt --- */
 const RATTRAPAGE_RAPPORT = 60;
 
+/** Date de reference du rapport annuel : celle fixee a la main si elle existe,
+    sinon la date de notification de prise en charge. */
+const baseRapport = e => estISO(e.rapportAnnuel) ? e.rapportAnnuel
+                       : (estISO(e.notifFin) ? e.notifFin : null);
+
 function echeanceRapport(e, type){
-  if(!estISO(e.notifFin)) return null;
-  let d = type === "annuel" ? e.notifFin : decalerMois(e.notifFin, -6);
+  const base = baseRapport(e);
+  if(!base) return null;
+  let d = type === "annuel" ? base : decalerMois(base, -6);
   const limite = decalerJours(aujourdHui(), -RATTRAPAGE_RAPPORT);
   let garde = 0;
   while(d < limite && garde++ < 50) d = decalerAns(d, 1);
@@ -1055,9 +1097,10 @@ function vueEnfants(){
   liste.sort((a,b) => etat.tri === "nom" ? parNom(a,b)
     : String(a.notifFin||"9").localeCompare(String(b.notifFin||"9")));
 
-  const cel = (d, seuil) => {
+  const cel = (d, seuil, manuel) => {
     const st = statutEcheance(d, seuil);
-    return '<span class="puce ' + st.code + '"></span>' + ech(fmtFR(d));
+    return '<span class="puce ' + st.code + '"></span>' + ech(fmtFR(d)) +
+      (manuel ? ' <span class="doux" title="Date fixée à la main">✎</span>' : "");
   };
 
   const lignes = liste.map(e => `<tr>
@@ -1068,8 +1111,10 @@ function vueEnfants(){
       <td>${e.service ? '<span class="et info">' + ech(e.service) + "</span>"
                       : '<span class="et gris">à préciser</span>'}</td>
       <td class="num">${cel(e.notifFin)}</td>
-      <td class="num pt">${cel(echeanceRapport(e,"semestriel"), DB.parametres.seuilRapportJours)}</td>
-      <td class="num pt">${cel(echeanceRapport(e,"annuel"), DB.parametres.seuilRapportJours)}</td>
+      <td class="num pt">${cel(echeanceRapport(e,"semestriel"), DB.parametres.seuilRapportJours,
+                               estISO(e.rapportAnnuel))}</td>
+      <td class="num pt">${cel(echeanceRapport(e,"annuel"), DB.parametres.seuilRapportJours,
+                               estISO(e.rapportAnnuel))}</td>
       <td><div class="actions">
         <button class="b mini" data-action="enfant-modifier" data-id="${e.id}">Modifier</button>
         <button class="b mini danger" data-action="enfant-supprimer" data-id="${e.id}">✕</button>
@@ -1087,7 +1132,7 @@ function vueEnfants(){
       <label class="nowrap pt doux">Trier par
         <select id="tri" style="width:auto;margin-left:5px">
           <option value="date"${etat.tri==="date"?" selected":""}>date de notification</option>
-          <option value="nom"${etat.tri==="nom"?" selected":""}>nom</option>
+          <option value="nom"${etat.tri==="nom"?" selected":""}>nom de famille</option>
         </select></label>
       <span class="pousse doux pt">${pluriel(liste.length,"enfant")} sur ${DB.enfants.length}</span>
       <button class="b" onclick="window.print()">Imprimer</button>
@@ -1100,7 +1145,7 @@ function vueEnfants(){
     <div class="tableau-enveloppe">
       <table>
         <thead><tr>
-          <th>Enfant</th><th class="num">Naissance</th><th>Service</th>
+          <th>Enfant</th><th class="num">Naissance</th><th>Autorité</th>
           <th class="num">Notification</th><th class="num">Rapport semestriel</th>
           <th class="num">Rapport annuel</th><th></th>
         </tr></thead>
@@ -1234,24 +1279,7 @@ function vueRapports(){
     </div>`;
   }).join("");
 
-  const al = rapportsAPreparer();
-  const aPreparer = al.length ? `
-    <div class="carte">
-      <div class="tete">${ic("rapports",18)}<h2>À préparer maintenant</h2>
-        <span class="et orange">${al.length}</span></div>
-      <div class="tableau-enveloppe"><table>
-        <thead><tr><th>Enfant</th><th>Service</th><th>Type</th><th class="num">Échéance</th><th>Statut</th></tr></thead>
-        <tbody>${al.map(o => `<tr>
-          <td><b>${ech(nomComplet(o.enfant))}</b></td>
-          <td>${o.enfant.service ? '<span class="et info">' + ech(o.enfant.service) + "</span>" : "—"}</td>
-          <td>${o.type === "annuel" ? "Annuel" : "Semestriel"}</td>
-          <td class="num">${ech(fmtFR(o.date))}</td>
-          <td><span class="et ${o.st.code}">${ech(o.st.label)}</span></td>
-        </tr>`).join("")}</tbody>
-      </table></div>
-    </div>` : "";
-
-  const sansDate = DB.enfants.filter(e => !estISO(e.notifFin));
+  const sansDate = DB.enfants.filter(e => !baseRapport(e));
 
   return `
   <div class="carte">
@@ -1271,8 +1299,7 @@ function vueRapports(){
       pluriel(sansDate.length,"enfant") + " sans date de notification</div><span class=\"pt\">" +
       "Impossible de calculer leurs rapports : " +
       sansDate.map(e => ech(nomComplet(e))).join(", ") + ".</span></div>" : ""}
-  </div>
-  ${aPreparer}`;
+  </div>`;
 }
 
 /* =========================================================================
@@ -1281,78 +1308,152 @@ function vueRapports(){
 
 function vueVisites(){
   const q = etat.recherche.trim().toLowerCase();
-  let enfants = DB.enfants.filter(e => (e.visites||[]).length);
-  if(q) enfants = enfants.filter(e => (nomComplet(e) + " " +
-    (e.visites||[]).map(libelleParent).join(" ")).toLowerCase().includes(q));
-  enfants.sort(parNom);
+  const auj = aujourdHui();
 
-  const blocs = enfants.map(e => (e.visites||[]).map(v => {
-    const s = statutVisite(v);
-    const renc = (v.rencontres||[]).slice().sort((a,b) => String(b.date).localeCompare(String(a.date)));
-    const venus = renc.filter(r => r.presence === "venu").length;
-    const absents = renc.filter(r => r.presence === "absent").length;
-    const visibles = etat.rencontresOuvertes[v.id] ? renc : renc.slice(0,3);
+  let liste = toutesRencontres();
+  if(q) liste = liste.filter(o => (nomComplet(o.enfant) + " " + libelleParent(o.visite) + " " +
+                                   (o.rencontre.note || "")).toLowerCase().includes(q));
+  const f = etat.filtreVisite;
+  if(f === "avenir")    liste = liste.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue");
+  if(f === "completer") liste = liste.filter(o => aCompleter(o.rencontre));
+  if(f === "venu")      liste = liste.filter(o => o.rencontre.presence === "venu");
+  if(f === "absent")    liste = liste.filter(o => o.rencontre.presence === "absent");
 
-    return `<div class="bloc">
-      <div class="chapeau">
-        ${avatar(e, 34)}
-        <span class="t">${ech(nomComplet(e))}</span>
-        <span class="doux">avec</span>
-        <span class="t">${ech(libelleParent(v))}</span>
-        ${v.frequence ? '<span class="et info">' + ech(v.frequence) + "</span>" : ""}
-        <span class="et ${s.code}">${ech(s.label)}</span>
-        <span class="actions pousse">
-          <button class="b mini primaire" data-action="rencontre-nouvelle" data-id="${e.id}"
-                  data-vid="${v.id}">${ic("plus",13)} Rencontre</button>
-          <button class="b mini" data-action="visite-modifier" data-id="${e.id}" data-vid="${v.id}">Modifier</button>
-          <button class="b mini danger" data-action="visite-supprimer" data-id="${e.id}" data-vid="${v.id}">✕</button>
-        </span>
-      </div>
-      <div class="pt doux">
-        ${renc.length ? pluriel(renc.length,"rencontre") + " : " + venus + " honorée(s), " +
-          absents + " manquée(s)" : "Aucune rencontre encodée"}
-        ${v.lieu ? " · " + ech(v.lieu) : ""}
-      </div>
-      ${visibles.map(r => {
-        const p = presenceDe(r);
-        return `<div class="rencontre">
-          <span class="d">${ech(fmtFR(r.date))}
-            ${heuresDe(r) ? '<br><span class="doux" style="font-weight:400">' +
-              ech(heuresDe(r)) + "</span>" : ""}</span>
-          <span class="et ${aCompleter(r) ? "orange" : p.code}" style="min-width:84px;text-align:center">${
-            aCompleter(r) ? "À compléter" : ech(p.court)}</span>
-          <span class="n">${r.note ? ech(r.note) : '<span class="doux">Pas de note</span>'}</span>
-          <span class="actions">
-            <button class="b mini" data-action="rencontre-modifier" data-id="${e.id}"
-                    data-vid="${v.id}" data-rid="${r.id}">Modifier</button>
-            <button class="b mini danger" data-action="rencontre-supprimer" data-id="${e.id}"
-                    data-vid="${v.id}" data-rid="${r.id}">✕</button>
-          </span></div>`;
-      }).join("")}
-      ${renc.length > 3 ? '<button class="b mini" style="margin-top:10px" data-action="voir-rencontres" ' +
-        'data-vid="' + v.id + '">' + (etat.rencontresOuvertes[v.id] ? "Réduire"
-        : "Voir les " + renc.length + " rencontres") + "</button>" : ""}
-    </div>`;
-  }).join("")).join("");
+  const toutes = toutesRencontres();
+  const compte = {
+    tout:      toutes.length,
+    avenir:    toutes.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue").length,
+    completer: toutes.filter(o => aCompleter(o.rencontre)).length,
+    venu:      toutes.filter(o => o.rencontre.presence === "venu").length,
+    absent:    toutes.filter(o => o.rencontre.presence === "absent").length
+  };
 
-  const sans = DB.enfants.filter(e => !(e.visites||[]).length);
+  const aVenir = liste.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue")
+    .sort((a,b) => a.rencontre.date.localeCompare(b.rencontre.date) ||
+                   String(a.rencontre.debut||"").localeCompare(String(b.rencontre.debut||"")));
+  const passees = liste.filter(o => !(o.rencontre.date >= auj && o.rencontre.presence === "prevue"))
+    .sort((a,b) => b.rencontre.date.localeCompare(a.rencontre.date));
+
+  const limite = etat.listeComplete ? passees.length : 20;
+
+  const filtre = (id, texte, n) =>
+    '<button data-action="filtre-visite" data-f="' + id + '" class="' +
+    (f === id ? "actif" : "") + '">' + texte + " " + n + "</button>";
+
+  /* --- séparateur de mois, pour repérer les périodes d'un coup d'œil --- */
+  function avecMois(l){
+    let dernier = "", sortie = "";
+    l.forEach(o => {
+      const m = fmtMoisAnnee(o.rencontre.date);
+      if(m !== dernier){ dernier = m; sortie += '<div class="separateur-mois">' + ech(m) + "</div>"; }
+      sortie += carteRencontre(o);
+    });
+    return sortie;
+  }
+
+  const droits = [];
+  DB.enfants.slice().sort(parNom).forEach(e => (e.visites||[]).forEach(v => droits.push({ e, v })));
 
   return `
   <div class="carte">
     <div class="barre">
-      <button class="b primaire" data-action="visite-nouvelle">${ic("plus",15)} Ajouter un droit de visite</button>
-      <button class="b" data-action="word">${ic("rapports",15)} Exporter les notes en Word</button>
-      <input type="search" id="recherche" placeholder="Rechercher…" style="max-width:200px"
-             value="${ech(etat.recherche)}">
-      <span class="pousse doux pt">${pluriel(toutesRencontres().length,"rencontre")} encodée(s)</span>
-      <button class="b" onclick="window.print()">Imprimer</button>
+      <button class="b primaire" data-action="rencontre-rapide">${ic("plus",15)} Nouvelle rencontre</button>
+      <button class="b" data-action="visite-nouvelle">${ic("plus",15)} Droit de visite</button>
+      <button class="b" data-action="word">${ic("rapports",15)} Notes en Word</button>
+      <input type="search" id="recherche" placeholder="Rechercher un enfant, un parent, une note…"
+             style="max-width:280px" value="${ech(etat.recherche)}">
+      <button class="b pousse" onclick="window.print()">Imprimer</button>
     </div>
-    <p class="aide" style="margin:-6px 0 14px">Un droit de visite par parent : si l'enfant voit son
-      papa et sa maman séparément, encodez-en deux. Une rencontre encodée à une date future
-      apparaît dans « Droits de visite à venir » sur l'accueil.</p>
-    ${blocs || '<p class="vide">Aucun droit de visite encodé.</p>'}
-    ${sans.length ? '<p class="aide">Sans droit de visite encodé : ' +
-      sans.map(e => ech(nomComplet(e))).join(", ") + ".</p>" : ""}
+    <div class="filtres" style="margin-bottom:16px">
+      ${filtre("tout","Toutes", compte.tout)}${filtre("avenir","À venir", compte.avenir)}
+      ${filtre("completer","À compléter", compte.completer)}
+      ${filtre("venu","Parent venu", compte.venu)}${filtre("absent","Parent absent", compte.absent)}
+    </div>
+
+    ${aVenir.length ? '<h3>Rencontres à venir</h3>' + avecMois(aVenir) : ""}
+
+    ${passees.length ? '<h3 style="margin-top:' + (aVenir.length ? "22px" : "0") + '">' +
+      (f === "tout" ? "Rencontres passées" : "Rencontres") + "</h3>" +
+      avecMois(passees.slice(0, limite)) +
+      (passees.length > limite
+        ? '<button class="b" data-action="voir-toutes-rencontres">Afficher les ' +
+          passees.length + " rencontres</button>"
+        : (etat.listeComplete && passees.length > 20
+          ? '<button class="b" data-action="voir-toutes-rencontres">Réduire la liste</button>' : ""))
+      : ""}
+
+    ${(!aVenir.length && !passees.length)
+      ? '<p class="vide">' + (toutes.length
+          ? "Aucune rencontre ne correspond à ce filtre."
+          : "Aucune rencontre encodée. Cliquez sur « Nouvelle rencontre » pour commencer.") + "</p>"
+      : ""}
+  </div>
+
+  <div class="carte">
+    <div class="tete">${ic("visites",18)}<h2>Droits de visite en cours</h2>
+      <span class="doux pt">${pluriel(droits.length,"droit")} · fréquence et échéance</span></div>
+    <div class="tableau-enveloppe">
+      <table>
+        <thead><tr><th>Enfant</th><th>Rencontre avec</th><th>Fréquence</th>
+          <th class="num">Fin du droit</th><th>Statut</th><th class="num">Rencontres</th><th></th></tr></thead>
+        <tbody>${droits.length ? droits.map(({e,v}) => {
+          const s = statutVisite(v);
+          return `<tr>
+            <td><div style="display:flex;align-items:center;gap:9px">${avatar(e,30)}
+              <b>${ech(nomComplet(e))}</b></div></td>
+            <td>${ech(libelleParent(v))}</td>
+            <td>${ech(v.frequence || "—")}${v.lieu ? '<br><span class="doux pt">' + ech(v.lieu) + "</span>" : ""}</td>
+            <td class="num">${v.suspendu ? "—" : ech(fmtFR(v.dateFin))}</td>
+            <td><span class="et ${s.code}">${ech(s.label)}</span></td>
+            <td class="num">${(v.rencontres||[]).length}</td>
+            <td><div class="actions">
+              <button class="b mini primaire" data-action="rencontre-nouvelle" data-id="${e.id}"
+                      data-vid="${v.id}">${ic("plus",13)} Rencontre</button>
+              <button class="b mini" data-action="visite-modifier" data-id="${e.id}" data-vid="${v.id}">Modifier</button>
+              <button class="b mini danger" data-action="visite-supprimer" data-id="${e.id}" data-vid="${v.id}">✕</button>
+            </div></td>
+          </tr>`;
+        }).join("") : '<tr><td colspan="7" class="vide">Aucun droit de visite encodé.</td></tr>'}</tbody>
+      </table>
+    </div>
+    <p class="aide">Un droit de visite par parent : si l'enfant voit son papa et sa maman séparément,
+      encodez-en deux.</p>
+  </div>`;
+}
+
+/** Une rencontre, présentée en clair : qui, quand, venu ou non, et la note. */
+function carteRencontre(o){
+  const e = o.enfant, v = o.visite, r = o.rencontre;
+  const p = presenceDe(r);
+  const manque = aCompleter(r);
+  const code = manque ? "orange" : p.code;
+  const SYMBOLES = { venu:"✓", absent:"✕", annulee:"—", prevue:"•" };
+  const symbole = manque ? "!" : (SYMBOLES[r.presence] || "•");
+  const texte = manque ? "À compléter" : p.court;
+
+  return `<div class="rdv ${code}">
+    <div class="rdv-haut">
+      ${avatar(e, 42)}
+      <div class="rdv-qui">
+        <div class="rdv-nom">${ech(nomComplet(e))}</div>
+        <div class="rdv-parent">avec <b>${ech(libelleParent(v))}</b>${
+          v.frequence ? ' <span class="doux">· ' + ech(v.frequence) + "</span>" : ""}</div>
+      </div>
+      <div class="rdv-date">
+        <div class="j">${ech(fmtLong(r.date))}</div>
+        ${heuresDe(r) ? '<div class="h">' + ic("horloge",13) + " " + ech(heuresDe(r)) + "</div>" : ""}
+      </div>
+      <span class="badge ${code}"><span class="sym">${symbole}</span>${ech(texte)}</span>
+    </div>
+    <div class="rdv-note">${r.note ? ech(r.note)
+      : '<span class="doux">' + (manque ? "Rencontre passée : indiquez si le parent est venu et ajoutez votre note."
+        : (r.presence === "prevue" ? "Rencontre à venir." : "Pas de note.")) + "</span>"}</div>
+    <div class="rdv-actions">
+      <button class="b mini" data-action="rencontre-modifier" data-id="${e.id}"
+              data-vid="${v.id}" data-rid="${r.id}">Modifier</button>
+      <button class="b mini danger" data-action="rencontre-supprimer" data-id="${e.id}"
+              data-vid="${v.id}" data-rid="${r.id}">Supprimer</button>
+    </div>
   </div>`;
 }
 
@@ -1362,11 +1463,14 @@ function vueVisites(){
 
 function formEnfant(e){
   const neuf = !e;
-  e = e || { id:null, prenom:"", nom:"", service:"", naissance:"", notifFin:"" };
-  const apercu = estISO(e.notifFin)
-    ? "Rapport semestriel le <b>" + fmtFR(decalerMois(e.notifFin,-6)) +
-      "</b>, rapport annuel le <b>" + fmtFR(e.notifFin) + "</b>."
-    : "Les dates de rapport apparaîtront dès que la date de notification sera encodée.";
+  e = e || { id:null, prenom:"", nom:"", service:"", naissance:"", notifFin:"", rapportAnnuel:"" };
+  const base = baseRapport(e);
+  const apercu = base
+    ? "Rapport semestriel le <b>" + fmtFR(decalerMois(base,-6)) +
+      "</b>, rapport annuel le <b>" + fmtFR(base) + "</b>" +
+      (estISO(e.rapportAnnuel) ? " — dates fixées à la main." :
+       " — calculées sur la notification.")
+    : "Les dates de rapport apparaîtront dès qu'une date sera encodée.";
   const corps = `
     <div class="ligne c2">
       <label class="champ"><span>Prénom</span>
@@ -1377,18 +1481,24 @@ function formEnfant(e){
     <div class="ligne c2">
       <label class="champ"><span>Date de naissance</span>
         <input type="date" name="naissance" value="${ech(e.naissance)}"></label>
-      <label class="champ"><span>Service</span>
+      <label class="champ"><span>Autorité</span>
         <select name="service">${["","SAJ","SPJ"].map(s =>
           '<option value="'+s+'"'+(e.service===s?" selected":"")+">"+(s||"— à préciser —")+
           "</option>").join("")}</select></label>
     </div>
     <label class="champ"><span>Date de la notification de prise en charge</span>
       <input type="date" name="notifFin" value="${ech(e.notifFin)}"></label>
+    <label class="champ"><span>Date du rapport annuel, si elle ne suit pas la notification</span>
+      <input type="date" name="rapportAnnuel" value="${ech(e.rapportAnnuel || "")}">
+      <p class="aide">Laissez vide dans le cas habituel : le rapport annuel tombe alors à la date
+        de notification. Remplissez ce champ quand les deux ne coïncident pas ; le rapport
+        semestriel suivra six mois avant cette date.</p></label>
     <div class="encadre"><div class="titre">Dates des rapports</div>
       <span class="pt">${apercu}</span></div>`;
   ouvrirModale(neuf ? "Nouvel enfant" : "Modifier " + nomComplet(e), corps, f => {
     const d = { prenom:val(f,"prenom"), nom:val(f,"nom"), service:val(f,"service"),
-                naissance:val(f,"naissance"), notifFin:val(f,"notifFin") };
+                naissance:val(f,"naissance"), notifFin:val(f,"notifFin"),
+                rapportAnnuel:val(f,"rapportAnnuel") };
     if(neuf) DB.enfants.push(Object.assign({ id:uid(), notifRecue:true, notifRecueLe:"",
                                              relances:[], historique:[], visites:[] }, d));
     else Object.assign(enfantParId(e.id), d);
@@ -1928,7 +2038,7 @@ function csv(lignes){
 const dt = s => estISO(s) ? fmtFR(s) : "";
 
 function exportCsvEnfants(){
-  const l = [["Prénom","Nom","Service","Naissance","Formalisation","Statut notification","Relances",
+  const l = [["Prénom","Nom","Autorité","Naissance","Formalisation","Statut notification","Relances",
               "Rapport semestriel","Rapport annuel","Droits de visite","Notes"]];
   DB.enfants.slice().sort(parNom).forEach(e => l.push([
     e.prenom, e.nom, e.service, dt(e.naissance), dt(e.notifFin), statutNotif(e).titre,
@@ -2027,10 +2137,10 @@ function actionner(b){
         maj();
       }
       break;
-    case "voir-rencontres":
-      etat.rencontresOuvertes[vid] = !etat.rencontresOuvertes[vid];
-      rendre();
-      break;
+    case "filtre-visite":
+      etat.filtreVisite = b.dataset.f; etat.listeComplete = false; rendre(); break;
+    case "voir-toutes-rencontres":
+      etat.listeComplete = !etat.listeComplete; rendre(); break;
 
     /* --- rencontres --- */
     case "rencontre-nouvelle": formRencontre(e, v, null); break;

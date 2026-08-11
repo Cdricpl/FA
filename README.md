@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.2.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.3.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -40,13 +40,16 @@ Une tâche peut être rattachée à un enfant.
 La fiche de chaque enfant, à compléter :
 
 * prénom et nom ;
-* **date de naissance** ;
-* **service** : SAJ ou SPJ ;
-* **date de la notification de prise en charge**.
+* **date de naissance** (l'âge se calcule tout seul) ;
+* **autorité** : SAJ ou SPJ ;
+* **date de la notification de prise en charge** ;
+* éventuellement une **date de rapport annuel** différente.
 
-Les **dates des deux rapports** s'affichent automatiquement à partir de cette dernière :
-le **rapport annuel** tombe à la date de notification, le **rapport semestriel** six mois
-plus tôt. Un bandeau signale les fiches encore incomplètes.
+Les **dates des deux rapports** s'affichent automatiquement : le **rapport annuel** tombe à
+la date de notification, le **rapport semestriel** six mois plus tôt. Quand les deux ne
+coïncident pas, remplissez le champ *date du rapport annuel* : les échéances suivent alors
+cette date, et un ✎ apparaît dans le tableau. Le tri se fait par **nom de famille** ou par
+date. Un bandeau signale les fiches encore incomplètes.
 
 ### Notifications de prise en charge
 La vue visuelle : une carte par enfant, pour voir d'un coup d'œil si la notification
@@ -74,17 +77,20 @@ Le calendrier des douze prochains mois, dans la présentation de votre tableau E
 | **Formalisations — rapport annuel** | à la date de notification |
 | **Rapports d'évolution — semestriel** | exactement six mois plus tôt |
 
-Boutons pour reculer ou avancer de douze mois, et une liste « À préparer maintenant »
-sous le calendrier.
+Boutons pour reculer ou avancer de douze mois.
 
 ### Droits de visite
-Un droit de visite **par parent** : si l'enfant voit son papa et sa maman séparément,
-encodez-en deux. Pour chacun : le parent, la **fréquence** (`2x 1h/mois`, `4h/mois`,
-`2h/vacances`…), la date de fin, une éventuelle suspension et le lieu.
+L'écran s'ouvre sur le **journal des rencontres**, une carte par rencontre : l'enfant,
+avec qui, la date et l'heure, un grand repère coloré **✓ Venu / ✕ Absent / • Prévue /
+! À compléter**, et la note de synthèse en dessous. Les rencontres sont séparées en
+« à venir » et « passées », regroupées par mois, avec des filtres.
 
-Pour chaque rencontre : la **date**, si le parent est **venu**, **absent** ou si la
-rencontre a été **annulée**, et une **note de synthèse**. Le programme compte les
-rencontres honorées et manquées.
+Une rencontre encodée à une date future apparaît sur l'**Accueil** ; une fois la date
+passée sans compte rendu, elle se marque **À compléter** en orange.
+
+En bas, le tableau **Droits de visite en cours** : un droit **par parent** (si l'enfant voit
+son papa et sa maman séparément, encodez-en deux), avec la **fréquence** (`2x 1h/mois`,
+`4h/mois`, `2h/vacances`…), la date de fin, une éventuelle suspension et le lieu.
 
 Bouton **Exporter les notes en Word** : un `.docx` structuré, un chapitre par enfant,
 filtrable par période, prêt à être repris dans vos rapports.
