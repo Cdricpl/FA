@@ -1019,7 +1019,10 @@ const ONGLETS = [
 
 const prenomUtilisateur = () => (DB.parametres.utilisateur.nom || "").trim().split(" ")[0] || "";
 
+let remonterEnHaut = false;   // vrai uniquement quand on change d'écran
+
 function rendre(){
+  const positionAvant = window.scrollY;
   const aFaire = tachesEnCours().filter(t => t.enRetard || t.pourAuj).length;
   const aReclamer = DB.enfants.filter(e => statutNotif(e).code === "rouge").length;
   const u = DB.parametres.utilisateur;
@@ -1057,7 +1060,8 @@ function rendre(){
       ? "enregistrement automatique dans <b>" + ech(FS.nom) + "</b>"
       : "voir <b>Paramètres</b> pour choisir le dossier");
   majEtatStockage();
-  window.scrollTo({ top:0 });
+  if(remonterEnHaut){ remonterEnHaut = false; window.scrollTo({ top:0 }); }
+  else window.scrollTo({ top:positionAvant });
 }
 
 /* =========================================================================
@@ -2483,7 +2487,7 @@ function exportCsvEnfants(){
    17. ÉVÉNEMENTS
    ========================================================================= */
 
-function allerA(id){ onglet = id; etat.recherche = ""; rendre(); }
+function allerA(id){ onglet = id; etat.recherche = ""; remonterEnHaut = true; rendre(); }
 
 document.getElementById("nav").addEventListener("click", ev => {
   const b = ev.target.closest("[data-onglet]");
