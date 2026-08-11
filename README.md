@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.9.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.10.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -64,7 +64,8 @@ est arrivée ou non.
 | ✕ **rouge** | pas reçue, ou échéance dépassée : à réclamer |
 | ? **gris** | date manquante |
 
-Quatre compteurs en haut, et des filtres pour n'afficher que ce qui vous intéresse.
+Quatre compteurs en haut — **cliquez sur l'un d'eux** pour n'afficher que cette catégorie ;
+un second clic, ou le bouton *← Tout afficher*, revient à la liste complète.
 
 Sur chaque carte : **Notification reçue** (encode la nouvelle échéance, proposée un an
 plus tard, et repasse la carte au vert), **Relance** (note la date du jour), et

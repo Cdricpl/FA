@@ -106,6 +106,9 @@ footer{padding:10px 30px 26px;font-size:12.5px;color:var(--doux);
   border-radius:var(--r);box-shadow:var(--ombre);padding:15px 16px;cursor:pointer;
   font:inherit;color:inherit;text-align:left;width:100%}
 .tuile:hover{border-color:var(--accent)}
+.tuile.actif{border-color:var(--accent);background:var(--accent-doux);box-shadow:none}
+.tuile .rond.gris{background:var(--gris)}
+.tuile .rond.rouge{background:var(--rouge)}
 .tuile .rond{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;
   justify-content:center;color:#fff;flex:none}
 .tuile .rond.bleu{background:var(--accent)} .tuile .rond.vert{background:var(--vert)}
@@ -121,8 +124,17 @@ ul.liste{list-style:none;margin:0;padding:0}
 ul.liste li{padding:11px 0;border-top:1px solid var(--bord);display:flex;gap:11px;align-items:center}
 ul.liste li:first-child{border-top:0;padding-top:2px}
 ul.liste li:last-child{padding-bottom:2px}
-.avatar{width:38px;height:38px;border-radius:50%;display:inline-flex;align-items:center;
-  justify-content:center;font-weight:700;font-size:13px;color:#fff;flex:none;letter-spacing:.02em}
+/* Deux tailles seulement : « ligne » dans un tableau ou une liste,
+   « carte » en tête d'une fiche. La couleur, elle, dépend du nom. */
+.avatar{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;
+  justify-content:center;font-weight:700;font-size:12px;color:#fff;flex:none;letter-spacing:.02em}
+.avatar.carte-av{width:40px;height:40px;font-size:14px}
+.ligne-nom{display:flex;align-items:center;gap:10px}
+.decale{margin-left:5px}
+input.coche{width:auto;margin-top:3px}
+input.coche-tache{width:auto}
+select.tri-court{width:auto;margin-left:5px}
+.aide.chapeau{margin:-6px 0 14px}
 .pousse{margin-left:auto}
 .lien{background:none;border:0;color:var(--accent);font:inherit;font-size:13.5px;cursor:pointer;
   padding:12px 0 0;display:inline-block}
@@ -243,8 +255,11 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
   .grille.dv{grid-template-columns:2fr 1fr}
 }
 .bandeau-enfants{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 8px}
+/* colonne, pour que le bouton d'action se pose au même niveau sur toutes les cartes */
 .carte-enfant{flex:none;width:212px;border:1px solid var(--bord);border-radius:12px;padding:13px 14px;
-  background:var(--vert-f);border-color:rgba(31,138,76,.35)}
+  background:var(--vert-f);border-color:rgba(31,138,76,.35);
+  display:flex;flex-direction:column;align-items:stretch}
+.carte-enfant .ce-prog{margin-top:auto;padding-top:9px}
 .ce-haut{display:flex;align-items:center;gap:10px;margin-bottom:9px}
 .ce-nom{font-weight:700;font-size:15px;line-height:1.1}
 .ce-ligne{font-size:12.5px;color:var(--doux);line-height:1.6}
@@ -329,6 +344,16 @@ textarea.note-vive{border-color:var(--bord);background:var(--carte);width:100%;m
 .encadre .titre{font-weight:600;margin-bottom:3px}
 code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px}
 .legende{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--doux);margin-top:12px}
+
+/* ---------- Utilitaires de mise en page ---------- */
+.champ-recherche{max-width:240px}
+.centre{text-align:center}
+.droite{text-align:right}
+.col-note{min-width:240px}
+.extensible{flex:1;min-width:0}
+.pleine{width:100%;justify-content:center}
+.haut-marge{margin-top:16px}
+.bas-marge{margin-bottom:16px}
 
 @media print{
   .cote,.barre,footer,.actions,button,.filtres,.entete-droite{display:none !important}
@@ -781,15 +806,15 @@ function ic(nom, taille){
 }
 
 const COULEURS = ["#2f6fb0","#1f8a4c","#b4632a","#7143b8","#0f7c8a","#b03a5b","#4a6480","#a06a12"];
-function avatar(e, taille){
+/** format : "ligne" (défaut, dans un tableau ou une liste) ou "carte" (en tête de fiche). */
+function avatar(e, format){
   const p = (e.prenom || "").trim(), n = (e.nom || "").trim();
   const ini = ((n[0] || "") + (p[0] || n[1] || "")).toUpperCase() || "?";
   const cle = nomComplet(e) || "?";
   let h = 0;
   for(let i = 0; i < cle.length; i++) h = (h * 31 + cle.charCodeAt(i)) >>> 0;
-  const t = taille || 38;
-  return '<span class="avatar" style="background:' + COULEURS[h % COULEURS.length] +
-    ";width:" + t + "px;height:" + t + "px;font-size:" + Math.round(t/2.9) + 'px">' + ech(ini) + "</span>";
+  return '<span class="avatar' + (format === "carte" ? " carte-av" : "") +
+    '" style="background:' + COULEURS[h % COULEURS.length] + '">' + ech(ini) + "</span>";
 }
 
 function age(naissance){
@@ -909,9 +934,9 @@ function ligneRapport(o){
   const retard = o.date < aujourdHui();
   return `<li>
     <input type="checkbox" data-action="rapport-envoye" data-id="${o.enfant.id}"
-           data-type="${o.type}" data-date="${o.date}" style="width:auto;margin-top:3px"
+           data-type="${o.type}" data-date="${o.date}" class="coche"
            aria-label="Marquer le rapport comme envoyé">
-    <div style="flex:1">
+    <div class="extensible">
       <b>${ech(nomComplet(o.enfant))}</b>
       <span class="doux pt">${o.enfant.service ? " · " + ech(o.enfant.service) : ""}</span><br>
       <span class="pt doux">${ech(nomRapport(o.type))} — à rendre pour le ${ech(fmtFR(o.date))}</span>
@@ -1067,8 +1092,8 @@ function vueAccueil(){
         <button class="b mini" data-action="tache-nouvelle">${ic("plus",14)} Ajouter</button></div>
       ${dujour.length ? '<ul class="liste">' + dujour.map(t => `<li>
         <input type="checkbox" data-action="tache-bascule" data-id="${t.id}"
-               style="width:auto" aria-label="Terminer">
-        <span style="flex:1">${ech(t.texte)}</span>
+               class="coche-tache" aria-label="Terminer">
+        <span class="extensible">${ech(t.texte)}</span>
         <span class="et ${t.enRetard?"rouge":(t.pourAuj?"orange":"gris")}">${
           t.enRetard ? "En retard" : (t.pourAuj ? "Aujourd'hui" : "Demain")}</span>
       </li>`).join("") + "</ul>" : '<p class="rien">Rien de prévu pour aujourd\'hui.</p>'}
@@ -1079,10 +1104,10 @@ function vueAccueil(){
     <div class="carte">
       <div class="tete">${ic("visites",18)}<h2>Droits de visite à venir</h2></div>
       ${visites.length ? '<ul class="liste">' + visites.slice(0,5).map(o => `<li>
-        ${avatar(o.enfant, 36)}
-        <span style="flex:1"><b>${ech(libelleDroit(o.enfant, o.visite))}</b>
+        ${avatar(o.enfant)}
+        <span class="extensible"><b>${ech(libelleDroit(o.enfant, o.visite))}</b>
           <span class="doux"> — ${ech(libelleParent(o.visite))}</span></span>
-        <span class="nowrap pt" style="text-align:right">
+        <span class="nowrap pt droite">
           ${ech(jourCourt(o.rencontre.date))}
           ${heuresDe(o.rencontre) ? '<br><span class="doux">' + ech(heuresDe(o.rencontre)) + "</span>" : ""}
         </span></li>`).join("") + "</ul>"
@@ -1098,8 +1123,8 @@ function vueAccueil(){
         <span class="et info">${DB.enfants.length}</span>
         <button class="b mini pousse" data-action="enfant-nouveau">${ic("plus",14)} Ajouter</button></div>
       ${DB.enfants.length ? '<ul class="liste">' + DB.enfants.slice().sort(parNom).slice(0,5).map(e => `<li>
-        ${avatar(e, 36)}
-        <span style="flex:1"><b>${ech(nomComplet(e))}</b>
+        ${avatar(e)}
+        <span class="extensible"><b>${ech(nomComplet(e))}</b>
           <br><span class="doux pt">${ech(ageTexte(e))}${e.service ? " · " + ech(e.service) : ""}</span></span>
         <button class="b mini" data-action="enfant-modifier" data-id="${e.id}">Ouvrir</button>
       </li>`).join("") + "</ul>" : '<p class="rien">Aucun enfant encodé.</p>'}
@@ -1126,7 +1151,7 @@ function vueAccueil(){
       <div class="tete">${ic("notifs",18)}<h2>Notifications à réclamer</h2></div>
       ${notifs.length ? '<ul class="liste">' + notifs.slice(0,5).map(o => `<li>
         <span class="puce rouge"></span>
-        <span style="flex:1">${ech(nomComplet(o.enfant))}
+        <span class="extensible">${ech(nomComplet(o.enfant))}
           <span class="doux pt">${o.enfant.service ? " · " + ech(o.enfant.service) : ""}</span></span>
         <span class="pt doux nowrap">${ech(fmtFR(o.enfant.notifFin))}</span>
       </li>`).join("") + "</ul>"
@@ -1136,7 +1161,7 @@ function vueAccueil(){
 
   return tuiles +
     '<div class="grille g2">' + carteTaches + carteVisites + "</div>" +
-    '<div class="grille g3" style="margin-top:16px">' + carteEnfants + carteRapides + carteNotifs + "</div>";
+    '<div class="grille g3 haut-marge">' + carteEnfants + carteRapides + carteNotifs + "</div>";
 }
 
 /* =========================================================================
@@ -1147,8 +1172,8 @@ function ligneTache(t){
   const cls = t.enRetard ? "rouge" : (t.pourAuj ? "orange" : "gris");
   return `<li>
     <input type="checkbox" data-action="tache-bascule" data-id="${t.id}" ${t.fait?"checked":""}
-           style="width:auto" aria-label="Terminer">
-    <div style="flex:1">
+           class="coche-tache" aria-label="Terminer">
+    <div class="extensible">
       <span class="${t.fait?"tache-faite":""}">${ech(t.texte)}</span>
       ${t.enfantId && enfantParId(t.enfantId)
         ? '<span class="doux pt"> · ' + ech(nomComplet(enfantParId(t.enfantId))) + "</span>" : ""}
@@ -1192,19 +1217,21 @@ function vueTaches(){
 
   return blocRapports + `
   <div class="carte">
+    <div class="tete">${ic("taches",18)}<h2>Ma to do</h2>
+      <span class="doux pt pousse">${pluriel(enCours.length,"tâche")} en cours ·
+        ${faites.length} terminée(s)</span></div>
     <div class="barre">
       <button class="b primaire" data-action="tache-nouvelle">${ic("plus",15)} Nouvelle tâche</button>
-      <span class="pousse doux pt">${pluriel(enCours.length,"tâche")} en cours · ${faites.length} terminée(s)</span>
       <button class="b" data-action="taches-basculer">${etat.tachesFaites?"Masquer":"Afficher"} les tâches faites</button>
-      <button class="b" onclick="window.print()">Imprimer</button>
+      <button class="b pousse" onclick="window.print()">Imprimer</button>
     </div>
     ${groupes.map(([t,l]) => l.length
-      ? '<h3 style="margin-top:18px">' + t + " (" + l.length + ')</h3><ul class="liste">' +
+      ? '<h3 class="haut-marge">' + t + " (" + l.length + ')</h3><ul class="liste">' +
         l.map(ligneTache).join("") + "</ul>" : "").join("")
       || '<p class="rien">Aucune tâche en cours.</p>'}
     ${etat.tachesFaites && faites.length
       ? '<h3 style="margin-top:22px">Terminées</h3><ul class="liste">' + faites.map(ligneTache).join("") +
-        '</ul><button class="b danger" style="margin-top:12px" data-action="taches-purger">' +
+        '</ul><button class="b danger haut-marge" data-action="taches-purger">' +
         "Supprimer les tâches terminées</button>" : ""}
   </div>`;
 }
@@ -1227,7 +1254,7 @@ function vueEnfants(){
   };
 
   const lignes = liste.map(e => `<tr>
-      <td><div style="display:flex;align-items:center;gap:10px">${avatar(e, 34)}
+      <td><div class="ligne-nom">${avatar(e)}
         <span><b>${ech(nomComplet(e))}</b><br>
         <span class="doux pt">${ech(ageTexte(e))}</span></span></div></td>
       <td class="num pt">${ech(fmtFR(e.naissance))}</td>
@@ -1250,10 +1277,10 @@ function vueEnfants(){
   <div class="carte">
     <div class="barre">
       <button class="b primaire" data-action="enfant-nouveau">${ic("plus",15)} Nouvel enfant</button>
-      <input type="search" id="recherche" placeholder="Rechercher un nom…" style="max-width:220px"
+      <input type="search" id="recherche" placeholder="Rechercher un nom…" class="champ-recherche"
              value="${ech(etat.recherche)}">
       <label class="nowrap pt doux">Trier par
-        <select id="tri" style="width:auto;margin-left:5px">
+        <select id="tri" class="tri-court">
           <option value="date"${etat.tri==="date"?" selected":""}>date de notification</option>
           <option value="nom"${etat.tri==="nom"?" selected":""}>nom de famille</option>
         </select></label>
@@ -1290,21 +1317,18 @@ function vueNotifs(){
 
   const filtre = etat.filtreNotif;
   let liste = tout;
-  if(filtre === "recues")  liste = tout.filter(o => o.st.code === "vert");
-  if(filtre === "attente") liste = tout.filter(o => o.st.code === "rouge");
-  if(filtre === "bientot") liste = tout.filter(o => o.st.code === "orange");
+  if(filtre === "recues")   liste = tout.filter(o => o.st.code === "vert");
+  if(filtre === "attente")  liste = tout.filter(o => o.st.code === "rouge");
+  if(filtre === "bientot")  liste = tout.filter(o => o.st.code === "orange");
+  if(filtre === "sansdate") liste = tout.filter(o => o.st.code === "gris");
   liste.sort((a,b) => ORDRE_STATUT[a.st.code] - ORDRE_STATUT[b.st.code] ||
                       String(a.enfant.notifFin||"9").localeCompare(String(b.enfant.notifFin||"9")));
 
-  const bouton = (id, texte, n) =>
-    '<button data-action="filtre-notif" data-f="' + id + '" class="' +
-    (filtre === id ? "actif" : "") + '">' + texte + " " + n + "</button>";
-
   const cartes = liste.map(({enfant:e, st}) => `
     <div class="fiche ${st.code}">
-      <div class="haut">${avatar(e, 36)}
+      <div class="haut">${avatar(e, "carte")}
         <span><span class="nom">${ech(nomComplet(e))}</span>
-          ${e.service ? '<span class="et info" style="margin-left:5px">' + ech(e.service) + "</span>" : ""}
+          ${e.service ? '<span class="et info decale">' + ech(e.service) + "</span>" : ""}
           <br><span class="doux pt">${ech(ageTexte(e))}</span></span></div>
       <div class="etat ${st.code}"><span class="marque-etat">${st.marque}</span>${ech(st.titre)}</div>
       <div class="detail">${ech(st.detail)}
@@ -1322,23 +1346,27 @@ function vueNotifs(){
       </div>
     </div>`).join("");
 
+  const tuile = (f, couleur, marque, titre, n) => `
+    <button class="tuile ${filtre === f ? "actif" : ""}" data-action="filtre-notif" data-f="${f}">
+      <span class="rond ${couleur}">${marque}</span>
+      <span class="txt"><span class="t">${ech(titre)}</span>
+        <span class="v"><b>${n}</b>${n > 1 ? "dossiers" : "dossier"}</span></span>
+      <span class="fleche">${ic("fleche", 17)}</span>
+    </button>`;
+
   return `
   <div class="carte">
     <div class="tuiles">
-      <div class="tuile" style="cursor:default"><span class="rond vert">✓</span>
-        <span class="txt"><span class="t">Reçues, en ordre</span><span class="v"><b>${nb("vert")}</b></span></span></div>
-      <div class="tuile" style="cursor:default"><span class="rond orange">!</span>
-        <span class="txt"><span class="t">À renouveler bientôt</span><span class="v"><b>${nb("orange")}</b></span></span></div>
-      <div class="tuile" style="cursor:default"><span class="rond" style="background:var(--rouge)">✕</span>
-        <span class="txt"><span class="t">À réclamer</span><span class="v"><b>${nb("rouge")}</b></span></span></div>
-      <div class="tuile" style="cursor:default"><span class="rond" style="background:var(--gris)">?</span>
-        <span class="txt"><span class="t">Sans date</span><span class="v"><b>${nb("gris")}</b></span></span></div>
+      ${tuile("recues","vert","✓","Reçues, en ordre", nb("vert"))}
+      ${tuile("bientot","orange","!","À renouveler bientôt", nb("orange"))}
+      ${tuile("attente","rouge","✕","À réclamer", nb("rouge"))}
+      ${tuile("sansdate","gris","?","Sans date", nb("gris"))}
     </div>
     <div class="barre">
-      <div class="filtres">
-        ${bouton("tout","Tous", tout.length)}${bouton("attente","À réclamer", nb("rouge"))}
-        ${bouton("bientot","Bientôt", nb("orange"))}${bouton("recues","En ordre", nb("vert"))}
-      </div>
+      ${filtre === "tout"
+        ? '<span class="doux pt">Cliquez sur une tuile pour n\'afficher que cette catégorie.</span>'
+        : '<button class="b" data-action="filtre-notif" data-f="tout">← Tout afficher (' +
+          tout.length + ")</button>"}
       <button class="b pousse" onclick="window.print()">Imprimer</button>
     </div>
     ${cartes ? '<div class="cartes">' + cartes + "</div>"
@@ -1420,19 +1448,20 @@ function vueRapports(){
 
   return bandeau + `
   <div class="carte">
+    <div class="tete">${ic("visites",18)}<h2>Calendrier des échéances</h2>
+      <span class="et info">De ${ech(MOIS[debut.getMonth()])} ${debut.getFullYear()}
+        à ${ech(MOIS[mois[11].mois])} ${mois[11].annee}</span></div>
     <div class="barre">
       <button class="b" data-action="annee" data-delta="-1">← 12 mois avant</button>
       <button class="b" data-action="annee" data-delta="0">Aujourd'hui</button>
       <button class="b" data-action="annee" data-delta="1">12 mois après →</button>
-      <b style="margin-left:6px">De ${ech(MOIS[debut.getMonth()])} ${debut.getFullYear()}
-         à ${ech(MOIS[mois[11].mois])} ${mois[11].annee}</b>
       <button class="b pousse" onclick="window.print()">Imprimer</button>
     </div>
-    <p class="aide" style="margin:-6px 0 14px">Le <b>rapport annuel</b> tombe à la date de
+    <p class="aide chapeau">Le <b>rapport annuel</b> tombe à la date de
       formalisation, le <b>rapport d'évolution semestriel</b> six mois plus tôt. Les deux se
       recalculent à chaque renouvellement de la notification.</p>
     <div class="mois-grille">${cases}</div>
-    ${sansDate.length ? '<div class="encadre attention" style="margin-top:16px"><div class="titre">' +
+    ${sansDate.length ? '<div class="encadre attention haut-marge"><div class="titre">' +
       pluriel(sansDate.length,"enfant") + " sans date de notification</div><span class=\"pt\">" +
       "Impossible de calculer leurs rapports : " +
       sansDate.map(e => ech(nomComplet(e))).join(", ") + ".</span></div>" : ""}
@@ -1520,7 +1549,7 @@ function vueVisites(){
   const cartesEnfants = avecDroit.map(e => {
     const p = derniereProgrammee(e);
     return `<div class="carte-enfant ${p.code}">
-      <div class="ce-haut">${avatar(e, 40)}
+      <div class="ce-haut">${avatar(e, "carte")}
         <div><div class="ce-nom">${ech(e.nom)}</div>
           <div class="ce-prenom">${ech(e.prenom)}</div></div></div>
       ${visitesDe(e).map(({e:o,v}) => `<div class="ce-ligne">
@@ -1534,7 +1563,7 @@ function vueVisites(){
                 data-vid="${v.id}" title="Supprimer ce droit de visite">✕</button>
       </div>`).join("")}
       <div class="ce-prog ${p.code}"><span class="puce ${p.code}"></span>${ech(p.texte)}</div>
-      <button class="b mini primaire" style="width:100%;justify-content:center;margin-top:9px"
+      <button class="b mini primaire pleine haut-marge"
               data-action="rencontres-enfant" data-id="${e.id}">${ic("plus",13)} Programmer des dates</button>
     </div>`;
   }).join("");
@@ -1625,8 +1654,8 @@ function vueVisites(){
 
     return `<div class="suivi-enfant">
       <div class="se-tete">
-        ${avatar(e, 34)}
-        <div style="flex:1">
+        ${avatar(e, "carte")}
+        <div class="extensible">
           <div class="se-nom">${ech(nomComplet(e))}</div>
           <div class="pt doux">${pluriel(lignes.length,"rencontre")}
             ${lignes.length ? "· " + venus + " honorée(s), " + absents + " manquée(s)" : ""}</div>
@@ -1639,7 +1668,7 @@ function vueVisites(){
       </div>
       ${lignes.length ? `<div class="tableau-enveloppe"><table>
         <thead><tr><th class="num">Date</th><th>Intervenant</th><th class="num">Début</th>
-          <th class="num">Fin</th><th style="text-align:center">Le parent</th><th>Note</th><th></th></tr></thead>
+          <th class="num">Fin</th><th class="centre">Le parent</th><th>Note</th><th></th></tr></thead>
         <tbody>${visibles.map(({o,v,r}) => `<tr>
           <td class="num nowrap">${ech(fmtFR(r.date))}${
             aCompleter(r) ? '<br><span class="et orange">à compléter</span>' : ""}</td>
@@ -1647,7 +1676,7 @@ function vueVisites(){
             ? '<br><span class="doux pt">avec ' + ech(libelleDroit(o, v)) + "</span>" : ""}</td>
           <td class="num">${ech(r.debut || "—")}</td>
           <td class="num">${ech(r.fin || "—")}</td>
-          <td style="text-align:center"><div class="bascule">
+          <td class="centre"><div class="bascule">
             <button class="oui ${r.presence === "venu" ? "actif" : ""}"
                     data-action="presence" data-p="venu" data-id="${o.id}" data-vid="${v.id}"
                     data-rid="${r.id}" title="Le parent est venu">✓ Présent</button>
@@ -1655,7 +1684,7 @@ function vueVisites(){
                     data-action="presence" data-p="absent" data-id="${o.id}" data-vid="${v.id}"
                     data-rid="${r.id}" title="Le parent n'est pas venu">✕ Absent</button>
           </div></td>
-          <td style="min-width:240px"><div class="note-vive" data-note="1"
+          <td class="col-note"><div class="note-vive" data-note="1"
               data-id="${o.id}" data-vid="${v.id}" data-rid="${r.id}" tabindex="0"
               title="Cliquez pour écrire">${r.note ? ech(r.note)
                 : '<span class="doux">Note de synthèse…</span>'}</div></td>
@@ -1670,7 +1699,7 @@ function vueVisites(){
           ? '<button class="b mini" style="margin-top:10px" data-action="deplier" data-id="' + e.id +
             '">' + (tout ? "Réduire" : "Voir les " + lignes.length + " rencontres") + "</button>"
           : "")
-        : '<p class="rien" style="padding:0 2px">Aucune rencontre' +
+        : '<p class="rien">Aucune rencontre' +
           (f === "tout" ? " encodée." : " pour ce filtre.") + "</p>"}
     </div>`;
   }).join("");
@@ -1683,7 +1712,7 @@ function vueVisites(){
       <button class="b mini pousse" data-action="visite-nouvelle">${ic("plus",14)} Droit de visite</button></div>
     ${avecDroit.length ? '<div class="bandeau-enfants">' + cartesEnfants + "</div>"
                        : '<p class="rien">Aucun droit de visite encodé.</p>'}
-    ${aReprogrammer.length ? '<div class="encadre attention" style="margin:14px 0 0">' +
+    ${aReprogrammer.length ? '<div class="encadre attention haut-marge">' +
       '<div class="titre">' + pluriel(aReprogrammer.length,"enfant") +
       " sans rencontre à venir</div><span class='pt'>" +
       aReprogrammer.map(e => ech(nomComplet(e))).join(", ") +
@@ -1702,22 +1731,24 @@ function vueVisites(){
     <div class="carte">
       <div class="tete">${ic("horloge",18)}<h2>Prochaines rencontres</h2></div>
       ${listeProchaines}
-      <div class="actions" style="margin-top:12px">
-        <button class="b" style="flex:1;justify-content:center"
+      <div class="actions haut-marge">
+        <button class="b pleine"
                 data-action="rencontre-rapide">${ic("plus",15)} Une rencontre</button>
-        <button class="b primaire" style="flex:1;justify-content:center"
+        <button class="b primaire pleine"
                 data-action="rencontres-rapide">${ic("plus",15)} Plusieurs dates</button>
       </div>
     </div>
   </div>
 
   <div class="carte">
-    <div class="tete">${ic("taches",18)}<h2>Suivi des rencontres, par enfant</h2>
+    <div class="tete">${ic("taches",18)}<h2>Suivi des rencontres, par enfant</h2></div>
+    <div class="barre">
       <input type="search" id="recherche" placeholder="Rechercher un enfant…"
-             style="max-width:220px;margin-left:auto" value="${ech(etat.recherche)}">
-      <button class="b mini" data-action="word">${ic("rapports",14)} Notes en Word</button>
-      <button class="b mini" onclick="window.print()">Imprimer</button></div>
-    <div class="filtres" style="margin-bottom:16px">
+             class="champ-recherche" value="${ech(etat.recherche)}">
+      <button class="b" data-action="word">${ic("rapports",15)} Notes en Word</button>
+      <button class="b pousse" onclick="window.print()">Imprimer</button>
+    </div>
+    <div class="filtres bas-marge">
       ${filtre("tout","Toutes", compte.tout)}${filtre("avenir","À venir", compte.avenir)}
       ${filtre("completer","À compléter", compte.completer)}
       ${filtre("venu","Présent", compte.venu)}${filtre("absent","Absent", compte.absent)}
@@ -1833,7 +1864,7 @@ function formVisite(e, v){
     <label class="champ"><span>Fréquence des rencontres</span>
       <input type="text" name="frequence" value="${ech(v.frequence)}" placeholder="Ex. 2x 1h/mois"></label>
     <label class="champ" style="display:flex;gap:9px;align-items:flex-start">
-      <input type="checkbox" name="sansEncadrement" style="width:auto;margin-top:3px"${
+      <input type="checkbox" name="sansEncadrement" class="coche"${
         v.sansEncadrement ? " checked" : ""}>
       <span style="margin:0">Rencontres <b>sans encadrement</b>
         <span class="aide" style="display:block;margin:2px 0 0">Les rencontres se déroulent sans
@@ -2151,22 +2182,22 @@ function formReglages(){
       <label class="champ"><span>Fonction</span>
         <input type="text" name="fonction" value="${ech(u.fonction)}" placeholder="Intervenant SAAF"></label>
     </div>
-    <h3 style="margin-top:18px">Enregistrement</h3>
+    <h3 class="haut-marge">Enregistrement</h3>
     ${blocStockage()}
-    <h3 style="margin-top:18px">Délais d'alerte</h3>
+    <h3 class="haut-marge">Délais d'alerte</h3>
     <div class="ligne c2">
       <label class="champ"><span>Notification : alerte orange (jours avant)</span>
         <input type="number" name="seuil" min="1" max="365" value="${DB.parametres.seuilAlerteJours}"></label>
       <label class="champ"><span>Rapports : alerte orange (jours avant)</span>
         <input type="number" name="rapport" min="1" max="365" value="${DB.parametres.seuilRapportJours}"></label>
     </div>
-    <h3 style="margin-top:18px">Copies et exports</h3>
+    <h3 class="haut-marge">Copies et exports</h3>
     <div class="actions">
       <button type="button" class="b" data-action="export-json">Exporter une sauvegarde</button>
       <button type="button" class="b" data-action="import-json">Restaurer une sauvegarde</button>
       <button type="button" class="b" data-action="export-csv-enfants">Dossiers en CSV</button>
     </div>
-    <h3 style="margin-top:18px">Remise à zéro</h3>
+    <h3 class="haut-marge">Remise à zéro</h3>
     <div class="actions">
       <button type="button" class="b danger" data-action="tout-effacer">Tout effacer</button>
       <button type="button" class="b" data-action="recharger-exemple">Recharger les données de départ</button>
@@ -2559,7 +2590,10 @@ function actionner(b){
       maj();
       break;
     }
-    case "filtre-notif": etat.filtreNotif = b.dataset.f; rendre(); break;
+    case "filtre-notif":
+      etat.filtreNotif = (etat.filtreNotif === b.dataset.f) ? "tout" : b.dataset.f;
+      rendre();
+      break;
     case "tache-notif":
       ajouterTache("Réclamer la notification de prise en charge — " + nomComplet(e), id);
       allerA("taches");
