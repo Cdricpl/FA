@@ -114,19 +114,18 @@ footer{padding:10px 30px 26px;font-size:12.5px;color:var(--doux);
 .tuile .rond.bleu{background:var(--accent)} .tuile .rond.vert{background:var(--vert)}
 .tuile .rond.orange{background:#e08a1e} .tuile .rond.violet{background:var(--violet)}
 .tuile .txt{flex:1;min-width:0}
-.tuile .t{display:block;font-weight:600;font-size:14px}
-.tuile .v{display:block;font-size:13px;color:var(--doux);margin-top:1px}
-.tuile .v b{font-size:20px;color:var(--texte);margin-right:4px;vertical-align:-1px}
+/* Le nombre en premier : c'est lui qu'on vient lire. */
+.tuile .n{display:block;font-size:25px;font-weight:700;line-height:1.15}
+.tuile .n.bleu{color:var(--accent)}  .tuile .n.vert{color:var(--vert)}
+.tuile .n.rouge{color:var(--rouge)}  .tuile .n.orange{color:var(--orange)}
+.tuile .n.violet{color:var(--violet)} .tuile .n.gris{color:var(--gris)}
+.tuile .t{display:block;font-weight:600;font-size:13.5px;line-height:1.3}
+.tuile .s{display:block;font-size:12px;color:var(--doux)}
+.tuile .rond{font-size:19px;font-weight:700;line-height:1}
 .tuile .fleche{color:var(--doux)}
-/* Variante d'information : pas de chevron, donc pas cliquable, et le nombre
-   prend toute la place parce que c'est lui qu'on vient lire. */
-.tuile.stat{cursor:default}
-.tuile.stat:hover{border-color:var(--bord)}
-.tuile.stat .rond{font-size:19px;font-weight:700;line-height:1}
-.tuile.stat .n{display:block;font-size:26px;font-weight:700;line-height:1.2;margin-top:1px}
-.tuile.stat .n.bleu{color:var(--accent)} .tuile.stat .n.vert{color:var(--vert)}
-.tuile.stat .n.rouge{color:var(--rouge)} .tuile.stat .n.orange{color:var(--orange)}
-.tuile.stat .s{display:block;font-size:12px;color:var(--doux)}
+/* Sans chevron : la tuile informe mais ne mène nulle part. */
+.tuile.fixe{cursor:default}
+.tuile.fixe:hover{border-color:var(--bord)}
 
 /* ---------- Listes ---------- */
 ul.liste{list-style:none;margin:0;padding:0}
@@ -182,6 +181,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:now
 .puce.vert{background:var(--vert)} .puce.orange{background:#e08a1e}
 .puce.rouge{background:var(--rouge)} .puce.gris{background:var(--gris)}
 .puce.info{background:var(--accent)}
+.puce.papa{background:var(--accent)} .puce.maman{background:#b03a5b}
+.puce.fratrie{background:var(--violet)} .puce.autre{background:var(--gris)}
 
 /* ---------- Boutons ---------- */
 button.b{display:inline-flex;align-items:center;gap:6px;background:var(--carte);color:var(--texte);
@@ -262,22 +263,64 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 /* ---------- Droits de visite ---------- */
 /* La liste des enfants à gauche, le dossier de celui qu'on a choisi à droite. */
 @media(min-width:1050px){
-  .grille.dv{grid-template-columns:288px minmax(0,1fr);align-items:start}
+  .grille.dv{grid-template-columns:360px minmax(0,1fr);align-items:start}
 }
-.liste-enfants{display:flex;flex-direction:column;max-height:520px;overflow-y:auto;margin:0 -4px}
-.le{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:inherit;
-  background:none;border:0;border-left:3px solid transparent;border-radius:10px;
-  padding:9px 10px;cursor:pointer}
-.le:hover{background:var(--fond)}
-.le.actif{background:var(--accent-doux);border-left-color:var(--accent)}
-.le-nom{display:block;font-weight:600;font-size:13.5px;line-height:1.25}
-.le-sous{display:block;font-size:12px;color:var(--doux)}
-.le-sous.orange{color:var(--orange)}
+.liste-enfants{max-height:560px;overflow-y:auto;overflow-x:hidden;margin:0 -18px}
+/* Le suivi tient beaucoup de colonnes : cellules resserrées pour qu'il
+   entre dans le volet sans barre de défilement horizontale. */
+.tab-suivi td,.tab-suivi th{padding:9px 7px}
+.tab-suivi .bascule button{padding:5px 8px;font-size:12px}
+/* le « à compléter » sous la date ne doit pas être plus large que la date */
+.tab-suivi .et{font-size:11px;padding:1px 6px}
+.tab-enfants{font-size:13px;table-layout:fixed;width:100%}
+.tab-enfants th:nth-child(1){width:48%}
+.tab-enfants th:nth-child(2){width:22%}
+.tab-enfants th:nth-child(3){width:30%}
+.tab-enfants th{white-space:normal}
+.tab-enfants .ligne-nom>span{min-width:0;overflow:hidden}
+.tab-enfants td{padding:9px 6px}
+.tab-enfants td:first-child,.tab-enfants th:first-child{padding-left:18px}
+.tab-enfants td:last-child,.tab-enfants th:last-child{padding-right:18px}
+.tab-enfants th{padding:8px 6px;font-size:10.5px}
+.tab-enfants .ligne-nom{gap:8px}
+.tab-enfants tr.le{cursor:pointer}
+/* Le trait de couleur à gauche donne l'état du dossier avant même de lire. */
+.tab-enfants tr.le td:first-child{border-left:3px solid transparent}
+.tab-enfants tr.le.vert   td:first-child{border-left-color:var(--vert)}
+.tab-enfants tr.le.orange td:first-child{border-left-color:#e08a1e}
+.tab-enfants tr.le.rouge  td:first-child{border-left-color:var(--rouge)}
+.tab-enfants tr.le.actif{background:var(--accent-doux)}
+.tab-enfants tr.le.actif td{font-weight:500}
+.le-nom{display:block;font-weight:700;font-size:12.5px;line-height:1.2;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.le-prenom{display:block;font-size:12px;color:var(--doux);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.le-date{display:block;font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.le-date.vert{color:var(--vert)} .le-date.orange{color:var(--orange)}
+.le-date.rouge{color:var(--rouge)}
+.le-sous{display:block;font-size:11.5px;color:var(--doux)}
+.le-sous.orange{color:var(--orange)} .le-sous.rouge{color:var(--rouge)}
+.le-marque{font-weight:700}
+.le-marque.vert{color:var(--vert)} .le-marque.orange{color:var(--orange)}
+.le-marque.rouge{color:var(--rouge)}
 .lien-nom{background:none;border:0;padding:0;font:inherit;font-size:12.5px;color:var(--accent);
   cursor:pointer;text-decoration:underline}
 
+/* Le bandeau de faits : ce qu'on veut savoir sans avoir à chercher. */
+.faits{display:flex;flex-wrap:wrap;border-top:1px solid var(--bord);
+  border-bottom:1px solid var(--bord);margin-bottom:4px}
+.fait{flex:1 1 118px;padding:11px 14px;border-left:1px solid var(--bord)}
+.fait:first-child{border-left:0;padding-left:0}
+.fait .l{display:block;font-size:11.5px;color:var(--doux);margin-bottom:3px}
+.fait .v{display:block;font-size:14.5px;font-weight:600}
+.fait .v.vert{color:var(--vert)} .fait .v.orange{color:var(--orange)}
+.fait .v.rouge{color:var(--rouge)}
+.fait .v .s{display:block;font-size:11.5px;font-weight:400;color:var(--doux)}
+
 .dv-tete{flex-wrap:wrap}
-.dv-tete h2{flex:none}
+/* plus spécifique que « .carte .tete h2 », sinon le titre s'étire
+   et pousse les boutons à la ligne */
+.carte .tete.dv-tete h2{flex:0 1 auto;white-space:nowrap}
 .dv-droit{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--bord);
   font-size:13px}
 .dv-droit:last-of-type{padding-bottom:14px}
@@ -300,7 +343,14 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 
 .schema{display:grid;gap:10px;grid-template-columns:1fr}
 @media(min-width:620px){.schema{grid-template-columns:1fr 1fr}}
-@media(min-width:1000px){.schema{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1000px){.schema{grid-template-columns:repeat(5,1fr)}}
+.sem.hors{background:var(--fond)}
+.sem.hors .sem-tete{background:var(--gris);color:#fff}
+.hs-noms{font-size:12.5px;line-height:1.7}
+/* la virgule reste collée au nom qui la précède, jamais en début de ligne */
+.hs-item{white-space:nowrap}
+.hs-item:not(:last-child)::after{content:", "}
+.hs-aide{font-size:11.5px;color:var(--doux);margin-top:7px;line-height:1.4}
 .sem{border:1px solid var(--bord);border-radius:12px;overflow:hidden;background:var(--carte)}
 .sem-tete{background:var(--marine);color:#fff;font-weight:600;font-size:13.5px;padding:9px 12px;text-align:center}
 .sem-corps{padding:10px;display:flex;flex-direction:column;gap:9px;min-height:70px}
@@ -366,7 +416,7 @@ code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px
 .champ-recherche{max-width:240px}
 .centre{text-align:center}
 .droite{text-align:right}
-.col-note{min-width:155px;width:99%}
+.col-note{min-width:135px;width:99%}
 .extensible{flex:1;min-width:0}
 .pleine{width:100%;justify-content:center}
 .haut-marge{margin-top:16px}
@@ -482,7 +532,7 @@ let DB = null;
 let onglet = "accueil";
 let etat = { recherche:"", tri:"nom", tachesFaites:false, anneeRapports:0,
              filtreNotif:"tout", filtreVisite:"tout", ouvertes:{},
-             enfantVisite:"", ongletVisite:"prochaines" };
+             enfantVisite:"", ongletVisite:"prochaines", filtreDossier:"tout" };
 
 function baseVide(){
   return {
@@ -823,6 +873,25 @@ function ic(nom, taille){
     (TRACES[nom] || "") + "</svg>";
 }
 
+/** Tuile de comptage — la même sur tous les écrans : le nombre d'abord,
+    parce que c'est lui qu'on vient lire, puis ce qu'il compte.
+    Le chevron n'apparaît que si la tuile mène quelque part. */
+function tuileCompte(o){
+  const attr = o.onglet ? ' data-onglet="' + o.onglet + '"'
+             : (o.action ? ' data-action="' + o.action + '" data-f="' + o.f + '"' : "");
+  const cliquable = !!(o.onglet || o.action);
+  return "<" + (cliquable ? "button" : "div") +
+    ' class="tuile' + (cliquable ? "" : " fixe") + (o.actif ? " actif" : "") + '"' + attr + ">" +
+    '<span class="rond ' + o.couleur + '">' + (o.marque || ic(o.icone, 21)) + "</span>" +
+    '<span class="txt">' +
+      '<span class="n ' + o.couleur + '">' + o.n + "</span>" +
+      '<span class="t">' + ech(o.titre) + "</span>" +
+      '<span class="s">' + ech(o.sous || "") + "</span>" +
+    "</span>" +
+    (cliquable ? '<span class="fleche">' + ic("fleche", 17) + "</span>" : "") +
+    "</" + (cliquable ? "button" : "div") + ">";
+}
+
 const COULEURS = ["#2f6fb0","#1f8a4c","#b4632a","#7143b8","#0f7c8a","#b03a5b","#4a6480","#a06a12"];
 /** format : "ligne" (défaut, dans un tableau ou une liste) ou "carte" (en tête de fiche). */
 function avatar(e, format){
@@ -1088,19 +1157,15 @@ function vueAccueil(){
   const visites = rencontresAVenir();
   const aRemplir = toutesRencontres().filter(o => aCompleter(o.rencontre));
 
-  const tuile = (cible, couleur, icone, titre, n, unite) => `
-    <button class="tuile" data-onglet="${cible}">
-      <span class="rond ${couleur}">${ic(icone, 21)}</span>
-      <span class="txt"><span class="t">${ech(titre)}</span>
-        <span class="v"><b>${n}</b>${ech(unite)}</span></span>
-      <span class="fleche">${ic("fleche", 17)}</span>
-    </button>`;
-
   const tuiles = `<div class="tuiles">
-    ${tuile("rapports","bleu","rapports","Rapports", rapports.length, "à préparer")}
-    ${tuile("taches","vert","taches","Tâches", taches.length, "à faire")}
-    ${tuile("notifs","orange","notifs","Notifications", notifs.length, "à réclamer")}
-    ${tuile("visites","violet","visites","Visites à venir", visites.length, "prévue(s)")}
+    ${tuileCompte({onglet:"rapports", couleur:"bleu",   icone:"rapports", n:rapports.length,
+                   titre:"Rapports",      sous:"à préparer"})}
+    ${tuileCompte({onglet:"taches",   couleur:"vert",   icone:"taches",   n:taches.length,
+                   titre:"Tâches",        sous:"à faire"})}
+    ${tuileCompte({onglet:"notifs",   couleur:"orange", icone:"notifs",   n:notifs.length,
+                   titre:"Notifications", sous:"à réclamer"})}
+    ${tuileCompte({onglet:"visites",  couleur:"violet", icone:"visites",  n:visites.length,
+                   titre:"Visites à venir", sous:"prévue(s)"})}
   </div>`;
 
   const dujour = taches.filter(t => t.enRetard || t.pourAuj || t.demain).slice(0,6);
@@ -1364,13 +1429,9 @@ function vueNotifs(){
       </div>
     </div>`).join("");
 
-  const tuile = (f, couleur, marque, titre, n) => `
-    <button class="tuile ${filtre === f ? "actif" : ""}" data-action="filtre-notif" data-f="${f}">
-      <span class="rond ${couleur}">${marque}</span>
-      <span class="txt"><span class="t">${ech(titre)}</span>
-        <span class="v"><b>${n}</b>${n > 1 ? "dossiers" : "dossier"}</span></span>
-      <span class="fleche">${ic("fleche", 17)}</span>
-    </button>`;
+  const tuile = (f, couleur, marque, titre, n) => tuileCompte({
+    action:"filtre-notif", f, actif:filtre === f, couleur, marque, n,
+    titre, sous:n > 1 ? "dossiers" : "dossier" });
 
   return `
   <div class="carte">
@@ -1505,24 +1566,33 @@ function categorieParent(v){
   return "autre";
 }
 
-/** Dernière rencontre programmée pour un enfant, tous intervenants confondus. */
+/* Un dossier est « à jour » quand l'agenda est couvert au-delà de ce délai. */
+const SEUIL_DV_PROCHE = 30;
+
+/** État du dossier de visite d'un enfant : jusqu'à quand son agenda est couvert.
+    C'est la rencontre la plus lointaine qui compte — elle dit quand il faudra
+    rappeler la famille pour programmer la suite. */
 function derniereProgrammee(enf){
   const droits = visitesDe(enf);
   let d = "";
   droits.forEach(({v}) => (v.rencontres||[]).forEach(r => {
     if(estISO(r.date) && r.date > d) d = r.date;
   }));
-  // c'est la rencontre la plus lointaine qui compte : elle dit jusqu'à quand
-  // l'agenda est couvert, donc quand il faudra rappeler la famille.
-  if(d >= aujourdHui())
-    return { date:d, code:"vert", texte:"Programmé jusqu'au " + fmtFR(d),
-             court:"Jusqu'au " + fmtFR(d) };
+  const auj = aujourdHui();
+
+  if(d >= auj){
+    const n = joursEntre(auj, d);
+    return { date:d, jours:n, code: n > SEUIL_DV_PROCHE ? "vert" : "orange",
+             texte: n > SEUIL_DV_PROCHE ? "Programmé jusqu'au " + fmtFR(d)
+                                        : "Échéance proche — " + fmtFR(d),
+             court: n === 0 ? "Aujourd'hui" : n === 1 ? "Demain" : "Dans " + n + " jours" };
+  }
   // rien à organiser quand toutes les rencontres se passent sans encadrement
   if(droits.length && droits.every(({v}) => v.sansEncadrement))
-    return { date:d, code:"vert", texte:"Sans encadrement", court:"Sans encadrement" };
-  if(!d) return { date:"", code:"orange", texte:"Rien de programmé", court:"Rien de programmé" };
-  return { date:d, code:"orange", texte:"Dernière le " + fmtFR(d) + " — à reprogrammer",
-           court:"À reprogrammer depuis le " + fmtFR(d) };
+    return { date:d, jours:null, code:"vert", texte:"Sans encadrement", court:"Sans encadrement" };
+  return { date:d, jours:null, code:"rouge",
+           texte: d ? "Aucun DV futur — dernier le " + fmtFR(d) : "Aucun DV programmé",
+           court:"Aucun DV futur" };
 }
 
 /** Les enfants couverts par un droit de visite : le titulaire et ceux
@@ -1573,61 +1643,72 @@ function vueVisites(){
   // un mois : les rencontres sont le plus souvent mensuelles, une quinzaine
   // afficherait zéro la moitié du temps.
   const horizon = decalerJours(auj, 30);
-  const nAvenir = total.filter(o => estISO(o.rencontre.date) && o.rencontre.date >= auj &&
-                                    o.rencontre.date <= horizon &&
-                                    o.rencontre.presence === "prevue").length;
-  const nVenus  = total.filter(o => ceMois(o.rencontre) && o.rencontre.presence === "venu").length;
-  const nAbsent = total.filter(o => ceMois(o.rencontre) && o.rencontre.presence === "absent").length;
-  const nMois   = total.filter(o => ceMois(o.rencontre)).length;
+  /* L'état de chaque dossier : c'est lui qui colore la liste et alimente
+     les trois compteurs, qui servent aussi de filtres. */
+  const etats = new Map(avecDroit.map(e => [e.id, derniereProgrammee(e)]));
+  const nbEtat = c => avecDroit.filter(e => etats.get(e.id).code === c).length;
 
-  /* Ces tuiles informent, elles ne mènent nulle part : pas de chevron,
-     qui reste la marque des tuiles sur lesquelles on peut cliquer. */
-  const stat = (couleur, marque, titre, n, sous) => `
-    <div class="tuile stat">
-      <span class="rond ${couleur}">${marque}</span>
-      <span class="txt"><span class="t">${ech(titre)}</span>
-        <span class="n ${couleur}">${n}</span>
-        <span class="s">${ech(sous)}</span></span>
-    </div>`;
+  const CODES = { rouge:"sans", orange:"proche", vert:"ajour" };
+  const fd = etat.filtreDossier;
 
   const compteurs = `<div class="tuiles">
-    ${stat("bleu",   ic("visites",21),  "Rencontres à venir", nAvenir, "dans les 30 prochains jours")}
-    ${stat("vert",   "✓",               "Honorées",           nVenus,  "ce mois")}
-    ${stat("rouge",  "✕",               "Manquées",           nAbsent, "ce mois")}
-    ${stat("orange", ic("rapports",21), "Rencontres au total", nMois,  "ce mois")}
+    ${tuileCompte({ action:"filtre-dossier", f:"sans", actif:fd === "sans",
+      couleur:"rouge", marque:"!", n:nbEtat("rouge"),
+      titre: nbEtat("rouge") > 1 ? "Dossiers sans DV futur" : "Dossier sans DV futur",
+      sous:"aucun DV programmé" })}
+    ${tuileCompte({ action:"filtre-dossier", f:"proche", actif:fd === "proche",
+      couleur:"orange", icone:"horloge", n:nbEtat("orange"),
+      titre: nbEtat("orange") > 1 ? "Dossiers à échéance proche" : "Dossier à échéance proche",
+      sous:"DV dans moins d'un mois" })}
+    ${tuileCompte({ action:"filtre-dossier", f:"ajour", actif:fd === "ajour",
+      couleur:"vert", marque:"✓", n:nbEtat("vert"),
+      titre: nbEtat("vert") > 1 ? "Dossiers à jour" : "Dossier à jour",
+      sous:"DV programmé à plus d'un mois" })}
   </div>`;
 
   /* ------------------------------------------- 2. la liste : choisir un enfant */
-  const visibles = avecDroit.filter(e => !q || nomComplet(e).toLowerCase().includes(q));
+  const visibles = avecDroit.filter(e =>
+    (!q || nomComplet(e).toLowerCase().includes(q)) &&
+    (fd === "tout" || CODES[etats.get(e.id).code] === fd));
   // pas d'écriture dans « etat » ici : une recherche qui masque l'enfant choisi
   // en montre un autre, et le retrouve dès que la recherche est effacée.
   const choisi = visibles.find(e => e.id === etat.enfantVisite) || visibles[0] || null;
 
   const ligneEnfant = e => {
-    const p = derniereProgrammee(e);
-    const n = visitesDe(e).reduce((s, {v}) => s + (v.rencontres||[]).filter(r =>
-      estISO(r.date) && r.date >= auj && r.presence === "prevue").length, 0);
-    return `<button class="le ${choisi && e.id === choisi.id ? "actif" : ""}"
-        data-action="choisir-enfant" data-id="${e.id}">
-      ${avatar(e)}
-      <span class="extensible">
-        <span class="le-nom">${ech(nomComplet(e))}</span>
+    const p = etats.get(e.id);
+    const freq = visitesDe(e).map(({v}) => v.frequence).filter(Boolean).join(" · ");
+    return `<tr class="le ${p.code} ${choisi && e.id === choisi.id ? "actif" : ""}"
+        data-action="choisir-enfant" data-id="${e.id}" tabindex="0">
+      <td><div class="ligne-nom">${avatar(e)}
+        <span><span class="le-nom">${ech(e.nom)}</span>
+          <span class="le-prenom">${ech(e.prenom)}</span></span></div></td>
+      <td class="pt doux">${ech(freq || "—")}</td>
+      <td>
+        ${p.date ? '<span class="le-date ' + p.code + '">' + ech(fmtFR(p.date)) +
+          ' <span class="le-marque">' + (p.code === "vert" ? "✓" : "!") + "</span></span>" : ""}
         <span class="le-sous ${p.code}">${ech(p.court)}</span>
-      </span>
-      ${n ? '<span class="et info">' + n + "</span>" : ""}
-    </button>`;
+      </td>
+    </tr>`;
   };
 
   const carteListe = `
     <div class="carte">
-      <div class="tete">${ic("enfants",18)}<h2>Choisir un enfant</h2>
-        <span class="et info">${avecDroit.length}</span></div>
+      <div class="tete">${ic("enfants",18)}<h2>Liste des enfants</h2></div>
       <input type="search" id="recherche" placeholder="Rechercher un enfant…"
              class="bas-marge" value="${ech(etat.recherche)}">
-      ${visibles.length ? '<div class="liste-enfants">' + visibles.map(ligneEnfant).join("") + "</div>"
-        : '<p class="rien">' + (q ? "Aucun enfant à ce nom." : "Aucun droit de visite encodé.") + "</p>"}
-      <button class="b pleine haut-marge" data-action="visite-nouvelle">${ic("plus",14)}
-        Nouveau droit de visite</button>
+      ${fd !== "tout" ? '<button class="b mini bas-marge" data-action="filtre-dossier" ' +
+        'data-f="tout">← Tous les dossiers (' + avecDroit.length + ")</button>" : ""}
+      ${visibles.length ? `<div class="liste-enfants"><table class="tab-enfants">
+          <thead><tr><th>Enfant</th><th>Fréquence</th><th>DV programmé</th></tr></thead>
+          <tbody>${visibles.map(ligneEnfant).join("")}</tbody></table></div>`
+        : '<p class="rien">' + (q || fd !== "tout" ? "Aucun enfant dans cette sélection."
+                                                   : "Aucun droit de visite encodé.") + "</p>"}
+      <div class="barre haut-marge">
+        <span class="doux pt">${pluriel(visibles.length,"enfant")}${
+          visibles.length !== avecDroit.length ? " sur " + avecDroit.length : ""}</span>
+        <button class="b mini pousse" data-action="visite-nouvelle">${ic("plus",14)}
+          Droit de visite</button>
+      </div>
     </div>`;
 
   /* ------------------------------------------------------ 3. le dossier choisi */
@@ -1662,6 +1743,27 @@ function vueVisites(){
     const passees = rencontres.filter(x => !estISO(x.r.date) || x.r.date <= auj);
 
     const freq = mesDroits.map(({v}) => v.frequence).filter(Boolean).join(" · ");
+    const avecQui = [...new Set(mesDroits.map(({v}) => libelleParent(v)))].join(" / ");
+    const dernierRealise = passees
+      .filter(x => x.r.presence === "venu" && estISO(x.r.date))
+      .map(x => x.r.date).sort().pop();
+
+    /* Le bandeau de faits : ce qu'on veut savoir sans avoir à chercher. */
+    const fait = (l, v, code) =>
+      '<div class="fait"><span class="l">' + ech(l) + "</span>" +
+      '<span class="v' + (code ? " " + code : "") + '">' + v + "</span></div>";
+
+    const bandeauFaits = '<div class="faits">' +
+      fait("Fréquence", ech(freq || "à préciser")) +
+      fait("Avec qui", ech(avecQui || "à préciser")) +
+      fait("Dernier DV réalisé", dernierRealise ? ech(fmtFR(dernierRealise))
+           : '<span class="doux">aucun</span>') +
+      fait("Programmé jusqu'au",
+           (p.date ? ech(fmtFR(p.date)) : "—") + '<span class="s">' + ech(p.court) + "</span>",
+           p.code) +
+      fait("Autorité", e.service ? '<span class="et info">' + ech(e.service) + "</span>"
+           : '<span class="doux">à préciser</span>') +
+      "</div>";
 
     /* le rappel des droits : intervenant, fréquence, créneaux, et de quoi corriger */
     const lignesDroits = mesDroits.map(({e:o, v}) => {
@@ -1735,7 +1837,7 @@ function vueVisites(){
         ${puce("tout","Toutes", compte.tout)}${puce("completer","À compléter", compte.completer)}
         ${puce("venu","Honorées", compte.venu)}${puce("absent","Manquées", compte.absent)}
       </div>
-      ${lignes.length ? `<div class="tableau-enveloppe"><table>
+      ${lignes.length ? `<div class="tableau-enveloppe"><table class="tab-suivi">
         <thead><tr><th class="num">Date</th><th>Intervenant</th><th class="num">Horaire</th>
           <th class="centre">Le parent</th><th class="col-note">Note</th><th></th></tr></thead>
         <tbody>${affichees.map(x => `<tr>
@@ -1774,18 +1876,15 @@ function vueVisites(){
       <div class="carte">
         <div class="tete dv-tete">
           ${avatar(e, "carte")}
-          <div class="extensible">
-            <h2>${ech(nomComplet(e))}</h2>
-            <div class="pt doux">${freq ? "Fréquence : " + ech(freq)
-              : pluriel(mesDroits.length,"droit") + " de visite"}</div>
-          </div>
-          <span class="et ${p.code}">${ech(p.texte)}</span>
-          <button class="b mini" data-action="enfant-modifier" data-id="${e.id}">Voir la fiche</button>
+          <h2>${ech(nomComplet(e))}</h2>
+          <button class="b mini pousse" data-action="enfant-modifier" data-id="${e.id}">
+            ✎ Modifier la fiche</button>
           <button class="b mini" data-action="rencontre-enfant" data-id="${e.id}">
             ${ic("plus",13)} Rencontre</button>
           <button class="b mini primaire" data-action="rencontres-enfant" data-id="${e.id}">
             ${ic("plus",13)} Plusieurs dates</button>
         </div>
+        ${bandeauFaits}
         ${lignesDroits}
         <div class="onglets-d">
           ${bouton("prochaines", "Prochaines rencontres" + (aVenir.length ? " (" + aVenir.length + ")" : ""))}
@@ -1821,19 +1920,24 @@ function vueVisites(){
           </div>`;
         }).join("") : '<div class="sem-vide">—</div>'}
       </div>
-    </div>`).join("");
-
-  const aReprogrammer = avecDroit.filter(e => derniereProgrammee(e).code !== "vert");
+    </div>`).join("") +
+    /* Cinquième colonne : les droits dont les créneaux ne sont pas encodés.
+       Ils ne disparaissent plus dans une note de bas de tableau. */
+    `<div class="sem hors">
+      <div class="sem-tete">Hors semaine</div>
+      <div class="sem-corps">
+        ${sansSchema.length ? '<div class="hs-noms">' +
+          sansSchema.map(({e,v}) => '<span class="hs-item"><button class="lien-nom" ' +
+            'data-action="choisir-enfant" data-id="' + e.id + '">' + ech(libelleDroit(e, v)) +
+            "</button></span>").join("") +
+          '</div><div class="hs-aide">Selon calendrier spécifique — le ✎ du droit de visite ' +
+          "permet d'encoder les semaines et les heures.</div>"
+          : '<div class="sem-vide">—</div>'}
+      </div>
+    </div>`;
 
   /* --------------------------------------------------------------- assemblage */
   return compteurs + `
-  ${aReprogrammer.length ? '<div class="carte"><div class="tete">' + ic("horloge",18) +
-    "<h2>Familles à recontacter</h2><span class='et orange'>" + aReprogrammer.length +
-    "</span></div><p class='pt'>" +
-    aReprogrammer.map(e => '<button class="lien-nom" data-action="choisir-enfant" data-id="' +
-      e.id + '">' + ech(nomComplet(e)) + "</button>").join(", ") +
-    " — aucune rencontre à venir n'est programmée.</p></div>" : ""}
-
   <div class="grille dv">
     ${carteListe}
     ${carteDetail}
@@ -1843,12 +1947,9 @@ function vueVisites(){
     <div class="tete">${ic("visites",18)}<h2>Schéma de récurrence (mensuel)</h2></div>
     <div class="schema">${colonnes}</div>
     <div class="legende">
-      ${["papa","maman","fratrie"].map(k =>
-        '<span>' + ic(CATEGORIES[k].icone, 15) + " " + CATEGORIES[k].label + "</span>").join("")}
+      ${["papa","maman","fratrie","autre"].map(k =>
+        '<span><span class="puce ' + k + '"></span>' + CATEGORIES[k].label + "</span>").join("")}
     </div>
-    ${sansSchema.length ? '<p class="aide">Sans créneau encodé : ' +
-      sansSchema.map(({e,v}) => ech(nomComplet(e))).join(", ") +
-      ". Le ✎ à côté du droit de visite permet d'indiquer les semaines et les heures.</p>" : ""}
   </div>
 
   <div class="carte">
@@ -2755,6 +2856,11 @@ function actionner(b){
       break;
     case "filtre-visite":
       etat.filtreVisite = b.dataset.f; rendre(); break;
+    case "filtre-dossier":
+      // un second clic sur la tuile active revient à la liste complète
+      etat.filtreDossier = (etat.filtreDossier === b.dataset.f) ? "tout" : b.dataset.f;
+      rendre();
+      break;
     case "choisir-enfant":
       if(etat.enfantVisite !== id){ etat.enfantVisite = id; etat.ongletVisite = "prochaines"; }
       if(onglet !== "visites"){ allerA("visites"); break; }

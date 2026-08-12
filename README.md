@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.11.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.12.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -86,21 +86,29 @@ s'affiche en rouge, et un bandeau **« Rapports en retard »** les rassemble en 
 Boutons pour reculer ou avancer de douze mois.
 
 ### Droits de visite
-L'écran s'ouvre sur **quatre compteurs** — rencontres à venir dans les trente prochains
-jours, honorées, manquées et total du mois — puis, s'il y a lieu, la liste des
-**familles à recontacter** : les enfants pour lesquels plus rien n'est programmé.
-Cliquez sur un nom pour ouvrir son dossier.
+L'écran s'ouvre sur **trois compteurs**, qui rangent chaque dossier selon la seule
+question qui compte — jusqu'à quand l'agenda est-il couvert :
+
+| | |
+|---|---|
+| ! **rouge** | **sans DV futur** : plus rien n'est programmé, il faut rappeler la famille |
+| ! **orange** | **échéance proche** : le dernier DV programmé tombe dans moins d'un mois |
+| ✓ **vert** | **à jour** : programmé à plus d'un mois |
+
+**Cliquez sur un compteur** pour ne garder que ces dossiers ; un second clic, ou le bouton
+*← Tous les dossiers*, revient à la liste complète.
 
 En dessous, l'écran est coupé en deux : **la liste des enfants à gauche, le dossier de
 celui que vous avez choisi à droite.**
 
-**À gauche** — un enfant par ligne, avec la date **jusqu'à laquelle son agenda est
-couvert**. En orange quand il n'y a plus rien de programmé : c'est le signal qu'il faut
-rappeler la famille. La pastille bleue compte les rencontres à venir. Un champ de
-recherche filtre la liste.
+**À gauche** — un tableau : l'enfant, sa fréquence, et la date **jusqu'à laquelle son
+agenda est couvert** avec le nombre de jours restants. Un trait de couleur à gauche de
+chaque ligne reprend l'état du dossier, pour repérer d'un coup d'œil ceux qui demandent
+un appel. Un champ de recherche filtre la liste.
 
-**À droite** — le dossier de l'enfant. En tête : son nom, sa fréquence, jusqu'à quand il
-est programmé, et les boutons *Voir la fiche*, *+ Rencontre* et *+ Plusieurs dates*.
+**À droite** — le dossier de l'enfant. En tête, son nom et les boutons *Modifier la
+fiche*, *+ Rencontre* et *+ Plusieurs dates*. Juste en dessous, un bandeau qui répond
+sans chercher : **fréquence, avec qui, dernier DV réalisé, programmé jusqu'au, autorité**.
 Puis chaque droit de visite : l'intervenant, la fréquence, les créneaux du mois, et le ✎
 pour le corriger. Enfin deux onglets :
 
@@ -114,7 +122,8 @@ pour le corriger. Enfin deux onglets :
 
 Plus bas, le **schéma de récurrence (mensuel)** : les quatre semaines du mois côte à côte,
 tous enfants confondus, colorés selon l'intervenant — Papa en bleu, Maman en rose,
-Fratrie en violet.
+Fratrie en violet. Une cinquième colonne, **Hors semaine**, rassemble les droits de visite
+dont les créneaux ne sont pas encore encodés ; cliquez sur un nom pour ouvrir son dossier.
 
 **Programmer plusieurs dates d'un coup** : le bouton *+ Plusieurs dates* ouvre un tableau de
 dates. Un remplissage rapide propose une série — toutes les semaines, toutes les deux
