@@ -118,6 +118,15 @@ footer{padding:10px 30px 26px;font-size:12.5px;color:var(--doux);
 .tuile .v{display:block;font-size:13px;color:var(--doux);margin-top:1px}
 .tuile .v b{font-size:20px;color:var(--texte);margin-right:4px;vertical-align:-1px}
 .tuile .fleche{color:var(--doux)}
+/* Variante d'information : pas de chevron, donc pas cliquable, et le nombre
+   prend toute la place parce que c'est lui qu'on vient lire. */
+.tuile.stat{cursor:default}
+.tuile.stat:hover{border-color:var(--bord)}
+.tuile.stat .rond{font-size:19px;font-weight:700;line-height:1}
+.tuile.stat .n{display:block;font-size:26px;font-weight:700;line-height:1.2;margin-top:1px}
+.tuile.stat .n.bleu{color:var(--accent)} .tuile.stat .n.vert{color:var(--vert)}
+.tuile.stat .n.rouge{color:var(--rouge)} .tuile.stat .n.orange{color:var(--orange)}
+.tuile.stat .s{display:block;font-size:12px;color:var(--doux)}
 
 /* ---------- Listes ---------- */
 ul.liste{list-style:none;margin:0;padding:0}
@@ -251,19 +260,43 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .mois .rien-mois{padding:10px 13px;color:var(--doux);font-size:12.5px;font-style:italic}
 
 /* ---------- Droits de visite ---------- */
-@media(min-width:1100px){
-  .grille.dv{grid-template-columns:2fr 1fr}
+/* La liste des enfants à gauche, le dossier de celui qu'on a choisi à droite. */
+@media(min-width:1050px){
+  .grille.dv{grid-template-columns:288px minmax(0,1fr);align-items:start}
 }
-.bandeau-enfants{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 8px}
-/* colonne, pour que le bouton d'action se pose au même niveau sur toutes les cartes */
-.carte-enfant{flex:none;width:212px;border:1px solid var(--bord);border-radius:12px;padding:13px 14px;
-  background:var(--vert-f);border-color:rgba(31,138,76,.35);
-  display:flex;flex-direction:column;align-items:stretch}
-.carte-enfant .ce-prog{margin-top:auto;padding-top:9px}
-.ce-haut{display:flex;align-items:center;gap:10px;margin-bottom:9px}
-.ce-nom{font-weight:700;font-size:15px;line-height:1.1}
-.ce-ligne{font-size:12.5px;color:var(--doux);line-height:1.6}
-.ce-ligne b{color:var(--texte)}
+.liste-enfants{display:flex;flex-direction:column;max-height:520px;overflow-y:auto;margin:0 -4px}
+.le{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:inherit;
+  background:none;border:0;border-left:3px solid transparent;border-radius:10px;
+  padding:9px 10px;cursor:pointer}
+.le:hover{background:var(--fond)}
+.le.actif{background:var(--accent-doux);border-left-color:var(--accent)}
+.le-nom{display:block;font-weight:600;font-size:13.5px;line-height:1.25}
+.le-sous{display:block;font-size:12px;color:var(--doux)}
+.le-sous.orange{color:var(--orange)}
+.lien-nom{background:none;border:0;padding:0;font:inherit;font-size:12.5px;color:var(--accent);
+  cursor:pointer;text-decoration:underline}
+
+.dv-tete{flex-wrap:wrap}
+.dv-tete h2{flex:none}
+.dv-droit{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--bord);
+  font-size:13px}
+.dv-droit:last-of-type{padding-bottom:14px}
+.rond-parent{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;
+  justify-content:center;flex:none;background:var(--gris-f);color:var(--doux)}
+.rond-parent.papa{background:var(--accent-doux);color:var(--accent)}
+.rond-parent.maman{background:#fdeaf0;color:#b03a5b}
+.rond-parent.fratrie{background:var(--violet-f);color:var(--violet)}
+
+/* Les onglets du dossier : le trait sous l'onglet actif, rien d'autre. */
+.onglets-d{display:flex;gap:4px;border-bottom:1px solid var(--bord);margin-bottom:14px}
+.onglets-d button{background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;
+  font:inherit;font-size:13.5px;color:var(--doux);padding:9px 12px;cursor:pointer}
+.onglets-d button:hover{color:var(--texte)}
+.onglets-d button.actif{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+
+.rdv{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid var(--bord)}
+.rdv:first-of-type{border-top:0}
+.rdv-qui{font-weight:600;font-size:13.5px}
 
 .schema{display:grid;gap:10px;grid-template-columns:1fr}
 @media(min-width:620px){.schema{grid-template-columns:1fr 1fr}}
@@ -279,7 +312,7 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .creneau.autre{background:var(--gris-f);border-color:var(--bord)}
 @media (prefers-color-scheme: dark){
   .creneau.maman{background:#3a2029;border-color:rgba(240,138,138,.3)}
-  .carte-enfant{background:rgba(31,138,76,.14)}
+  .rond-parent.maman{background:#3a2029;color:#f08a8a}
 }
 .creneau.barre{opacity:.72}
 .cr-haut{display:flex;align-items:center;gap:7px}
@@ -287,17 +320,11 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .cr-h{font-size:13px;font-variant-numeric:tabular-nums;margin:3px 0 1px}
 .cr-bas{font-size:12px;color:var(--doux);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
-.proch{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid var(--bord)}
-.proch:first-of-type{border-top:0}
 .pastille-date{display:flex;flex-direction:column;align-items:center;justify-content:center;
   width:46px;flex:none;background:var(--fond);border:1px solid var(--bord);border-radius:9px;padding:5px 0}
 .pastille-date .j{font-size:9.5px;letter-spacing:.05em;color:var(--doux);font-weight:700}
 .pastille-date .n{font-size:17px;font-weight:700;line-height:1.1}
 .pastille-date .m{font-size:9.5px;letter-spacing:.05em;color:var(--doux);font-weight:700}
-.proch-txt{flex:1;min-width:0}
-.proch-nom{font-weight:600;font-size:13.5px}
-.proch-det{font-size:12px;color:var(--doux)}
-
 .choix-rapides{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
 .choix-rapides button{border:1px solid var(--bord);background:var(--carte);color:var(--doux);
   border-radius:20px;padding:5px 13px;font:inherit;font-size:13px;cursor:pointer}
@@ -308,18 +335,8 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .cases input{width:auto;margin:0}
 .ce-libre{display:inline-block;font-size:11.5px;color:var(--vert);font-weight:600}
 .ce-groupe{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--accent)}
-.ce-prenom{font-size:13px;color:var(--doux)}
-.ce-prog{font-size:12px;font-weight:600;margin-top:9px}
-.ce-prog.vert{color:var(--vert)} .ce-prog.orange{color:var(--orange)} .ce-prog.rouge{color:var(--rouge)}
-.carte-enfant.vert{background:var(--vert-f);border-color:rgba(31,138,76,.3)}
-.carte-enfant.orange{background:var(--orange-f);border-color:rgba(224,138,30,.35)}
-.carte-enfant.rouge{background:var(--rouge-f);border-color:rgba(192,43,43,.3)}
 .cr-prenom{font-size:12px;color:var(--doux);margin-top:1px}
 
-.suivi-enfant{border:1px solid var(--bord);border-radius:12px;padding:13px 15px;margin-bottom:14px;
-  background:var(--carte)}
-.se-tete{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:10px}
-.se-nom{font-weight:700;font-size:15px}
 .bascule{display:inline-flex;border:1px solid var(--bord);border-radius:8px;overflow:hidden}
 .bascule button{border:0;background:var(--carte);color:var(--doux);font:inherit;font-size:12.5px;
   padding:5px 10px;cursor:pointer;white-space:nowrap}
@@ -349,7 +366,7 @@ code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px
 .champ-recherche{max-width:240px}
 .centre{text-align:center}
 .droite{text-align:right}
-.col-note{min-width:240px}
+.col-note{min-width:155px;width:99%}
 .extensible{flex:1;min-width:0}
 .pleine{width:100%;justify-content:center}
 .haut-marge{margin-top:16px}
@@ -464,7 +481,8 @@ const CLE = "fa-dossiers-v2";
 let DB = null;
 let onglet = "accueil";
 let etat = { recherche:"", tri:"nom", tachesFaites:false, anneeRapports:0,
-             filtreNotif:"tout", filtreVisite:"tout", ouvertes:{} };
+             filtreNotif:"tout", filtreVisite:"tout", ouvertes:{},
+             enfantVisite:"", ongletVisite:"prochaines" };
 
 function baseVide(){
   return {
@@ -1494,12 +1512,17 @@ function derniereProgrammee(enf){
   droits.forEach(({v}) => (v.rencontres||[]).forEach(r => {
     if(estISO(r.date) && r.date > d) d = r.date;
   }));
-  if(d >= aujourdHui()) return { date:d, code:"vert", texte:"Prochaine le " + fmtFR(d) };
+  // c'est la rencontre la plus lointaine qui compte : elle dit jusqu'à quand
+  // l'agenda est couvert, donc quand il faudra rappeler la famille.
+  if(d >= aujourdHui())
+    return { date:d, code:"vert", texte:"Programmé jusqu'au " + fmtFR(d),
+             court:"Jusqu'au " + fmtFR(d) };
   // rien à organiser quand toutes les rencontres se passent sans encadrement
   if(droits.length && droits.every(({v}) => v.sansEncadrement))
-    return { date:d, code:"vert", texte:"Sans encadrement" };
-  if(!d) return { date:"", code:"orange", texte:"À programmer" };
-  return { date:d, code:"orange", texte:"Dernière le " + fmtFR(d) + " — à reprogrammer" };
+    return { date:d, code:"vert", texte:"Sans encadrement", court:"Sans encadrement" };
+  if(!d) return { date:"", code:"orange", texte:"Rien de programmé", court:"Rien de programmé" };
+  return { date:d, code:"orange", texte:"Dernière le " + fmtFR(d) + " — à reprogrammer",
+           court:"À reprogrammer depuis le " + fmtFR(d) };
 }
 
 /** Les enfants couverts par un droit de visite : le titulaire et ceux
@@ -1545,30 +1568,234 @@ function vueVisites(){
   DB.enfants.slice().sort(parNom).forEach(e => (e.visites||[]).forEach(v => droits.push({ e, v })));
   const avecDroit = DB.enfants.slice().sort(parNom).filter(e => visitesDe(e).length);
 
-  /* ------------------------------------------------ 1. enfants concernés */
-  const cartesEnfants = avecDroit.map(e => {
-    const p = derniereProgrammee(e);
-    return `<div class="carte-enfant ${p.code}">
-      <div class="ce-haut">${avatar(e, "carte")}
-        <div><div class="ce-nom">${ech(e.nom)}</div>
-          <div class="ce-prenom">${ech(e.prenom)}</div></div></div>
-      ${visitesDe(e).map(({e:o,v}) => `<div class="ce-ligne">
-        <b>${ech(libelleParent(v))}</b>${v.frequence ? " · " + ech(v.frequence) : ""}
-        ${v.sansEncadrement ? '<br><span class="ce-libre">sans encadrement</span>' : ""}
-        ${(v.partageAvec||[]).length ? '<br><span class="ce-groupe">' + ic("enfants",12) +
-          " regroupé : " + ech(libelleDroit(o, v)) + "</span>" : ""}
-        <button class="b mini" data-action="visite-modifier" data-id="${o.id}"
-                data-vid="${v.id}" title="Modifier ce droit de visite">✎</button>
-        <button class="b mini danger" data-action="visite-supprimer" data-id="${o.id}"
-                data-vid="${v.id}" title="Supprimer ce droit de visite">✕</button>
-      </div>`).join("")}
-      <div class="ce-prog ${p.code}"><span class="puce ${p.code}"></span>${ech(p.texte)}</div>
-      <button class="b mini primaire pleine haut-marge"
-              data-action="rencontres-enfant" data-id="${e.id}">${ic("plus",13)} Programmer des dates</button>
-    </div>`;
-  }).join("");
+  /* ------------------------------------------------------ 1. les compteurs */
+  const ceMois  = r => String(r.date || "").slice(0, 7) === auj.slice(0, 7);
+  // un mois : les rencontres sont le plus souvent mensuelles, une quinzaine
+  // afficherait zéro la moitié du temps.
+  const horizon = decalerJours(auj, 30);
+  const nAvenir = total.filter(o => estISO(o.rencontre.date) && o.rencontre.date >= auj &&
+                                    o.rencontre.date <= horizon &&
+                                    o.rencontre.presence === "prevue").length;
+  const nVenus  = total.filter(o => ceMois(o.rencontre) && o.rencontre.presence === "venu").length;
+  const nAbsent = total.filter(o => ceMois(o.rencontre) && o.rencontre.presence === "absent").length;
+  const nMois   = total.filter(o => ceMois(o.rencontre)).length;
 
-  /* --------------------------------------- 2. schéma de récurrence mensuel */
+  /* Ces tuiles informent, elles ne mènent nulle part : pas de chevron,
+     qui reste la marque des tuiles sur lesquelles on peut cliquer. */
+  const stat = (couleur, marque, titre, n, sous) => `
+    <div class="tuile stat">
+      <span class="rond ${couleur}">${marque}</span>
+      <span class="txt"><span class="t">${ech(titre)}</span>
+        <span class="n ${couleur}">${n}</span>
+        <span class="s">${ech(sous)}</span></span>
+    </div>`;
+
+  const compteurs = `<div class="tuiles">
+    ${stat("bleu",   ic("visites",21),  "Rencontres à venir", nAvenir, "dans les 30 prochains jours")}
+    ${stat("vert",   "✓",               "Honorées",           nVenus,  "ce mois")}
+    ${stat("rouge",  "✕",               "Manquées",           nAbsent, "ce mois")}
+    ${stat("orange", ic("rapports",21), "Rencontres au total", nMois,  "ce mois")}
+  </div>`;
+
+  /* ------------------------------------------- 2. la liste : choisir un enfant */
+  const visibles = avecDroit.filter(e => !q || nomComplet(e).toLowerCase().includes(q));
+  // pas d'écriture dans « etat » ici : une recherche qui masque l'enfant choisi
+  // en montre un autre, et le retrouve dès que la recherche est effacée.
+  const choisi = visibles.find(e => e.id === etat.enfantVisite) || visibles[0] || null;
+
+  const ligneEnfant = e => {
+    const p = derniereProgrammee(e);
+    const n = visitesDe(e).reduce((s, {v}) => s + (v.rencontres||[]).filter(r =>
+      estISO(r.date) && r.date >= auj && r.presence === "prevue").length, 0);
+    return `<button class="le ${choisi && e.id === choisi.id ? "actif" : ""}"
+        data-action="choisir-enfant" data-id="${e.id}">
+      ${avatar(e)}
+      <span class="extensible">
+        <span class="le-nom">${ech(nomComplet(e))}</span>
+        <span class="le-sous ${p.code}">${ech(p.court)}</span>
+      </span>
+      ${n ? '<span class="et info">' + n + "</span>" : ""}
+    </button>`;
+  };
+
+  const carteListe = `
+    <div class="carte">
+      <div class="tete">${ic("enfants",18)}<h2>Choisir un enfant</h2>
+        <span class="et info">${avecDroit.length}</span></div>
+      <input type="search" id="recherche" placeholder="Rechercher un enfant…"
+             class="bas-marge" value="${ech(etat.recherche)}">
+      ${visibles.length ? '<div class="liste-enfants">' + visibles.map(ligneEnfant).join("") + "</div>"
+        : '<p class="rien">' + (q ? "Aucun enfant à ce nom." : "Aucun droit de visite encodé.") + "</p>"}
+      <button class="b pleine haut-marge" data-action="visite-nouvelle">${ic("plus",14)}
+        Nouveau droit de visite</button>
+    </div>`;
+
+  /* ------------------------------------------------------ 3. le dossier choisi */
+  const delai = iso => {
+    const n = joursEntre(auj, iso);
+    return n <= 0 ? "Aujourd'hui" : n === 1 ? "Demain" : "Dans " + n + " jours";
+  };
+
+  const f = etat.filtreVisite;
+  const garde = r =>
+    (f !== "completer" || aCompleter(r)) &&
+    (f !== "venu"      || r.presence === "venu") &&
+    (f !== "absent"    || r.presence === "absent");
+
+  let carteDetail;
+  if(!choisi){
+    carteDetail = '<div class="carte"><p class="vide">Choisissez un enfant dans la liste.</p></div>';
+  }else{
+    const e = choisi;
+    const p = derniereProgrammee(e);
+    const mesDroits = visitesDe(e);
+
+    const rencontres = [];
+    mesDroits.forEach(({e:o, v}) => (v.rencontres||[]).forEach(r => rencontres.push({ o, v, r })));
+
+    /* Les deux onglets se partagent les rencontres à la date du jour : celle
+       d'aujourd'hui est à la fois la prochaine et celle qu'on vient noter. */
+    const aVenir = rencontres
+      .filter(x => estISO(x.r.date) && x.r.date >= auj)
+      .sort((a,b) => a.r.date.localeCompare(b.r.date) ||
+                     String(a.r.debut||"").localeCompare(String(b.r.debut||"")));
+    const passees = rencontres.filter(x => !estISO(x.r.date) || x.r.date <= auj);
+
+    const freq = mesDroits.map(({v}) => v.frequence).filter(Boolean).join(" · ");
+
+    /* le rappel des droits : intervenant, fréquence, créneaux, et de quoi corriger */
+    const lignesDroits = mesDroits.map(({e:o, v}) => {
+      const cat = categorieParent(v);
+      const cr = (v.creneaux||[]).map(c =>
+        "semaine " + c.semaine + " " + (c.debut || "?") + "–" + (c.fin || "?")).join(", ");
+      return `<div class="dv-droit">
+        <span class="rond-parent ${CATEGORIES[cat].classe}">${ic(CATEGORIES[cat].icone, 16)}</span>
+        <div class="extensible">
+          <div><b>${ech(libelleParent(v))}</b>${v.frequence ? ' <span class="doux">· ' +
+            ech(v.frequence) + "</span>" : ""}</div>
+          <div class="pt doux">${cr ? ech(cr) : "aucun créneau encodé"}</div>
+          ${v.sansEncadrement ? '<span class="ce-libre">rencontres sans encadrement</span>' : ""}
+          ${(v.partageAvec||[]).length ? '<span class="ce-groupe">' + ic("enfants",12) +
+            " regroupé : " + ech(libelleDroit(o, v)) + "</span>" : ""}
+        </div>
+        <div class="actions">
+          <button class="b mini" data-action="visite-modifier" data-id="${o.id}"
+                  data-vid="${v.id}" title="Modifier ce droit de visite">✎</button>
+          <button class="b mini danger" data-action="visite-supprimer" data-id="${o.id}"
+                  data-vid="${v.id}" title="Supprimer ce droit de visite">✕</button>
+        </div>
+      </div>`;
+    }).join("");
+
+    /* --- onglet « prochaines rencontres » --- */
+    const boutonsRencontre = ({o,v,r}) => `<div class="actions">
+      <button class="b mini" data-action="rencontre-modifier" data-id="${o.id}"
+              data-vid="${v.id}" data-rid="${r.id}" title="Modifier">✎</button>
+      <button class="b mini danger" data-action="rencontre-supprimer" data-id="${o.id}"
+              data-vid="${v.id}" data-rid="${r.id}" title="Supprimer">🗑</button>
+    </div>`;
+
+    const vueProchaines = aVenir.length ? aVenir.slice(0, 8).map(x => {
+      const cat = categorieParent(x.v);
+      return `<div class="rdv">
+        ${pastilleDate(x.r.date)}
+        <span class="rond-parent ${CATEGORIES[cat].classe}">${ic(CATEGORIES[cat].icone, 17)}</span>
+        <div class="extensible">
+          <div class="rdv-qui">${ech(libelleParent(x.v))}</div>
+          <div class="pt doux">${ech(heuresDe(x.r) || "heure à préciser")}</div>
+        </div>
+        <span class="et info nowrap">${ech(delai(x.r.date))}</span>
+        ${boutonsRencontre(x)}
+      </div>`;
+    }).join("") + (aVenir.length > 8
+        ? '<p class="aide">et ' + (aVenir.length - 8) +
+          " autre(s) plus loin — elles figurent dans l'historique.</p>" : "")
+      : '<p class="rien">Aucune rencontre programmée. ' +
+        (p.code === "vert" ? "" : "C'est le moment de contacter la famille.") + "</p>";
+
+    /* --- onglet « historique » --- */
+    const compte = {
+      tout:      passees.length,
+      completer: passees.filter(x => aCompleter(x.r)).length,
+      venu:      passees.filter(x => x.r.presence === "venu").length,
+      absent:    passees.filter(x => x.r.presence === "absent").length
+    };
+    const puce = (id, texte, n) =>
+      '<button data-action="filtre-visite" data-f="' + id + '" class="' +
+      (f === id ? "actif" : "") + '">' + texte + " " + n + "</button>";
+
+    const lignes = passees.filter(x => garde(x.r))
+      .sort((a,b) => String(b.r.date||"").localeCompare(String(a.r.date||"")) ||
+                     String(b.r.debut||"").localeCompare(String(a.r.debut||"")));
+    const deplie = !!etat.ouvertes[e.id];
+    const affichees = deplie ? lignes : lignes.slice(0, 10);
+
+    const vueHistorique = `
+      <div class="filtres bas-marge">
+        ${puce("tout","Toutes", compte.tout)}${puce("completer","À compléter", compte.completer)}
+        ${puce("venu","Honorées", compte.venu)}${puce("absent","Manquées", compte.absent)}
+      </div>
+      ${lignes.length ? `<div class="tableau-enveloppe"><table>
+        <thead><tr><th class="num">Date</th><th>Intervenant</th><th class="num">Horaire</th>
+          <th class="centre">Le parent</th><th class="col-note">Note</th><th></th></tr></thead>
+        <tbody>${affichees.map(x => `<tr>
+          <td class="num nowrap">${ech(fmtFR(x.r.date))}${
+            aCompleter(x.r) ? '<br><span class="et orange">à compléter</span>' : ""}</td>
+          <td>${ech(libelleParent(x.v))}${(x.v.partageAvec||[]).length
+            ? '<br><span class="doux pt">avec ' + ech(libelleDroit(x.o, x.v)) + "</span>" : ""}</td>
+          <td class="num nowrap">${ech(heuresDe(x.r) || "—")}</td>
+          <td class="centre"><div class="bascule">
+            <button class="oui ${x.r.presence === "venu" ? "actif" : ""}"
+                    data-action="presence" data-p="venu" data-id="${x.o.id}" data-vid="${x.v.id}"
+                    data-rid="${x.r.id}" title="Le parent est venu">✓ Présent</button>
+            <button class="non ${x.r.presence === "absent" ? "actif" : ""}"
+                    data-action="presence" data-p="absent" data-id="${x.o.id}" data-vid="${x.v.id}"
+                    data-rid="${x.r.id}" title="Le parent n'est pas venu">✕ Absent</button>
+          </div></td>
+          <td class="col-note"><div class="note-vive" data-note="1"
+              data-id="${x.o.id}" data-vid="${x.v.id}" data-rid="${x.r.id}" tabindex="0"
+              title="Cliquez pour écrire">${x.r.note ? ech(x.r.note)
+                : '<span class="doux">Note de synthèse…</span>'}</div></td>
+          <td>${boutonsRencontre(x)}</td>
+        </tr>`).join("")}</tbody></table></div>
+        ${lignes.length > 10 ? '<button class="b pleine haut-marge" data-action="deplier" data-id="' +
+          e.id + '">' + (deplie ? "Réduire" : "Voir les " + lignes.length + " rencontres") +
+          "</button>" : ""}
+        <p class="aide">La présence et la note se saisissent directement dans le tableau :
+          un clic sur ✓ Présent ou ✕ Absent, et la note s'enregistre en quittant la case.</p>`
+        : '<p class="rien">Aucune rencontre passée' +
+          (f === "tout" ? " pour cet enfant." : " pour ce filtre.") + "</p>"}`;
+
+    const ong = etat.ongletVisite === "historique" ? "historique" : "prochaines";
+    const bouton = (id, texte) => '<button class="' + (ong === id ? "actif" : "") +
+      '" data-action="onglet-visite" data-o="' + id + '">' + texte + "</button>";
+
+    carteDetail = `
+      <div class="carte">
+        <div class="tete dv-tete">
+          ${avatar(e, "carte")}
+          <div class="extensible">
+            <h2>${ech(nomComplet(e))}</h2>
+            <div class="pt doux">${freq ? "Fréquence : " + ech(freq)
+              : pluriel(mesDroits.length,"droit") + " de visite"}</div>
+          </div>
+          <span class="et ${p.code}">${ech(p.texte)}</span>
+          <button class="b mini" data-action="enfant-modifier" data-id="${e.id}">Voir la fiche</button>
+          <button class="b mini" data-action="rencontre-enfant" data-id="${e.id}">
+            ${ic("plus",13)} Rencontre</button>
+          <button class="b mini primaire" data-action="rencontres-enfant" data-id="${e.id}">
+            ${ic("plus",13)} Plusieurs dates</button>
+        </div>
+        ${lignesDroits}
+        <div class="onglets-d">
+          ${bouton("prochaines", "Prochaines rencontres" + (aVenir.length ? " (" + aVenir.length + ")" : ""))}
+          ${bouton("historique", "Historique des rencontres")}
+        </div>
+        ${ong === "prochaines" ? vueProchaines : vueHistorique}
+      </div>`;
+  }
+
+  /* ------------------------------------------- 4. schéma de récurrence mensuel */
   const semaines = [1,2,3,4].map(n => {
     const items = [];
     droits.forEach(({e,v}) => (v.creneaux||[]).forEach(c => {
@@ -1596,166 +1823,43 @@ function vueVisites(){
       </div>
     </div>`).join("");
 
-  const legende = `<div class="legende">
-    ${["papa","maman","fratrie"].map(k =>
-      '<span>' + ic(CATEGORIES[k].icone, 15) + " " + CATEGORIES[k].label + "</span>").join("")}
-  </div>`;
-
-  /* ------------------------------------------------ 3. prochaines rencontres */
-  const prochaines = total
-    .filter(o => estISO(o.rencontre.date) && o.rencontre.date >= auj)
-    .sort((a,b) => a.rencontre.date.localeCompare(b.rencontre.date) ||
-                   String(a.rencontre.debut||"").localeCompare(String(b.rencontre.debut||"")))
-    .slice(0, 6);
-
-  const listeProchaines = prochaines.length ? prochaines.map(o => `
-    <div class="proch">
-      ${pastilleDate(o.rencontre.date)}
-      <div class="proch-txt">
-        <div class="proch-nom">${ech(libelleDroit(o.enfant, o.visite))}</div>
-        <div class="proch-det">${heuresDe(o.rencontre) || "heure à préciser"}</div>
-        <div class="proch-det">${ech(libelleParent(o.visite))}</div>
-      </div>
-    </div>`).join("") : '<p class="rien">Aucune rencontre programmée.</p>';
-
   const aReprogrammer = avecDroit.filter(e => derniereProgrammee(e).code !== "vert");
 
-  /* --------------------------------------------- 4. suivi, enfant par enfant */
-  const f = etat.filtreVisite;
-  const garde = r =>
-    (f !== "avenir"    || (r.date >= auj && r.presence === "prevue")) &&
-    (f !== "completer" || aCompleter(r)) &&
-    (f !== "venu"      || r.presence === "venu") &&
-    (f !== "absent"    || r.presence === "absent");
-
-  const compte = {
-    tout:      total.length,
-    avenir:    total.filter(o => o.rencontre.date >= auj && o.rencontre.presence === "prevue").length,
-    completer: total.filter(o => aCompleter(o.rencontre)).length,
-    venu:      total.filter(o => o.rencontre.presence === "venu").length,
-    absent:    total.filter(o => o.rencontre.presence === "absent").length
-  };
-  const filtre = (id, texte, n) =>
-    '<button data-action="filtre-visite" data-f="' + id + '" class="' +
-    (f === id ? "actif" : "") + '">' + texte + " " + n + "</button>";
-
-  const blocs = avecDroit.filter(e => !q || nomComplet(e).toLowerCase().includes(q)).map(e => {
-    const lignes = [];
-    visitesDe(e).forEach(({e:o, v}) => (v.rencontres||[]).forEach(r => {
-      if(garde(r)) lignes.push({ o, v, r });
-    }));
-    lignes.sort((a,b) => b.r.date.localeCompare(a.r.date) ||
-                         String(b.r.debut||"").localeCompare(String(a.r.debut||"")));
-    const p = derniereProgrammee(e);
-    const venus = lignes.filter(x => x.r.presence === "venu").length;
-    const absents = lignes.filter(x => x.r.presence === "absent").length;
-    const tout = !!etat.ouvertes[e.id];
-    const visibles = tout ? lignes : lignes.slice(0, 10);
-
-    return `<div class="suivi-enfant">
-      <div class="se-tete">
-        ${avatar(e, "carte")}
-        <div class="extensible">
-          <div class="se-nom">${ech(nomComplet(e))}</div>
-          <div class="pt doux">${pluriel(lignes.length,"rencontre")}
-            ${lignes.length ? "· " + venus + " honorée(s), " + absents + " manquée(s)" : ""}</div>
-        </div>
-        <span class="et ${p.code}">${ech(p.texte)}</span>
-        <button class="b mini" data-action="rencontre-enfant" data-id="${e.id}">
-          ${ic("plus",13)} Rencontre</button>
-        <button class="b mini primaire" data-action="rencontres-enfant" data-id="${e.id}">
-          ${ic("plus",13)} Plusieurs dates</button>
-      </div>
-      ${lignes.length ? `<div class="tableau-enveloppe"><table>
-        <thead><tr><th class="num">Date</th><th>Intervenant</th><th class="num">Début</th>
-          <th class="num">Fin</th><th class="centre">Le parent</th><th>Note</th><th></th></tr></thead>
-        <tbody>${visibles.map(({o,v,r}) => `<tr>
-          <td class="num nowrap">${ech(fmtFR(r.date))}${
-            aCompleter(r) ? '<br><span class="et orange">à compléter</span>' : ""}</td>
-          <td>${ech(libelleParent(v))}${(v.partageAvec||[]).length
-            ? '<br><span class="doux pt">avec ' + ech(libelleDroit(o, v)) + "</span>" : ""}</td>
-          <td class="num">${ech(r.debut || "—")}</td>
-          <td class="num">${ech(r.fin || "—")}</td>
-          <td class="centre"><div class="bascule">
-            <button class="oui ${r.presence === "venu" ? "actif" : ""}"
-                    data-action="presence" data-p="venu" data-id="${o.id}" data-vid="${v.id}"
-                    data-rid="${r.id}" title="Le parent est venu">✓ Présent</button>
-            <button class="non ${r.presence === "absent" ? "actif" : ""}"
-                    data-action="presence" data-p="absent" data-id="${o.id}" data-vid="${v.id}"
-                    data-rid="${r.id}" title="Le parent n'est pas venu">✕ Absent</button>
-          </div></td>
-          <td class="col-note"><div class="note-vive" data-note="1"
-              data-id="${o.id}" data-vid="${v.id}" data-rid="${r.id}" tabindex="0"
-              title="Cliquez pour écrire">${r.note ? ech(r.note)
-                : '<span class="doux">Note de synthèse…</span>'}</div></td>
-          <td><div class="actions">
-            <button class="b mini" data-action="rencontre-modifier" data-id="${o.id}"
-                    data-vid="${v.id}" data-rid="${r.id}" title="Modifier">✎</button>
-            <button class="b mini danger" data-action="rencontre-supprimer" data-id="${o.id}"
-                    data-vid="${v.id}" data-rid="${r.id}" title="Supprimer">🗑</button>
-          </div></td>
-        </tr>`).join("")}</tbody></table></div>` +
-        (lignes.length > 10
-          ? '<button class="b mini" style="margin-top:10px" data-action="deplier" data-id="' + e.id +
-            '">' + (tout ? "Réduire" : "Voir les " + lignes.length + " rencontres") + "</button>"
-          : "")
-        : '<p class="rien">Aucune rencontre' +
-          (f === "tout" ? " encodée." : " pour ce filtre.") + "</p>"}
-    </div>`;
-  }).join("");
-
   /* --------------------------------------------------------------- assemblage */
-  return `
-  <div class="carte">
-    <div class="tete">${ic("enfants",18)}<h2>Enfants concernés</h2>
-      <span class="et info">${avecDroit.length}</span>
-      <button class="b mini pousse" data-action="visite-nouvelle">${ic("plus",14)} Droit de visite</button></div>
-    ${avecDroit.length ? '<div class="bandeau-enfants">' + cartesEnfants + "</div>"
-                       : '<p class="rien">Aucun droit de visite encodé.</p>'}
-    ${aReprogrammer.length ? '<div class="encadre attention haut-marge">' +
-      '<div class="titre">' + pluriel(aReprogrammer.length,"enfant") +
-      " sans rencontre à venir</div><span class='pt'>" +
-      aReprogrammer.map(e => ech(nomComplet(e))).join(", ") +
-      " — à contacter pour programmer la suite.</span></div>" : ""}
-  </div>
+  return compteurs + `
+  ${aReprogrammer.length ? '<div class="carte"><div class="tete">' + ic("horloge",18) +
+    "<h2>Familles à recontacter</h2><span class='et orange'>" + aReprogrammer.length +
+    "</span></div><p class='pt'>" +
+    aReprogrammer.map(e => '<button class="lien-nom" data-action="choisir-enfant" data-id="' +
+      e.id + '">' + ech(nomComplet(e)) + "</button>").join(", ") +
+    " — aucune rencontre à venir n'est programmée.</p></div>" : ""}
 
   <div class="grille dv">
-    <div class="carte">
-      <div class="tete">${ic("visites",18)}<h2>Schéma de récurrence (mensuel)</h2></div>
-      <div class="schema">${colonnes}</div>
-      ${legende}
-      ${sansSchema.length ? '<p class="aide">Sans créneau encodé : ' +
-        sansSchema.map(({e,v}) => ech(nomComplet(e))).join(", ") +
-        ". Le ✎ sur la carte de l'enfant permet d'indiquer les semaines et les heures.</p>" : ""}
-    </div>
-    <div class="carte">
-      <div class="tete">${ic("horloge",18)}<h2>Prochaines rencontres</h2></div>
-      ${listeProchaines}
-      <div class="actions haut-marge">
-        <button class="b pleine"
-                data-action="rencontre-rapide">${ic("plus",15)} Une rencontre</button>
-        <button class="b primaire pleine"
-                data-action="rencontres-rapide">${ic("plus",15)} Plusieurs dates</button>
-      </div>
-    </div>
+    ${carteListe}
+    ${carteDetail}
   </div>
 
   <div class="carte">
-    <div class="tete">${ic("taches",18)}<h2>Suivi des rencontres, par enfant</h2></div>
-    <div class="barre">
-      <input type="search" id="recherche" placeholder="Rechercher un enfant…"
-             class="champ-recherche" value="${ech(etat.recherche)}">
-      <button class="b" data-action="word">${ic("rapports",15)} Notes en Word</button>
+    <div class="tete">${ic("visites",18)}<h2>Schéma de récurrence (mensuel)</h2></div>
+    <div class="schema">${colonnes}</div>
+    <div class="legende">
+      ${["papa","maman","fratrie"].map(k =>
+        '<span>' + ic(CATEGORIES[k].icone, 15) + " " + CATEGORIES[k].label + "</span>").join("")}
+    </div>
+    ${sansSchema.length ? '<p class="aide">Sans créneau encodé : ' +
+      sansSchema.map(({e,v}) => ech(nomComplet(e))).join(", ") +
+      ". Le ✎ à côté du droit de visite permet d'indiquer les semaines et les heures.</p>" : ""}
+  </div>
+
+  <div class="carte">
+    <div class="tete">${ic("rapports",18)}<h2>Exporter les notes</h2></div>
+    <p class="aide">Un document Word reprenant les notes des rencontres, un chapitre par enfant.
+      Vous choisissez la période, les enfants et les rencontres à retenir : le document est
+      directement utilisable dans vos rapports.</p>
+    <div class="barre haut-marge">
+      <button class="b primaire" data-action="word">${ic("rapports",15)} Exporter les notes</button>
       <button class="b pousse" onclick="window.print()">Imprimer</button>
     </div>
-    <div class="filtres bas-marge">
-      ${filtre("tout","Toutes", compte.tout)}${filtre("avenir","À venir", compte.avenir)}
-      ${filtre("completer","À compléter", compte.completer)}
-      ${filtre("venu","Présent", compte.venu)}${filtre("absent","Absent", compte.absent)}
-    </div>
-    ${blocs || '<p class="vide">Aucun enfant à afficher.</p>'}
-    <p class="aide">La présence et la note se saisissent directement dans le tableau :
-      un clic sur ✓ Présent ou ✕ Absent, et la note s'enregistre en quittant la case.</p>
   </div>`;
 }
 
@@ -2650,11 +2754,17 @@ function actionner(b){
       rendre();
       break;
     case "filtre-visite":
-      etat.filtreVisite = b.dataset.f; etat.listeComplete = false; rendre(); break;
+      etat.filtreVisite = b.dataset.f; rendre(); break;
+    case "choisir-enfant":
+      if(etat.enfantVisite !== id){ etat.enfantVisite = id; etat.ongletVisite = "prochaines"; }
+      if(onglet !== "visites"){ allerA("visites"); break; }
+      rendre();
+      break;
+    case "onglet-visite":
+      etat.ongletVisite = b.dataset.o; rendre(); break;
 
     /* --- rencontres --- */
     case "rencontre-rapide":   formRencontre(null, null, null); break;
-    case "rencontres-rapide":  formRencontresMultiples(null, null); break;
     case "rencontres-enfant": {
       const vs = visitesDe(e);
       if(!vs.length){ alert("Ajoutez d'abord un droit de visite pour " + nomComplet(e) + "."); break; }

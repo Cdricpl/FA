@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.10.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.11.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -86,28 +86,44 @@ s'affiche en rouge, et un bandeau **« Rapports en retard »** les rassemble en 
 Boutons pour reculer ou avancer de douze mois.
 
 ### Droits de visite
-Quatre blocs :
+L'écran s'ouvre sur **quatre compteurs** — rencontres à venir dans les trente prochains
+jours, honorées, manquées et total du mois — puis, s'il y a lieu, la liste des
+**familles à recontacter** : les enfants pour lesquels plus rien n'est programmé.
+Cliquez sur un nom pour ouvrir son dossier.
 
-1. **Enfants concernés** — une carte par enfant : l'intervenant, la fréquence, et surtout
-   **la dernière rencontre programmée**. En vert quand une rencontre est à venir, en orange
-   quand la dernière est passée ou qu'il n'y en a aucune : c'est le signal qu'il faut
-   rappeler la famille. Un bandeau récapitule les enfants concernés.
-2. **Schéma de récurrence (mensuel)** — les quatre semaines du mois côte à côte, avec les
-   créneaux, colorés selon l'intervenant : Papa en bleu, Maman en rose, Fratrie en violet.
-3. **Prochaines rencontres** — les rendez-vous à venir, avec leur pastille de date.
-4. **Suivi des rencontres, par enfant** — un bloc par enfant : date, intervenant, heures,
-   **✓ Présent / ✕ Absent en un clic**, et la **note qui s'écrit directement dans le tableau** :
-   cliquez sur la note, écrivez, quittez la case — c'est enregistré. Échap annule la saisie.
-   Les dix dernières rencontres de chaque enfant sont affichées, le reste sur demande.
+En dessous, l'écran est coupé en deux : **la liste des enfants à gauche, le dossier de
+celui que vous avez choisi à droite.**
 
-**Programmer plusieurs dates d'un coup** : le bouton *Plusieurs dates* ouvre un tableau de
+**À gauche** — un enfant par ligne, avec la date **jusqu'à laquelle son agenda est
+couvert**. En orange quand il n'y a plus rien de programmé : c'est le signal qu'il faut
+rappeler la famille. La pastille bleue compte les rencontres à venir. Un champ de
+recherche filtre la liste.
+
+**À droite** — le dossier de l'enfant. En tête : son nom, sa fréquence, jusqu'à quand il
+est programmé, et les boutons *Voir la fiche*, *+ Rencontre* et *+ Plusieurs dates*.
+Puis chaque droit de visite : l'intervenant, la fréquence, les créneaux du mois, et le ✎
+pour le corriger. Enfin deux onglets :
+
+* **Prochaines rencontres** — les rendez-vous à venir, leur date, leur horaire et dans
+  combien de jours ils tombent.
+* **Historique des rencontres** — les rencontres passées : date, intervenant, horaire,
+  **✓ Présent / ✕ Absent en un clic**, et la **note qui s'écrit directement dans le
+  tableau** : cliquez sur la note, écrivez, quittez la case — c'est enregistré. Échap
+  annule la saisie. Filtres *Toutes / À compléter / Honorées / Manquées*. Les dix
+  dernières sont affichées, le reste sur demande.
+
+Plus bas, le **schéma de récurrence (mensuel)** : les quatre semaines du mois côte à côte,
+tous enfants confondus, colorés selon l'intervenant — Papa en bleu, Maman en rose,
+Fratrie en violet.
+
+**Programmer plusieurs dates d'un coup** : le bouton *+ Plusieurs dates* ouvre un tableau de
 dates. Un remplissage rapide propose une série — toutes les semaines, toutes les deux
 semaines ou tous les mois — que vous corrigez ligne par ligne avant d'enregistrer. Les
 horaires sont repris du schéma de récurrence.
 
 **Rencontres sans encadrement** : cochez la case sur le droit de visite quand les rencontres
 se déroulent sans votre présence. Il n'y a alors rien à programmer : la fiche de l'enfant
-reste verte et il ne figure plus dans la liste des familles à recontacter.
+reste au vert et il ne figure plus dans la liste des familles à recontacter.
 
 Le champ **Rencontre avec** propose Papa, Maman, Les deux parents, Grands-parents et
 Fratrie en un clic, mais accepte aussi n'importe quel texte. Aucun champ n'est obligatoire :
@@ -118,8 +134,9 @@ cochez-les dans « Regrouper avec un autre enfant » sur le droit de visite. La 
 s'encode alors qu'une fois et apparaît dans le suivi de chacun, avec la même note.
 Célia et Lucas THEISMANN sont déjà regroupés.
 
-Bouton **Notes en Word** : un `.docx` structuré, un chapitre par enfant, filtrable par
-période, prêt à être repris dans vos rapports.
+Tout en bas, la carte **Exporter les notes** produit un `.docx` structuré, un chapitre par
+enfant, filtrable par période, prêt à être repris dans vos rapports — et le bouton
+*Imprimer* de l'écran.
 
 ---
 
