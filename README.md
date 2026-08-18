@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.12.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.13.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -129,6 +129,11 @@ dont les créneaux ne sont pas encore encodés ; cliquez sur un nom pour ouvrir 
 dates. Un remplissage rapide propose une série — toutes les semaines, toutes les deux
 semaines ou tous les mois — que vous corrigez ligne par ligne avant d'enregistrer. Les
 horaires sont repris du schéma de récurrence.
+
+**Tout se tape au clavier.** Dans les formulaires, **Tab passe au champ suivant** — un seul
+appui, même depuis une date ou une heure. **Maj+Tab** revient en arrière. **Entrée** avance
+elle aussi de champ en champ au lieu d'enregistrer au milieu de la saisie ; dans le bloc
+*Remplissage rapide*, elle remplit le tableau. L'enregistrement se fait avec le bouton.
 
 **Rencontres sans encadrement** : cochez la case sur le droit de visite quand les rencontres
 se déroulent sans votre présence. Il n'y a alors rien à programmer : la fiche de l'enfant

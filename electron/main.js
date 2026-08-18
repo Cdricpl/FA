@@ -9,6 +9,11 @@ const path = require("path");
 const fs = require("fs");
 const fsp = fs.promises;
 
+/* Les champs « date » et « heure » suivent la langue de Chromium, pas celle
+   de la page : sans cela, une machine configurée en anglais afficherait et
+   accepterait les dates au format mois/jour/année. */
+app.commandLine.appendSwitch("lang", "fr-BE");
+
 const NOM_FICHIER    = "donnees-dossiers.json";
 const DOSSIER_SAUV   = "sauvegardes";
 const NB_SAUVEGARDES = 60;

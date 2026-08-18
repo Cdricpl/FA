@@ -123,9 +123,6 @@ footer{padding:10px 30px 26px;font-size:12.5px;color:var(--doux);
 .tuile .s{display:block;font-size:12px;color:var(--doux)}
 .tuile .rond{font-size:19px;font-weight:700;line-height:1}
 .tuile .fleche{color:var(--doux)}
-/* Sans chevron : la tuile informe mais ne mène nulle part. */
-.tuile.fixe{cursor:default}
-.tuile.fixe:hover{border-color:var(--bord)}
 
 /* ---------- Listes ---------- */
 ul.liste{list-style:none;margin:0;padding:0}
@@ -427,8 +424,19 @@ code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px
   body{background:#fff}
   .appli{display:block}
   main,.entete{padding:0}
-  .carte,.fiche,.mois,.suivi-enfant,.carte-enfant{break-inside:avoid;box-shadow:none;border-color:#bbb}
+  .carte,.fiche,.mois,.sem,.dv-droit{break-inside:avoid;box-shadow:none;border-color:#bbb}
   .et{border:1px solid #999}
+  /* Les compteurs résument la page : ils restent, sans leur chevron. */
+  .tuile{display:flex !important;box-shadow:none;border-color:#bbb}
+  .tuile .fleche{display:none !important}
+  /* Présence et onglet actif sont portés par des boutons : sans ces règles,
+     la feuille imprimée perdrait la colonne « le parent » et le nom de
+     l'onglet affiché. */
+  .bascule{border:0}
+  .bascule button.actif{display:inline !important;background:none !important;
+    color:#000 !important;padding:0;font-weight:700}
+  .onglets-d button.actif{display:inline !important;color:#000 !important;
+    border:0;padding:0 0 6px;font-weight:700}
 }
 </style>
 </head>
@@ -560,7 +568,7 @@ function normaliser(d){
       v.creneaux    = Array.isArray(v.creneaux)    ? v.creneaux    : [];
       v.partageAvec = Array.isArray(v.partageAvec) ? v.partageAvec : [];
       v.sansEncadrement = !!v.sansEncadrement;
-      v.rencontres.forEach(r => { if(!r.presence) r.presence = "venu"; });
+      v.rencontres.forEach(r => { if(!PRESENCES[r.presence]) r.presence = "prevue"; });
     });
   });
   return r;
@@ -878,18 +886,15 @@ function ic(nom, taille){
     Le chevron n'apparaît que si la tuile mène quelque part. */
 function tuileCompte(o){
   const attr = o.onglet ? ' data-onglet="' + o.onglet + '"'
-             : (o.action ? ' data-action="' + o.action + '" data-f="' + o.f + '"' : "");
-  const cliquable = !!(o.onglet || o.action);
-  return "<" + (cliquable ? "button" : "div") +
-    ' class="tuile' + (cliquable ? "" : " fixe") + (o.actif ? " actif" : "") + '"' + attr + ">" +
+                        : ' data-action="' + o.action + '" data-f="' + o.f + '"';
+  return '<button class="tuile' + (o.actif ? " actif" : "") + '"' + attr + ">" +
     '<span class="rond ' + o.couleur + '">' + (o.marque || ic(o.icone, 21)) + "</span>" +
     '<span class="txt">' +
       '<span class="n ' + o.couleur + '">' + o.n + "</span>" +
       '<span class="t">' + ech(o.titre) + "</span>" +
       '<span class="s">' + ech(o.sous || "") + "</span>" +
     "</span>" +
-    (cliquable ? '<span class="fleche">' + ic("fleche", 17) + "</span>" : "") +
-    "</" + (cliquable ? "button" : "div") + ">";
+    '<span class="fleche">' + ic("fleche", 17) + "</span></button>";
 }
 
 const COULEURS = ["#2f6fb0","#1f8a4c","#b4632a","#7143b8","#0f7c8a","#b03a5b","#4a6480","#a06a12"];
@@ -1041,7 +1046,7 @@ const PRESENCES = {
   absent:  { label:"Parent absent",     court:"Absent",  code:"rouge" },
   annulee: { label:"Rencontre annulée", court:"Annulée", code:"gris"  }
 };
-const presenceDe = r => PRESENCES[r.presence] || PRESENCES.venu;
+const presenceDe = r => PRESENCES[r.presence] || PRESENCES.prevue;
 const heuresDe = r => (r.debut ? r.debut + (r.fin ? " – " + r.fin : "") : "");
 const aCompleter = r => r.presence === "prevue" && estISO(r.date) && r.date < aujourdHui();
 
@@ -2239,6 +2244,16 @@ function formRencontresMultiples(e, v){
 
   /* --- ajout de lignes sans perdre la saisie déjà faite --- */
   const form = document.getElementById("form-modale");
+
+  /* Dans le bloc de remplissage rapide, Entrée remplit le tableau : c'est ce
+     qu'on attend après avoir tapé la date de départ. */
+  // en capture : passe avant la navigation champ à champ de la modale
+  form.addEventListener("keydown", ev => {
+    if(ev.key === "Enter" && ev.target.closest && ev.target.closest(".encadre")){
+      ev.preventDefault();
+      document.getElementById("btn-remplir").click();
+    }
+  }, true);
   document.getElementById("btn-lignes").addEventListener("click", () => {
     const tb = document.getElementById("corps-dates");
     for(let k = 0; k < 3; k++) tb.insertAdjacentHTML("beforeend", ligne(tb.children.length));
@@ -2444,8 +2459,37 @@ function ouvrirModale(titre, corps, onValider, largeur, onAnnuler){
     ev.preventDefault();
     if(soumission && soumission(f) !== false){ annulation = null; fermerModale(); }
   });
+  clavierLineaire(f);
   const prem = f.querySelector("input,select,textarea");
   if(prem) prem.focus();
+}
+
+/** Une tabulation = un champ.
+    Les champs « date » et « heure » sont découpés en segments — jour, mois,
+    année, heures, minutes — et chaque segment avale une tabulation : en
+    saisie enchaînée, on a l'impression que la touche ne répond pas. Entrée,
+    de son côté, validait le formulaire au beau milieu de la saisie.
+    Les deux touches passent maintenant au champ suivant ; les segments
+    restent accessibles aux flèches, comme d'habitude. */
+function clavierLineaire(form){
+  form.addEventListener("keydown", ev => {
+    if(ev.defaultPrevented) return;
+    if(ev.key !== "Tab" && ev.key !== "Enter") return;
+    const c = ev.target;
+    if(!c || !/^(INPUT|SELECT|TEXTAREA)$/.test(c.tagName)) return;
+    if(c.tagName === "TEXTAREA" && ev.key === "Enter") return;      // saut de ligne
+    if(c.type === "radio" || c.type === "checkbox") return;         // flèches / espace
+
+    const champs = [...form.querySelectorAll("input, select, textarea")]
+      .filter(n => !n.disabled && n.type !== "hidden" && n.type !== "radio");
+    const i = champs.indexOf(c);
+    if(i < 0) return;
+    const suivant = champs[i + (ev.shiftKey ? -1 : 1)];
+    if(!suivant) return;   // dernier champ : on laisse le navigateur faire
+    ev.preventDefault();
+    suivant.focus();
+    if(/^(text|search|number)$/.test(suivant.type)) suivant.select();
+  });
 }
 function fermerModale(){
   const retour = annulation;
@@ -2949,6 +2993,13 @@ function actionner(b){
       break;
   }
 }
+/* Les lignes du tableau et les notes sont atteignables au clavier :
+   Entrée et Espace doivent y faire la même chose qu'un clic. */
+document.getElementById("vue").addEventListener("keydown", ev => {
+  if(ev.key !== "Enter" && ev.key !== " ") return;
+  if(ev.target.matches("[data-note]")){ ev.preventDefault(); ouvrirNote(ev.target); return; }
+  if(ev.target.matches("tr[data-action]")){ ev.preventDefault(); actionner(ev.target); }
+});
 document.getElementById("vue").addEventListener("click", ev => {
   const note = ev.target.closest("[data-note]");
   if(note){ ouvrirNote(note); return; }
