@@ -384,9 +384,22 @@ h3.titre-suivi{display:flex;align-items:center;gap:8px;font-size:14.5px;font-wei
 .bascule .non.actif{background:var(--rouge);color:#fff;font-weight:700}
 .note-vive{font-size:13px;padding:7px 9px;border:1px solid transparent;border-radius:8px;
   min-height:38px;white-space:pre-wrap;cursor:text;line-height:1.45}
+/* Une note de synthèse peut faire une page : au repos, on n'en montre que
+   le début, sinon une seule ligne du tableau occupe tout l'écran. Le texte
+   entier reste lisible dans la zone de saisie, qui défile. */
+/* Hauteur calée au pixel : trois lignes de 18 px, plus 14 px de marge
+   intérieure et 2 px de bordure (box-sizing: border-box). Sans ce calage,
+   une quatrième ligne dépassait sous les points de suspension. */
+/* Trois lignes, coupées net. « overflow:hidden » découpe au bord de la marge
+   intérieure : la hauteur vaut donc 7 px de marge haute + 3 lignes de 18 px
+   + 2 px de bordure. Avec les 7 px du bas en plus, le haut d'une quatrième
+   ligne dépassait sous le texte. */
+div.note-vive{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+  overflow:hidden;line-height:18px;max-height:63px}
 .note-vive:hover{border-color:var(--bord);background:var(--fond)}
 .note-vive:focus{outline:2px solid var(--accent);outline-offset:-1px}
-textarea.note-vive{border-color:var(--bord);background:var(--carte);width:100%;min-height:60px}
+textarea.note-vive{border-color:var(--bord);background:var(--carte);width:100%;
+  min-height:74px;max-height:40vh}
 
 /* ---------- Divers ---------- */
 .doux{color:var(--doux)} .pt{font-size:12.5px} .nowrap{white-space:nowrap}
@@ -421,6 +434,9 @@ code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px
   .tuile .fleche{display:none !important}
   /* Présence et onglet actif sont portés par des boutons : sans ces règles,
      la feuille imprimée perdrait la colonne « le parent ». */
+  /* Sur papier, la note doit être entière : on lève la coupure à trois lignes. */
+  div.note-vive{display:block !important;overflow:visible !important;
+    -webkit-line-clamp:none !important;max-height:none !important}
   .bascule{border:0}
   .bascule button.actif{display:inline !important;background:none !important;
     color:#000 !important;padding:0;font-weight:700}
