@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.14.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.14.1-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -119,8 +119,9 @@ pour le corriger.
 Enfin **Rencontres**, une seule liste : les rendez-vous **à venir en tête**, sur fond bleu
 clair avec le nombre de jours restants, puis les rencontres passées, de la plus récente à
 la plus ancienne. Pour chacune : date, intervenant, horaire, **✓ Présent / ✕ Absent en un
-clic**, et la **note qui s'écrit directement dans le tableau** — cliquez sur la note,
-écrivez, quittez la case, c'est enregistré ; Échap annule la saisie. Filtres *Toutes /
+clic**, et la **note qui s'écrit directement dans le tableau** — cliquez sur la note (ou
+atteignez-la à la tabulation), écrivez, quittez la case, c'est enregistré ; Échap annule
+la saisie. Filtres *Toutes /
 À venir / À compléter / Honorées / Manquées*. Les rencontres à venir restent toujours
 affichées ; du passé, les dix dernières, le reste sur demande.
 

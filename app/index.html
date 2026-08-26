@@ -575,11 +575,22 @@ function sauver(){
 function maj(){ DB.initial = false; sauver(); rendre(); }
 
 /* Redessin groupé : plusieurs clics rapprochés ne provoquent qu'un seul
-   redessin, une fois l'utilisateur arrêté. */
+   redessin, une fois l'utilisateur arrêté.
+
+   Un redessin remplace tout le contenu de l'écran — donc la note en cours
+   d'écriture et ce qu'elle contient déjà. Tant qu'une note est ouverte, le
+   redessin attend : il repartira quand elle sera refermée, puisque la
+   fermeture le redemande elle-même. */
 let minuteurRendu = null;
+const noteEnCoursDeSaisie = () => !!document.querySelector("textarea.note-vive");
+
 function rendreBientot(){
   clearTimeout(minuteurRendu);
-  minuteurRendu = setTimeout(() => { minuteurRendu = null; rendre(); }, 350);
+  minuteurRendu = setTimeout(() => {
+    minuteurRendu = null;
+    if(noteEnCoursDeSaisie()){ rendreBientot(); return; }
+    rendre();
+  }, 350);
 }
 
 const enfantParId = id => DB.enfants.find(e => e.id === id);
@@ -1792,7 +1803,7 @@ function vueVisites(){
           </div></td>
           <td class="col-note"><div class="note-vive" data-note="1"
               data-id="${x.o.id}" data-vid="${x.v.id}" data-rid="${x.r.id}" tabindex="0"
-              title="Cliquez pour écrire">${x.r.note ? ech(x.r.note)
+              title="Cliquez ou tabulez pour écrire">${x.r.note ? ech(x.r.note)
                 : '<span class="doux">Note de synthèse…</span>'}</div></td>
           <td>${boutonsRencontre(x)}</td>
         </tr>`).join("")}</tbody></table></div>
@@ -2918,12 +2929,19 @@ function actionner(b){
    Entrée et Espace doivent y faire la même chose qu'un clic. */
 document.getElementById("vue").addEventListener("keydown", ev => {
   if(ev.key !== "Enter" && ev.key !== " ") return;
-  if(ev.target.matches("[data-note]")){ ev.preventDefault(); ouvrirNote(ev.target); return; }
   if(ev.target.matches("tr[data-action]")){ ev.preventDefault(); actionner(ev.target); }
 });
+
+/* La note s'ouvre dès que la case reçoit le focus — au clic comme à la
+   tabulation. L'attendre au « click », c'est-à-dire au relâchement du bouton,
+   laissait la case focalisée mais encore inerte : tout ce qui était tapé entre
+   l'appui et le relâchement partait dans le vide, et il ne restait que la fin
+   de la phrase. */
+document.getElementById("vue").addEventListener("focusin", ev => {
+  if(ev.target.matches && ev.target.matches("[data-note]")) ouvrirNote(ev.target);
+});
+
 document.getElementById("vue").addEventListener("click", ev => {
-  const note = ev.target.closest("[data-note]");
-  if(note){ ouvrirNote(note); return; }
   const b = ev.target.closest("[data-action]");
   if(b){ actionner(b); return; }
   const o = ev.target.closest("[data-onglet]");
