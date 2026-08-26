@@ -69,6 +69,35 @@ async function sauvegardeDuJour(contenu, forcer){
   }catch(e){ console.error("Copie de sauvegarde impossible :", e); }
 }
 
+/* ------------------------------------------ démarrage avec l'ordinateur */
+
+/** Le vrai chemin du programme. Pour la version portable, c'est l'exécutable
+    que l'utilisateur a rangé quelque part, et non la copie temporaire d'où
+    Windows le lance réellement. */
+const cheminProgramme = () => process.env.PORTABLE_EXECUTABLE_FILE || process.execPath;
+
+/** Activé tant qu'on ne l'a pas explicitement refusé. */
+const demarrageAutoVoulu = () => lireConfig().demarrageAuto !== false;
+
+function appliquerDemarrageAuto(actif){
+  // en développement, le programme n'est pas installé : on ne touche à rien
+  if(!app.isPackaged) return false;
+  try{
+    app.setLoginItemSettings({ openAtLogin: !!actif, path: cheminProgramme(), args: [] });
+    return true;
+  }catch(e){
+    console.error("Démarrage automatique non modifiable :", e);
+    return false;
+  }
+}
+
+/** Ce que Windows a réellement enregistré, indépendamment de nos réglages. */
+function demarrageAutoReel(){
+  if(!app.isPackaged) return false;
+  try{ return !!app.getLoginItemSettings({ path: cheminProgramme() }).openAtLogin; }
+  catch(e){ return false; }
+}
+
 /* ----------------------------------------------------------------- fenêtre */
 
 function creerFenetre(){
@@ -212,6 +241,20 @@ ipcMain.handle("fichier:enregistrerSous", async (ev, nom, donnees, description) 
   }catch(e){ return { ok:false, erreur:e.message }; }
 });
 
+ipcMain.handle("demarrage:lire", async () => ({
+  possible: app.isPackaged,
+  voulu:    demarrageAutoVoulu(),
+  actif:    demarrageAutoReel()
+}));
+
+ipcMain.handle("demarrage:ecrire", async (ev, actif) => {
+  const c = lireConfig();
+  c.demarrageAuto = !!actif;
+  ecrireConfig(c);
+  appliquerDemarrageAuto(!!actif);
+  return { ok:true, actif: demarrageAutoReel() };
+});
+
 ipcMain.handle("fichier:choisir", async () => {
   const r = await dialog.showOpenDialog(fenetre, {
     title: "Choisir une sauvegarde à restaurer",
@@ -234,6 +277,9 @@ if(!app.requestSingleInstanceLock()){
     if(fenetre){ if(fenetre.isMinimized()) fenetre.restore(); fenetre.focus(); }
   });
   app.whenReady().then(() => {
+    // remis en place à chaque lancement : le chemin change quand le programme
+    // est réinstallé ailleurs, ou quand la version portable est déplacée
+    appliquerDemarrageAuto(demarrageAutoVoulu());
     construireMenu();
     creerFenetre();
     app.on("activate", () => { if(!BrowserWindow.getAllWindows().length) creerFenetre(); });

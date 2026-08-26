@@ -16,5 +16,8 @@ contextBridge.exposeInMainWorld("programme", {
   enregistrerSous:  (nom, d, desc)       => ipcRenderer.invoke("fichier:enregistrerSous", nom, d, desc),
   choisirFichier:   ()                   => ipcRenderer.invoke("fichier:choisir"),
 
+  lireDemarrage:    ()                   => ipcRenderer.invoke("demarrage:lire"),
+  ecrireDemarrage:  actif                => ipcRenderer.invoke("demarrage:ecrire", actif),
+
   surMenu: rappel => ipcRenderer.on("menu", (ev, action) => rappel(action))
 });

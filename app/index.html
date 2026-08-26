@@ -141,6 +141,8 @@ ul.liste li:last-child{padding-bottom:2px}
 .avatar.carte-av{width:40px;height:40px;font-size:14px}
 .ligne-nom{display:flex;align-items:center;gap:10px}
 input.coche{width:auto;margin-top:3px}
+label.coche-ligne{display:flex;gap:9px;align-items:flex-start}
+label.coche-ligne>span{margin:0;font-size:14px;color:var(--texte)}
 input.coche-tache{width:auto}
 select.tri-court{width:auto;margin-left:5px}
 .aide.chapeau{margin:-6px 0 14px}
@@ -2337,6 +2339,11 @@ function formReglages(){
     </div>
     <h3 class="haut-marge">Enregistrement</h3>
     ${blocStockage()}
+    ${NATIF ? `<h3 class="haut-marge">Démarrage</h3>
+      <label class="champ coche-ligne">
+        <input type="checkbox" name="demarrage" class="coche">
+        <span>Démarrer <b>automatiquement</b> au lancement de l'ordinateur</span></label>
+      <p class="aide" id="aide-demarrage">Vérification…</p>` : ""}
     <h3 class="haut-marge">Délais d'alerte</h3>
     <div class="ligne c2">
       <label class="champ"><span>Notification : alerte orange (jours avant)</span>
@@ -2363,8 +2370,34 @@ function formReglages(){
     DB.parametres.seuilAlerteJours  = (s > 0 && s < 400) ? s : 30;
     DB.parametres.seuilRapportJours = (r > 0 && r < 400) ? r : 45;
     DB.parametres.utilisateur = { nom:val(f,"nom"), fonction:val(f,"fonction") };
+    if(NATIF && f.elements.demarrage)
+      window.programme.ecrireDemarrage(f.elements.demarrage.checked).catch(() => {});
     maj();
   }, 620);
+
+  /* L'état réel est celui de Windows, pas le nôtre : on le demande et on
+     l'affiche, plutôt que de supposer qu'il a bien été pris en compte. */
+  if(NATIF) window.programme.lireDemarrage().then(d => {
+    const c = document.querySelector('#form-modale input[name=demarrage]');
+    const aide = document.getElementById("aide-demarrage");
+    if(!c || !aide) return;
+    c.checked = d.actif;
+    if(!d.possible){
+      c.checked = false; c.disabled = true;
+      aide.textContent = "Disponible seulement sur le programme installé.";
+    }else if(d.actif){
+      aide.textContent = "Le programme s'ouvrira tout seul à chaque démarrage de Windows.";
+    }else if(d.voulu){
+      // demandé de notre côté, mais Windows ne l'a pas retenu : le dire
+      aide.innerHTML = '<b>Windows n\'a pas enregistré le démarrage automatique.</b> ' +
+        "Recochez la case ; si cela ne tient pas, une règle de votre ordinateur l'empêche.";
+    }else{
+      aide.textContent = "Le programme ne s'ouvre que lorsque vous le lancez.";
+    }
+  }).catch(() => {
+    const aide = document.getElementById("aide-demarrage");
+    if(aide) aide.textContent = "État du démarrage automatique indisponible.";
+  });
 }
 
 /* =========================================================================

@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.15.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.16.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -168,7 +168,18 @@ enfant, filtrable par période, prêt à être repris dans vos rapports — et l
 ## Réglages et sauvegarde
 
 Bouton **Paramètres** en bas de la barre latérale (ou menu *Fichier*) : dossier d'enregistrement,
-délais d'alerte, sauvegarde, restauration, export CSV, remise à zéro.
+démarrage automatique, délais d'alerte, sauvegarde, restauration, export CSV, remise à zéro.
+
+### Démarrage automatique
+
+Le programme **s'ouvre tout seul à chaque démarrage de Windows**. C'est actif dès
+l'installation ; la case *Démarrer automatiquement au lancement de l'ordinateur*, dans
+Paramètres, permet de l'arrêter.
+
+Le réglage est réappliqué à chaque lancement : réinstaller le programme ailleurs, ou
+déplacer la version portable, ne le casse pas. Sous la case, une phrase dit l'état
+**réel** — celui que Windows a retenu, pas celui qu'on lui a demandé : si le démarrage
+automatique a été refusé par une règle de votre ordinateur, la case le signale.
 
 ### Où sont mes données
 
