@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.13.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.14.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -28,9 +28,11 @@ directement, y compris depuis une clé USB.
 ## Les écrans
 
 ### Accueil
-Un aperçu du jour : quatre tuiles de comptage (rapports à préparer, tâches à faire,
-notifications à réclamer, visites à venir), les tâches du jour, les prochaines rencontres,
-les enfants suivis, des accès rapides et les notifications à réclamer.
+**Tout tient sur un écran, sans avoir à faire défiler.** Quatre tuiles de comptage
+(rapports à préparer, tâches à faire, notifications à réclamer, visites à venir), puis
+trois cartes : les **tâches du jour**, les **rapports à rendre prochainement** — avec leur
+retard éventuel et la case à cocher quand c'est envoyé — et les **prochaines rencontres**.
+Chaque carte s'arrête à quatre lignes et renvoie vers son onglet pour la suite.
 
 ### À faire
 En tête, les **rapports à rendre dans les deux prochains mois**, avec leur retard éventuel
@@ -39,23 +41,13 @@ regroupée en *En retard* / *Aujourd'hui* / *À venir* / *Sans date*. Une tâche
 rattachée à un enfant.
 
 ### Enfants
-La fiche de chaque enfant, à compléter :
+**Un seul écran pour un dossier** : la fiche, la notification de prise en charge et les
+dates de rapport étaient répartis sur deux onglets qui répétaient les mêmes informations.
+Ils n'en font plus qu'un.
 
-* prénom et nom — affichés **NOM Prénom** et classés par nom de famille ;
-* **date de naissance** (l'âge se calcule tout seul) ;
-* **autorité** : SAJ ou SPJ ;
-* **date de la notification de prise en charge** ;
-* éventuellement une **date de rapport annuel** différente.
-
-Les **dates des deux rapports** s'affichent automatiquement : le **rapport annuel** tombe à
-la date de notification, le **rapport semestriel** six mois plus tôt. Quand les deux ne
-coïncident pas, remplissez le champ *date du rapport annuel* : les échéances suivent alors
-cette date, et un ✎ apparaît dans le tableau. Le tri se fait par **nom de famille** ou par
-date. Un bandeau signale les fiches encore incomplètes.
-
-### Notifications de prise en charge
-La vue visuelle : une carte par enfant, pour voir d'un coup d'œil si la notification
-est arrivée ou non.
+En haut, **quatre compteurs** rangent les dossiers selon l'état de la notification —
+en ordre, à renouveler bientôt, à réclamer, sans date. **Cliquez sur l'un d'eux** pour
+n'afficher que ceux-là ; un second clic, ou *← Tous les dossiers*, revient à la liste.
 
 | | |
 |---|---|
@@ -64,12 +56,23 @@ est arrivée ou non.
 | ✕ **rouge** | pas reçue, ou échéance dépassée : à réclamer |
 | ? **gris** | date manquante |
 
-Quatre compteurs en haut — **cliquez sur l'un d'eux** pour n'afficher que cette catégorie ;
-un second clic, ou le bouton *← Tout afficher*, revient à la liste complète.
+Puis **une ligne par enfant**, avec un trait de couleur à gauche qui reprend l'état :
 
-Sur chaque carte : **Notification reçue** (encode la nouvelle échéance, proposée un an
-plus tard, et repasse la carte au vert), **Relance** (note la date du jour), et
-**+ tâche** (crée la tâche de relance dans l'onglet À faire).
+* **Enfant** — nom, prénom et âge ; les noms s'affichent **NOM Prénom** ;
+* **Autorité** — SAJ ou SPJ ;
+* **Notification de prise en charge** — l'état, le détail (« échéance dépassée depuis
+  85 jours », les relances déjà notées) et les gestes qui s'imposent : **✓ Reçue**
+  (encode la nouvelle échéance, proposée un an plus tard), **Relance** (note la date du
+  jour) et **+ tâche** (crée la tâche de relance dans l'onglet À faire). Quand tout est
+  en ordre, un discret **↺** permet de signaler que le papier n'est pas arrivé ;
+* **Rapport semestriel** et **Rapport annuel** — calculés tout seuls : le rapport annuel
+  tombe à la date de notification, le semestriel six mois plus tôt. Quand les deux ne
+  coïncident pas, remplissez *date du rapport annuel* dans la fiche : les échéances
+  suivent alors cette date.
+
+Le bouton **+ Nouvel enfant** est en haut de l'écran, et un second **Ajouter un enfant**
+en bas du tableau. Le tri se fait par **nom de famille** ou par **urgence de la
+notification**. Un bandeau signale les fiches encore incomplètes.
 
 ### Rapports
 
@@ -101,24 +104,25 @@ question qui compte — jusqu'à quand l'agenda est-il couvert :
 En dessous, l'écran est coupé en deux : **la liste des enfants à gauche, le dossier de
 celui que vous avez choisi à droite.**
 
-**À gauche** — un tableau : l'enfant, sa fréquence, et la date **jusqu'à laquelle son
-agenda est couvert** avec le nombre de jours restants. Un trait de couleur à gauche de
-chaque ligne reprend l'état du dossier, pour repérer d'un coup d'œil ceux qui demandent
-un appel. Un champ de recherche filtre la liste.
+**À gauche** — un tableau, **tous les dossiers visibles d'un coup** : l'enfant, sa
+fréquence, et la date **jusqu'à laquelle son agenda est couvert** avec le nombre de jours
+restants. Un trait de couleur à gauche de chaque ligne reprend l'état du dossier, pour
+repérer d'un coup d'œil ceux qui demandent un appel. Le champ de recherche ne sert qu'à
+retrouver un nom précis dans une longue liste.
 
 **À droite** — le dossier de l'enfant. En tête, son nom et les boutons *Modifier la
 fiche*, *+ Rencontre* et *+ Plusieurs dates*. Juste en dessous, un bandeau qui répond
 sans chercher : **fréquence, avec qui, dernier DV réalisé, programmé jusqu'au, autorité**.
 Puis chaque droit de visite : l'intervenant, la fréquence, les créneaux du mois, et le ✎
-pour le corriger. Enfin deux onglets :
+pour le corriger.
 
-* **Prochaines rencontres** — les rendez-vous à venir, leur date, leur horaire et dans
-  combien de jours ils tombent.
-* **Historique des rencontres** — les rencontres passées : date, intervenant, horaire,
-  **✓ Présent / ✕ Absent en un clic**, et la **note qui s'écrit directement dans le
-  tableau** : cliquez sur la note, écrivez, quittez la case — c'est enregistré. Échap
-  annule la saisie. Filtres *Toutes / À compléter / Honorées / Manquées*. Les dix
-  dernières sont affichées, le reste sur demande.
+Enfin **Rencontres**, une seule liste : les rendez-vous **à venir en tête**, sur fond bleu
+clair avec le nombre de jours restants, puis les rencontres passées, de la plus récente à
+la plus ancienne. Pour chacune : date, intervenant, horaire, **✓ Présent / ✕ Absent en un
+clic**, et la **note qui s'écrit directement dans le tableau** — cliquez sur la note,
+écrivez, quittez la case, c'est enregistré ; Échap annule la saisie. Filtres *Toutes /
+À venir / À compléter / Honorées / Manquées*. Les rencontres à venir restent toujours
+affichées ; du passé, les dix dernières, le reste sur demande.
 
 Plus bas, le **schéma de récurrence (mensuel)** : les quatre semaines du mois côte à côte,
 tous enfants confondus, colorés selon l'intervenant — Papa en bleu, Maman en rose,
