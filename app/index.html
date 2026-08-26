@@ -101,6 +101,7 @@ footer{padding:10px 30px 26px;font-size:12.5px;color:var(--doux);
   .grille.g3 > .carte > ul.liste{max-height:calc(100vh - 452px);overflow-y:auto}
 }
 @media(min-width:1000px){
+  .g2{grid-template-columns:1fr 1fr}
   .g3{grid-template-columns:1fr 1fr 1fr}
 }
 
@@ -524,7 +525,7 @@ let DB = null;
 let onglet = "accueil";
 let etat = { recherche:"", tri:"nom", tachesFaites:false, anneeRapports:0,
              filtreNotif:"tout", filtreVisite:"tout", ouvertes:{},
-             enfantVisite:"", filtreDossier:"tout" };
+             enfantVisite:"", filtreDossier:"tout", tachesToutes:false };
 
 function baseVide(){
   return {
@@ -1076,8 +1077,6 @@ function tachesEnCours(){
 const ONGLETS = [
   { id:"accueil",  titre:"Accueil",   icone:"accueil",
     sous:"Voici un aperçu de vos dossiers et tâches du jour." },
-  { id:"taches",   titre:"À faire",   icone:"taches",
-    sous:"Vos tâches, classées par échéance." },
   { id:"enfants",  titre:"Enfants",   icone:"enfants",
     sous:"Les fiches, les notifications de prise en charge et les dates de rapport." },
   { id:"rapports", titre:"Rapports",  icone:"rapports",
@@ -1110,7 +1109,6 @@ function rendre(){
 
   document.getElementById("nav").innerHTML = ONGLETS.map(o => {
     let p = "";
-    if(o.id === "taches" && aFaire)    p = '<span class="compte">' + aFaire + "</span>";
     if(o.id === "enfants" && aReclamer) p = '<span class="compte">' + aReclamer + "</span>";
     return '<button data-onglet="' + o.id + '" class="' + (onglet === o.id ? "actif" : "") +
            '" title="' + ech(o.titre) + '">' + ic(o.icone) +
@@ -1126,7 +1124,7 @@ function rendre(){
   document.getElementById("sous-titre").textContent = o.sous;
   document.getElementById("date-jour").innerHTML = ic("visites", 16) + " " + ech(fmtLong(aujourdHui()));
 
-  const vues = { accueil:vueAccueil, taches:vueTaches, enfants:vueEnfants,
+  const vues = { accueil:vueAccueil, enfants:vueEnfants,
                  rapports:vueRapports, visites:vueVisites };
   document.getElementById("vue").innerHTML = (vues[onglet] || vueAccueil)();
   document.getElementById("pied").innerHTML = ic("cadenas", 15) +
@@ -1147,6 +1145,7 @@ function rendre(){
    ========================================================================= */
 
 function vueAccueil(){
+  const auj      = aujourdHui();
   const taches   = tachesEnCours();
   const rapports = rapportsAPreparer();
   const visites  = rencontresAVenir();
@@ -1160,7 +1159,7 @@ function vueAccueil(){
   const tuiles = `<div class="tuiles">
     ${tuileCompte({onglet:"rapports", couleur:"bleu",   icone:"rapports", n:rapports.length,
                    titre:"Rapports",      sous:"à préparer"})}
-    ${tuileCompte({onglet:"taches",   couleur:"vert",   icone:"taches",   n:taches.length,
+    ${tuileCompte({action:"taches-toutes", f:"", couleur:"vert", icone:"taches", n:taches.length,
                    titre:"Tâches",        sous:"à faire"})}
     ${tuileCompte({onglet:"enfants",  couleur:"orange", icone:"notifs",   n:notifs,
                    titre:"Notifications", sous:"à réclamer"})}
@@ -1169,18 +1168,47 @@ function vueAccueil(){
   </div>`;
 
   const dujour = taches.filter(t => t.enRetard || t.pourAuj || t.demain).slice(0, MAX);
+  /* La to do vit ici, repliée sur le jour même. Dépliée, elle prend toute la
+     largeur : les tâches à venir, sans date et terminées apparaissent, avec
+     de quoi les modifier et les supprimer. */
+  const toutes = !!etat.tachesToutes;
+  const faites = DB.taches.filter(t => t.fait)
+    .sort((a,b) => String(b.faitLe||"").localeCompare(String(a.faitLe||"")));
+  const groupes = [
+    ["En retard",   taches.filter(t => t.enRetard)],
+    ["Aujourd'hui", taches.filter(t => t.pourAuj)],
+    ["À venir",     taches.filter(t => estISO(t.echeance) && t.echeance > auj)],
+    ["Sans date",   taches.filter(t => !estISO(t.echeance))]
+  ];
+
   const carteTaches = `
     <div class="carte">
-      <div class="tete">${ic("taches",18)}<h2>À faire aujourd'hui</h2>
-        <button class="b mini pousse" data-action="tache-nouvelle">${ic("plus",14)} Ajouter</button></div>
-      ${dujour.length ? '<ul class="liste">' + dujour.map(t => `<li>
-        <input type="checkbox" data-action="tache-bascule" data-id="${t.id}"
-               class="coche-tache" aria-label="Terminer">
-        <span class="extensible">${ech(t.texte)}</span>
-        <span class="et ${t.enRetard?"rouge":(t.pourAuj?"orange":"gris")}">${
-          t.enRetard ? "En retard" : (t.pourAuj ? "Aujourd'hui" : "Demain")}</span>
-      </li>`).join("") + "</ul>" : '<p class="rien">Rien de prévu pour aujourd\'hui.</p>'}
-      <button class="lien" data-onglet="taches">Voir toutes mes tâches</button>
+      <div class="tete">${ic("taches",18)}<h2>${toutes ? "Mes tâches" : "À faire aujourd'hui"}</h2>
+        ${toutes ? '<span class="doux pt">' + pluriel(taches.length,"tâche") + " en cours · " +
+          faites.length + " terminée(s)</span>" : ""}
+        <button class="b mini pousse" data-action="tache-nouvelle">${ic("plus",14)} Ajouter</button>
+        ${toutes ? '<button class="b mini" data-action="taches-basculer">' +
+          (etat.tachesFaites ? "Masquer" : "Afficher") + " les tâches faites</button>" : ""}</div>
+      ${toutes
+        ? (groupes.map(([titre,l]) => l.length
+            ? '<h3 class="haut-marge">' + titre + " (" + l.length + ')</h3><ul class="liste">' +
+              l.map(ligneTache).join("") + "</ul>" : "").join("")
+           || '<p class="rien">Aucune tâche en cours.</p>') +
+          (etat.tachesFaites && faites.length
+            ? '<h3 class="haut-marge">Terminées</h3><ul class="liste">' +
+              faites.map(ligneTache).join("") +
+              '</ul><button class="b danger haut-marge" data-action="taches-purger">' +
+              "Supprimer les tâches terminées</button>" : "")
+        : (dujour.length ? '<ul class="liste">' + dujour.map(t => `<li>
+            <input type="checkbox" data-action="tache-bascule" data-id="${t.id}"
+                   class="coche-tache" aria-label="Terminer">
+            <span class="extensible">${ech(t.texte)}</span>
+            <span class="et ${t.enRetard?"rouge":(t.pourAuj?"orange":"gris")}">${
+              t.enRetard ? "En retard" : (t.pourAuj ? "Aujourd'hui" : "Demain")}</span>
+          </li>`).join("") + "</ul>" : '<p class="rien">Rien de prévu pour aujourd\'hui.</p>')}
+      <button class="lien" data-action="taches-toutes">${toutes
+        ? "Ne montrer que le jour même"
+        : "Voir toutes mes tâches (" + taches.length + ")"}</button>
     </div>`;
 
   const carteRapports = `
@@ -1222,11 +1250,13 @@ function vueAccueil(){
       <button class="lien" data-onglet="visites">Voir tous les droits de visite</button>
     </div>`;
 
-  return tuiles + '<div class="grille g3">' + carteTaches + carteRapports + carteVisites + "</div>";
+  return tuiles + (toutes
+    ? carteTaches + '<div class="grille g2 haut-marge">' + carteRapports + carteVisites + "</div>"
+    : '<div class="grille g3">' + carteTaches + carteRapports + carteVisites + "</div>");
 }
 
 /* =========================================================================
-   8. VUE — À faire
+   8. LIGNE DE TÂCHE (utilisée par la to do de l'accueil)
    ========================================================================= */
 
 function ligneTache(t){
@@ -1248,53 +1278,6 @@ function ligneTache(t){
       <button class="b mini danger" data-action="tache-supprimer" data-id="${t.id}">✕</button>
     </div>
   </li>`;
-}
-
-function vueTaches(){
-  const enCours = tachesEnCours();
-  const faites = DB.taches.filter(t => t.fait)
-    .sort((a,b) => String(b.faitLe||"").localeCompare(String(a.faitLe||"")));
-  const groupes = [
-    ["En retard",   enCours.filter(t => t.enRetard)],
-    ["Aujourd'hui", enCours.filter(t => t.pourAuj)],
-    ["À venir",     enCours.filter(t => estISO(t.echeance) && t.echeance > aujourdHui())],
-    ["Sans date",   enCours.filter(t => !estISO(t.echeance))]
-  ];
-  const rapports = rapportsDus(62);
-  const enRetard = rapports.filter(o => o.date < aujourdHui()).length;
-
-  const blocRapports = `
-    <div class="carte">
-      <div class="tete">${ic("rapports",18)}<h2>Rapports à rendre</h2>
-        <span class="et ${enRetard ? "rouge" : (rapports.length ? "orange" : "vert")}">${
-          rapports.length ? (enRetard ? enRetard + " en retard sur " + rapports.length : rapports.length)
-                          : "aucun"}</span>
-        <span class="doux pt pousse">deux prochains mois</span></div>
-      ${rapports.length ? '<ul class="liste">' + rapports.map(ligneRapport).join("") + "</ul>"
-        : '<p class="rien">Aucun rapport à rendre dans les deux prochains mois.</p>'}
-      ${rapports.length ? '<p class="aide">Cochez la case quand le rapport est envoyé :' +
-        " l'échéance suivante se place alors un an plus tard.</p>" : ""}
-    </div>`;
-
-  return blocRapports + `
-  <div class="carte">
-    <div class="tete">${ic("taches",18)}<h2>Ma to do</h2>
-      <span class="doux pt pousse">${pluriel(enCours.length,"tâche")} en cours ·
-        ${faites.length} terminée(s)</span></div>
-    <div class="barre">
-      <button class="b primaire" data-action="tache-nouvelle">${ic("plus",15)} Nouvelle tâche</button>
-      <button class="b" data-action="taches-basculer">${etat.tachesFaites?"Masquer":"Afficher"} les tâches faites</button>
-      <button class="b pousse" onclick="window.print()">Imprimer</button>
-    </div>
-    ${groupes.map(([t,l]) => l.length
-      ? '<h3 class="haut-marge">' + t + " (" + l.length + ')</h3><ul class="liste">' +
-        l.map(ligneTache).join("") + "</ul>" : "").join("")
-      || '<p class="rien">Aucune tâche en cours.</p>'}
-    ${etat.tachesFaites && faites.length
-      ? '<h3 style="margin-top:22px">Terminées</h3><ul class="liste">' + faites.map(ligneTache).join("") +
-        '</ul><button class="b danger haut-marge" data-action="taches-purger">' +
-        "Supprimer les tâches terminées</button>" : ""}
-  </div>`;
 }
 
 /* =========================================================================
@@ -1601,6 +1584,13 @@ function vueVisites(){
   const CODES = { rouge:"sans", orange:"proche", vert:"ajour" };
   const fd = etat.filtreDossier;
 
+  /* Compte à part : une rencontre passée dont on n'a pas encore dit si le
+     parent est venu. Un dossier peut être à jour côté agenda et avoir malgré
+     tout des comptes rendus en attente. */
+  const aRemplirDe = e => visitesDe(e).reduce((n, {v}) =>
+    n + (v.rencontres||[]).filter(r => aCompleter(r)).length, 0);
+  const nbAremplir = avecDroit.filter(e => aRemplirDe(e) > 0).length;
+
   const compteurs = `<div class="tuiles">
     ${tuileCompte({ action:"filtre-dossier", f:"sans", actif:fd === "sans",
       couleur:"rouge", marque:"!", n:nbEtat("rouge"),
@@ -1614,12 +1604,17 @@ function vueVisites(){
       couleur:"vert", marque:"✓", n:nbEtat("vert"),
       titre: nbEtat("vert") > 1 ? "Dossiers à jour" : "Dossier à jour",
       sous:"DV programmé à plus d'un mois" })}
+    ${tuileCompte({ action:"filtre-dossier", f:"aremplir", actif:fd === "aremplir",
+      couleur:"bleu", icone:"taches", n:nbAremplir,
+      titre: nbAremplir > 1 ? "Dossiers à compléter" : "Dossier à compléter",
+      sous:"rencontres passées sans compte rendu" })}
   </div>`;
 
   /* ------------------------------------------- 2. la liste : choisir un enfant */
   const visibles = avecDroit.filter(e =>
     (!q || nomComplet(e).toLowerCase().includes(q)) &&
-    (fd === "tout" || CODES[etats.get(e.id).code] === fd));
+    (fd === "tout" || (fd === "aremplir" ? aRemplirDe(e) > 0
+                                         : CODES[etats.get(e.id).code] === fd)));
   // pas d'écriture dans « etat » ici : une recherche qui masque l'enfant choisi
   // en montre un autre, et le retrouve dès que la recherche est effacée.
   const choisi = visibles.find(e => e.id === etat.enfantVisite) || visibles[0] || null;
@@ -1631,7 +1626,10 @@ function vueVisites(){
         data-action="choisir-enfant" data-id="${e.id}" tabindex="0">
       <td><div class="ligne-nom">${avatar(e)}
         <span><span class="le-nom">${ech(e.nom)}</span>
-          <span class="le-prenom">${ech(e.prenom)}</span></span></div></td>
+          <span class="le-prenom">${ech(e.prenom)}</span></span>
+        ${aRemplirDe(e) ? '<span class="et info pousse" title="' +
+          pluriel(aRemplirDe(e),"rencontre") + ' passée(s) sans compte rendu">' +
+          aRemplirDe(e) + "</span>" : ""}</div></td>
       <td class="pt doux">${ech(freq || "—")}</td>
       <td>
         ${p.date ? '<span class="le-date ' + p.code + '">' + ech(fmtFR(p.date)) +
@@ -2780,7 +2778,8 @@ function actionner(b){
       break;
     case "tache-notif":
       ajouterTache("Réclamer la notification de prise en charge — " + nomComplet(e), id);
-      allerA("taches");
+      etat.tachesToutes = true;
+      allerA("accueil");
       break;
 
     /* --- rapports --- */
@@ -2873,6 +2872,12 @@ function actionner(b){
       maj();
       break;
     }
+    case "taches-toutes":
+      etat.tachesToutes = !etat.tachesToutes;
+      if(onglet !== "accueil"){ allerA("accueil"); break; }
+      remonterEnHaut = true;
+      rendre();
+      break;
     case "taches-basculer": etat.tachesFaites = !etat.tachesFaites; rendre(); break;
     case "taches-purger":
       if(confirm("Supprimer toutes les tâches terminées ?")){

@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.14.1-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.15.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -32,13 +32,14 @@ directement, y compris depuis une clé USB.
 (rapports à préparer, tâches à faire, notifications à réclamer, visites à venir), puis
 trois cartes : les **tâches du jour**, les **rapports à rendre prochainement** — avec leur
 retard éventuel et la case à cocher quand c'est envoyé — et les **prochaines rencontres**.
-Chaque carte s'arrête à quatre lignes et renvoie vers son onglet pour la suite.
+Chaque carte s'arrête à quatre lignes.
 
-### À faire
-En tête, les **rapports à rendre dans les deux prochains mois**, avec leur retard éventuel
-et une case à cocher quand le rapport est envoyé. En dessous, la to do quotidienne,
-regroupée en *En retard* / *Aujourd'hui* / *À venir* / *Sans date*. Une tâche peut être
-rattachée à un enfant.
+**La to do vit ici.** Repliée, elle ne montre que le jour même : ce qui est en retard,
+pour aujourd'hui ou pour demain. Le lien **Voir toutes mes tâches** — ou la tuile
+*Tâches* — la déplie en pleine largeur : les quatre groupes *En retard* / *Aujourd'hui* /
+*À venir* / *Sans date*, chaque tâche avec **Modifier** et une croix pour la supprimer,
+et de quoi **afficher les tâches faites** puis les supprimer d'un bloc. Une tâche peut
+être rattachée à un enfant. *Ne montrer que le jour même* revient à l'aperçu.
 
 ### Enfants
 **Un seul écran pour un dossier** : la fiche, la notification de prise en charge et les
@@ -63,7 +64,7 @@ Puis **une ligne par enfant**, avec un trait de couleur à gauche qui reprend l'
 * **Notification de prise en charge** — l'état, le détail (« échéance dépassée depuis
   85 jours », les relances déjà notées) et les gestes qui s'imposent : **✓ Reçue**
   (encode la nouvelle échéance, proposée un an plus tard), **Relance** (note la date du
-  jour) et **+ tâche** (crée la tâche de relance dans l'onglet À faire). Quand tout est
+  jour) et **+ tâche** (crée la tâche de relance dans la to do de l'accueil). Quand tout est
   en ordre, un discret **↺** permet de signaler que le papier n'est pas arrivé ;
 * **Rapport semestriel** et **Rapport annuel** — calculés tout seuls : le rapport annuel
   tombe à la date de notification, le semestriel six mois plus tôt. Quand les deux ne
@@ -97,6 +98,11 @@ question qui compte — jusqu'à quand l'agenda est-il couvert :
 | ! **rouge** | **sans DV futur** : plus rien n'est programmé, il faut rappeler la famille |
 | ! **orange** | **échéance proche** : le dernier DV programmé tombe dans moins d'un mois |
 | ✓ **vert** | **à jour** : programmé à plus d'un mois |
+| ☑ **bleu** | **à compléter** : des rencontres passées attendent leur compte rendu |
+
+Les trois premiers regardent l'agenda, le quatrième le travail en retard : un dossier
+peut être **à jour et à compléter** en même temps. Dans la liste, une pastille bleue
+indique combien de comptes rendus attendent pour cet enfant.
 
 **Cliquez sur un compteur** pour ne garder que ces dossiers ; un second clic, ou le bouton
 *← Tous les dossiers*, revient à la liste complète.
