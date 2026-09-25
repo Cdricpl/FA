@@ -6,35 +6,54 @@
 <title>Gestion des dossiers</title>
 <style>
 :root{
-  --fond:#f5f7fa; --carte:#ffffff; --texte:#16232f; --doux:#68788a; --bord:#e2e8f0;
-  --accent:#2f6fb0; --accent-doux:#e9f1f9;
-  --marine:#0e2c4f; --marine-clair:#17406e; --marine-texte:#c3d4e6;
-  --vert:#1f8a4c; --vert-f:#e4f5ea;
-  --orange:#c07a10; --orange-f:#fdf1dc;
-  --rouge:#c02b2b; --rouge-f:#fce5e5;
-  --gris:#6b7785; --gris-f:#eef1f5;
-  --violet:#7143b8; --violet-f:#f0e9fb;
-  --ombre:0 1px 2px rgba(16,24,40,.05),0 6px 16px rgba(16,24,40,.05);
+  /* Fond chaud plutôt que gris bleuté : les fiches blanches ressortent, et
+     l'outil ressemble moins à un tableur. */
+  --fond:#f6f4f0; --carte:#ffffff; --texte:#16202b; --doux:#4a5a6b; --bord:#e4e0d9;
+  --accent:#2d5fa8; --accent-doux:#eef3fa;
+  --marine:#132235; --marine-clair:#1e3550; --marine-texte:#c9d8e8;
+  --vert:#1c7a4b; --vert-f:#e6f2eb;
+  /* Orange assombri et fond éclairci : sur l'ancien couple, l'étiquette
+     « Renouvellement proche » tombait à 4,0:1, sous le seuil AA. */
+  --orange:#a8590b; --orange-f:#fdf3e8;
+  --rouge:#b3312c; --rouge-f:#fbeae9;
+  --gris:#4a5a6b; --gris-f:#f1efea;
+  --violet:#6a4ba8; --violet-f:#efeaf8;
+  --maman:#9e315f; --maman-f:#faeaf0;
+  /* Encre posée sur un aplat de couleur (bouton plein, étiquette active).
+     En thème clair les aplats sont sombres, en thème sombre ils sont clairs :
+     le blanc ne convient pas aux deux. */
+  --sur-aplat:#ffffff;
+  --ombre:0 1px 2px rgba(22,32,43,.04),0 6px 16px rgba(22,32,43,.05);
   --r:14px;
+  /* Un serif pour les titres. Police du système : le programme doit
+     s'ouvrir sans réseau. */
+  --titre:Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --fond:#131a22; --carte:#1b232d; --texte:#e9eef4; --doux:#94a3b5; --bord:#2b3642;
-    --accent:#6aa6e0; --accent-doux:#22303f;
-    --marine:#0b1c30; --marine-clair:#1d456f; --marine-texte:#b7c7d9;
-    --vert:#5fcf8e; --vert-f:#1b3327;
-    --orange:#e8b055; --orange-f:#3a2e17;
-    --rouge:#f08a8a; --rouge-f:#3a1f1f;
-    --gris:#94a3b5; --gris-f:#232c36;
-    --violet:#b39ae8; --violet-f:#2a2340;
+    --fond:#141a20; --carte:#1c232b; --texte:#eceef0; --doux:#a9b6c2; --bord:#2c3540;
+    --accent:#7fb0e6; --accent-doux:#20303f;
+    --marine:#0f1c2c; --marine-clair:#1e3550; --marine-texte:#c2d2e2;
+    --vert:#6ad39a; --vert-f:#172f22;
+    --orange:#e8ac62; --orange-f:#33291a;
+    --rouge:#ef8e87; --rouge-f:#341f1e;
+    --gris:#a9b6c2; --gris-f:#232b34;
+    --violet:#b7a0e8; --violet-f:#272040;
+    --maman:#e893b4; --maman-f:#3a2029;
+    --sur-aplat:#101a24;
     --ombre:none;
   }
 }
 *{box-sizing:border-box}
+/* Chiffres de largeur fixe partout : les dates et les compteurs s'alignent
+   d'une ligne à l'autre sans qu'on ait à le demander colonne par colonne. */
+/* « font-variant-numeric » vient après le raccourci « font », qui le remet à zéro. */
 body{margin:0;background:var(--fond);color:var(--texte);
-  font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-h1{font-size:25px;margin:0;line-height:1.2}
-h2{font-size:16.5px;margin:0 0 14px;line-height:1.25}
+  font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-variant-numeric:tabular-nums}
+h1{font-family:var(--titre);font-size:31px;font-weight:400;margin:0;line-height:1.1;
+  letter-spacing:-.01em}
+h2{font-family:var(--titre);font-size:19px;font-weight:400;margin:0 0 14px;line-height:1.2}
 h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--doux);margin:0 0 8px}
 svg{flex:none}
 
@@ -53,7 +72,7 @@ svg{flex:none}
   padding:10px 12px;border-radius:10px;cursor:pointer}
 .cote nav button:hover{background:rgba(255,255,255,.08);color:#fff}
 .cote nav button.actif{background:var(--marine-clair);color:#fff;font-weight:600}
-.cote nav .compte{margin-left:auto;background:var(--rouge);color:#fff;font-size:11px;font-weight:700;
+.cote nav .compte{margin-left:auto;background:var(--rouge);color:var(--sur-aplat);font-size:11px;font-weight:700;
   min-width:19px;padding:0 5px;line-height:19px;text-align:center;border-radius:10px}
 .cote .bas{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
 .profil{display:flex;align-items:center;gap:10px;padding:8px 6px 0}
@@ -106,27 +125,36 @@ footer{padding:10px 30px 26px;font-size:12.5px;color:var(--doux);
 }
 
 /* ---------- Tuiles d'accueil ---------- */
-.tuiles{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));margin-bottom:16px}
-.tuile{display:flex;align-items:center;gap:13px;background:var(--carte);border:1px solid var(--bord);
-  border-radius:var(--r);box-shadow:var(--ombre);padding:15px 16px;cursor:pointer;
+.tuiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(206px,1fr));margin-bottom:16px}
+.tuile{display:flex;align-items:center;gap:12px;background:var(--carte);border:1px solid var(--bord);
+  border-radius:var(--r);box-shadow:var(--ombre);padding:12px 14px;cursor:pointer;
   font:inherit;color:inherit;text-align:left;width:100%}
 .tuile:hover{border-color:var(--accent)}
 .tuile.actif{border-color:var(--accent);background:var(--accent-doux);box-shadow:none}
-.tuile .rond.gris{background:var(--gris)}
-.tuile .rond.rouge{background:var(--rouge)}
-.tuile .rond{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;color:#fff;flex:none}
-.tuile .rond.bleu{background:var(--accent)} .tuile .rond.vert{background:var(--vert)}
-.tuile .rond.orange{background:#e08a1e} .tuile .rond.violet{background:var(--violet)}
+/* Pastille teintée plutôt que rond plein : du blanc sur une couleur vive ne
+   tient pas le contraste, et la teinte claire laisse le nombre dominer. */
+.tuile .rond{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;flex:none}
+.tuile .rond.gris{background:var(--gris-f);color:var(--gris)}
+.tuile .rond.rouge{background:var(--rouge-f);color:var(--rouge)}
+.tuile .rond.bleu{background:var(--accent-doux);color:var(--accent)}
+.tuile .rond.vert{background:var(--vert-f);color:var(--vert)}
+.tuile .rond.orange{background:var(--orange-f);color:var(--orange)}
+.tuile .rond.violet{background:var(--violet-f);color:var(--violet)}
 .tuile .txt{flex:1;min-width:0}
 /* Le nombre en premier : c'est lui qu'on vient lire. */
-.tuile .n{display:block;font-size:25px;font-weight:700;line-height:1.15}
+.tuile .n{display:block;font-size:24px;font-weight:700;line-height:1.1}
 .tuile .n.bleu{color:var(--accent)}  .tuile .n.vert{color:var(--vert)}
 .tuile .n.rouge{color:var(--rouge)}  .tuile .n.orange{color:var(--orange)}
 .tuile .n.violet{color:var(--violet)} .tuile .n.gris{color:var(--gris)}
-.tuile .t{display:block;font-weight:600;font-size:13.5px;line-height:1.3}
-.tuile .s{display:block;font-size:12px;color:var(--doux)}
-.tuile .rond{font-size:19px;font-weight:700;line-height:1}
+/* Une ligne chacun : un libellé un peu long passait sur trois lignes et
+   décalait les quatre tuiles les unes par rapport aux autres. Le texte entier
+   reste dans l'info-bulle. */
+.tuile .t{display:block;font-weight:600;font-size:13.5px;line-height:1.25;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tuile .s{display:block;font-size:12px;color:var(--doux);line-height:1.3;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tuile .rond{font-size:18px;font-weight:700;line-height:1}
 .tuile .fleche{color:var(--doux)}
 
 /* ---------- Listes ---------- */
@@ -171,17 +199,17 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:now
 .et.gris{background:var(--gris-f);color:var(--gris)}
 .et.info{background:var(--accent-doux);color:var(--accent)}
 .puce{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.puce.vert{background:var(--vert)} .puce.orange{background:#e08a1e}
+.puce.vert{background:var(--vert)} .puce.orange{background:var(--orange)}
 .puce.rouge{background:var(--rouge)} .puce.gris{background:var(--gris)}
 .puce.info{background:var(--accent)}
-.puce.papa{background:var(--accent)} .puce.maman{background:#b03a5b}
+.puce.papa{background:var(--accent)} .puce.maman{background:var(--maman)}
 .puce.fratrie{background:var(--violet)} .puce.autre{background:var(--gris)}
 
 /* ---------- Boutons ---------- */
 button.b{display:inline-flex;align-items:center;gap:6px;background:var(--carte);color:var(--texte);
   border:1px solid var(--bord);border-radius:9px;padding:7px 13px;font:inherit;font-size:13.5px;cursor:pointer}
 button.b:hover{background:var(--accent-doux);border-color:var(--accent)}
-button.b.primaire{background:var(--accent);border-color:var(--accent);color:#fff}
+button.b.primaire{background:var(--accent);border-color:var(--accent);color:var(--sur-aplat)}
 button.b.primaire:hover{filter:brightness(1.08)}
 button.b.danger{color:var(--rouge)}
 button.b.danger:hover{background:var(--rouge-f);border-color:var(--rouge)}
@@ -221,38 +249,90 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .filtres{display:flex;gap:6px;flex-wrap:wrap}
 .filtres button{border:1px solid var(--bord);background:var(--carte);color:var(--doux);
   border-radius:20px;padding:5px 14px;font:inherit;font-size:13px;cursor:pointer}
-.filtres button.actif{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.filtres button.actif{background:var(--accent);border-color:var(--accent);color:var(--sur-aplat);font-weight:600}
 /* État de la notification, dans sa colonne du tableau des dossiers */
-.col-notif{min-width:262px}
+.col-notif{min-width:212px}
 .notif-etat{display:flex;align-items:center;gap:7px;font-weight:600;font-size:13px}
+.notif-etat.deux-lignes{display:flex}
 .notif-etat.vert{color:var(--vert)} .notif-etat.orange{color:var(--orange)}
 .notif-etat.rouge{color:var(--rouge)} .notif-etat.gris{color:var(--gris)}
 .notif-etat .marque-etat{font-size:14px;line-height:1}
 .col-notif .actions{justify-content:flex-start;flex-wrap:wrap}
 .haut-marge-court{margin-top:6px}
+
+/* Toutes les lignes à la même hauteur, quel que soit l'état du dossier : sans
+   ce calage, une ligne « à réclamer » portait trois boutons et mesurait 105 px
+   quand une ligne « en ordre » en mesurait 75. L'œil n'avait aucun repère. */
+.tab-dossiers tbody tr{height:68px}
+.tab-dossiers tbody td{padding-top:8px;padding-bottom:8px}
+/* Largeurs posées à la main : sans elles, un détail de notification un peu
+   long vole la place du nom, qui passe alors sur deux lignes et casse le
+   rythme qu'on vient d'établir. */
+.tab-dossiers{table-layout:fixed}
+.tab-dossiers .col-enfant{width:24%}
+.tab-dossiers .col-autorite{width:88px}
+.tab-dossiers .col-notif{width:30%;min-width:0}
+.tab-dossiers .col-echeance{width:132px}
+/* Colonne d'actions de largeur fixe : ouvrir le menu « ⋯ » ne doit pas
+   déplacer les colonnes de gauche. */
+.tab-dossiers .col-actions{width:158px}
+/* Deux lignes, jamais trois : au-delà, c'est l'info-bulle qui prend le relais. */
+.deux-lignes{display:block;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.deux-lignes + .deux-lignes{margin-top:2px}
+.tab-dossiers .col-enfant b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tab-dossiers .col-enfant .ligne-nom>span{min-width:0}
+
+/* Une seule action pleine par ligne ; le reste sous « ⋯ ». Un <details> plutôt
+   qu'un menu maison : le clavier y arrive, et Échap le referme tout seul. */
+.plus{display:inline-block}
+.plus>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;
+  justify-content:center;min-width:32px;height:29px;border:1px solid var(--bord);
+  border-radius:9px;background:var(--carte);color:var(--doux);font-size:15px;line-height:1}
+.plus>summary::-webkit-details-marker{display:none}
+.plus>summary::marker{content:""}
+.plus>summary:hover{border-color:var(--accent);color:var(--accent)}
+.plus[open]>summary{border-color:var(--accent);color:var(--accent);background:var(--accent-doux)}
+.plus .menu{display:flex;flex-direction:column;gap:4px;margin-top:5px;padding:6px;
+  border:1px solid var(--bord);border-radius:11px;background:var(--fond)}
+.plus .menu button{justify-content:flex-start;width:100%;background:var(--carte)}
+
 /* La couleur de l'état se retrouve sur le bord gauche de la ligne */
 .tab-dossiers tr td:first-child{border-left:3px solid transparent}
 .tab-dossiers tr.ligne-vert   td:first-child{border-left-color:var(--vert)}
-.tab-dossiers tr.ligne-orange td:first-child{border-left-color:#e08a1e}
+.tab-dossiers tr.ligne-orange td:first-child{border-left-color:var(--orange)}
 .tab-dossiers tr.ligne-rouge  td:first-child{border-left-color:var(--rouge)}
 .tab-dossiers tr.ligne-gris   td:first-child{border-left-color:var(--gris)}
 .tab-dossiers td:first-child{padding-left:11px}
 
 /* ---------- Calendrier des rapports ---------- */
-.mois-grille{display:grid;gap:12px;grid-template-columns:1fr}
+/* Quatre mois par rangée sur un grand écran : douze cases souvent presque
+   vides tenaient sur trois rangées de trois, et l'année ne se lisait pas d'un
+   seul coup d'œil. */
+.mois-grille{display:grid;gap:12px;grid-template-columns:1fr;align-items:start}
 @media(min-width:720px){.mois-grille{grid-template-columns:1fr 1fr}}
 @media(min-width:1100px){.mois-grille{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1280px){.mois-grille{grid-template-columns:repeat(4,1fr)}}
 .mois{border:1px solid var(--bord);border-radius:12px;background:var(--carte);overflow:hidden}
 .mois>.tete-mois{padding:8px 13px;background:var(--gris-f);font-weight:700;font-size:13.5px;
   display:flex;justify-content:space-between;align-items:baseline}
 .mois>.tete-mois.courant{background:var(--accent-doux);color:var(--accent)}
-.mois .part{padding:9px 13px;border-top:1px solid var(--bord)}
-.mois .part .lib{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux);margin-bottom:4px}
+.mois .part{padding:7px 11px;border-top:1px solid var(--bord)}
 .mois .part .item{font-size:13px;padding:3px 0;display:flex;align-items:center;gap:6px;cursor:pointer}
 .mois .part .item input{width:auto;margin:0;flex:none}
 .mois .part .item.envoye{color:var(--doux);text-decoration:line-through}
 .mois .part .item.retard{color:var(--rouge);font-weight:600}
-.mois .rien-mois{padding:10px 13px;color:var(--doux);font-size:12.5px;font-style:italic}
+.mois .rien-mois{padding:9px 11px;color:var(--doux);font-size:12.5px;font-style:italic}
+/* « A » ou « S » devant le nom, au lieu de répéter « Formalisations — rapport
+   annuel » en capitales dans chaque case du calendrier. La légende sous la
+   grille donne la clé une fois pour toutes. */
+.badge-r{flex:none;width:18px;height:18px;border-radius:6px;font-size:11px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;letter-spacing:0}
+.badge-r.a{background:var(--accent-doux);color:var(--accent)}
+.badge-r.s{background:var(--violet-f);color:var(--violet)}
+.item.envoye .badge-r{opacity:.55}
+.nom-rapport{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.date-rapport{flex:none;color:var(--doux);margin-left:auto}
+.item.retard .date-rapport{color:var(--rouge)}
 
 /* ---------- Droits de visite ---------- */
 /* La liste des enfants à gauche, le dossier de celui qu'on a choisi à droite. */
@@ -270,9 +350,13 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .tab-enfants th:nth-child(1){width:48%}
 .tab-enfants th:nth-child(2){width:22%}
 .tab-enfants th:nth-child(3){width:30%}
-.tab-enfants th{white-space:normal}
+.tab-enfants th{white-space:nowrap}
 .tab-enfants .ligne-nom>span{min-width:0;overflow:hidden}
-.tab-enfants td{padding:9px 6px}
+/* Même hauteur pour chaque dossier, qu'il porte une fréquence d'un mot ou
+   de quatre : la liste se parcourt à l'œil, pas ligne à ligne. */
+.tab-enfants tbody tr{height:54px}
+.tab-enfants .freq{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tab-enfants td{padding:7px 6px}
 .tab-enfants td:first-child,.tab-enfants th:first-child{padding-left:18px}
 .tab-enfants td:last-child,.tab-enfants th:last-child{padding-right:18px}
 .tab-enfants th{padding:8px 6px;font-size:10.5px}
@@ -281,7 +365,7 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 /* Le trait de couleur à gauche donne l'état du dossier avant même de lire. */
 .tab-enfants tr.le td:first-child{border-left:3px solid transparent}
 .tab-enfants tr.le.vert   td:first-child{border-left-color:var(--vert)}
-.tab-enfants tr.le.orange td:first-child{border-left-color:#e08a1e}
+.tab-enfants tr.le.orange td:first-child{border-left-color:var(--orange)}
 .tab-enfants tr.le.rouge  td:first-child{border-left-color:var(--rouge)}
 .tab-enfants tr.le.actif{background:var(--accent-doux)}
 .tab-enfants tr.le.actif td{font-weight:500}
@@ -321,7 +405,7 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .rond-parent{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;
   justify-content:center;flex:none;background:var(--gris-f);color:var(--doux)}
 .rond-parent.papa{background:var(--accent-doux);color:var(--accent)}
-.rond-parent.maman{background:#fdeaf0;color:#b03a5b}
+.rond-parent.maman{background:var(--maman-f);color:var(--maman)}
 .rond-parent.fratrie{background:var(--violet-f);color:var(--violet)}
 
 /* Titre de section dans une carte : lisible, pas la petite capitale des h3 */
@@ -337,7 +421,7 @@ h3.titre-suivi{display:flex;align-items:center;gap:8px;font-size:14.5px;font-wei
 @media(min-width:620px){.schema{grid-template-columns:1fr 1fr}}
 @media(min-width:1000px){.schema{grid-template-columns:repeat(5,1fr)}}
 .sem.hors{background:var(--fond)}
-.sem.hors .sem-tete{background:var(--gris);color:#fff}
+.sem.hors .sem-tete{background:var(--gris);color:var(--sur-aplat)}
 .hs-noms{font-size:12.5px;line-height:1.7}
 /* la virgule reste collée au nom qui la précède, jamais en début de ligne */
 .hs-item{white-space:nowrap}
@@ -348,14 +432,12 @@ h3.titre-suivi{display:flex;align-items:center;gap:8px;font-size:14.5px;font-wei
 .sem-corps{padding:10px;display:flex;flex-direction:column;gap:9px;min-height:70px}
 .sem-vide{color:var(--doux);font-size:12.5px;text-align:center;padding:12px 0}
 .creneau{border-radius:10px;padding:10px 11px;border:1px solid transparent}
-.creneau.papa{background:var(--accent-doux);border-color:rgba(47,111,176,.3)}
-.creneau.maman{background:#fdeaf0;border-color:rgba(176,58,91,.28)}
-.creneau.fratrie{background:var(--violet-f);border-color:rgba(113,67,184,.28)}
+/* La bordure reprend la couleur de la catégorie, en transparence : une seule
+   règle sert les deux thèmes, plus besoin de reprise en sombre. */
+.creneau.papa{background:var(--accent-doux);border-color:color-mix(in srgb,var(--accent) 34%,transparent)}
+.creneau.maman{background:var(--maman-f);border-color:color-mix(in srgb,var(--maman) 34%,transparent)}
+.creneau.fratrie{background:var(--violet-f);border-color:color-mix(in srgb,var(--violet) 34%,transparent)}
 .creneau.autre{background:var(--gris-f);border-color:var(--bord)}
-@media (prefers-color-scheme: dark){
-  .creneau.maman{background:#3a2029;border-color:rgba(240,138,138,.3)}
-  .rond-parent.maman{background:#3a2029;color:#f08a8a}
-}
 .creneau.barre{opacity:.72}
 .cr-haut{display:flex;align-items:center;gap:7px}
 .cr-nom{font-weight:700;font-size:13.5px}
@@ -380,8 +462,8 @@ h3.titre-suivi{display:flex;align-items:center;gap:8px;font-size:14.5px;font-wei
 .bascule button + button{border-left:1px solid var(--bord)}
 .bascule .oui:hover{background:var(--vert-f);color:var(--vert)}
 .bascule .non:hover{background:var(--rouge-f);color:var(--rouge)}
-.bascule .oui.actif{background:var(--vert);color:#fff;font-weight:700}
-.bascule .non.actif{background:var(--rouge);color:#fff;font-weight:700}
+.bascule .oui.actif{background:var(--vert);color:var(--sur-aplat);font-weight:700}
+.bascule .non.actif{background:var(--rouge);color:var(--sur-aplat);font-weight:700}
 .note-vive{font-size:13px;padding:7px 9px;border:1px solid transparent;border-radius:8px;
   min-height:38px;white-space:pre-wrap;cursor:text;line-height:1.45}
 /* Une note de synthèse peut faire une page : au repos, on n'en montre que
@@ -406,13 +488,20 @@ textarea.note-vive{border-color:var(--bord);background:var(--carte);width:100%;
 .tache-faite{text-decoration:line-through;color:var(--doux)}
 .encadre{border:1px solid var(--bord);border-radius:12px;padding:12px 14px;background:var(--fond);margin-bottom:12px}
 .encadre.ok{border-color:var(--vert);background:var(--vert-f)}
-.encadre.attention{border-color:#e08a1e;background:var(--orange-f)}
+.encadre.attention{border-color:var(--orange);background:var(--orange-f)}
 .encadre.souci{border-color:var(--rouge);background:var(--rouge-f)}
 .encadre .titre{font-weight:600;margin-bottom:3px}
 code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px}
-.legende{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--doux);margin-top:12px}
+.legende{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:12.5px;
+  color:var(--doux);margin-top:12px}
+.legende>span{display:inline-flex;align-items:center}
+.legende .badge-r{margin-right:5px}
 
 /* ---------- Utilitaires de mise en page ---------- */
+/* Un intitulé que seul le lecteur d'écran entend : la colonne d'actions n'a
+   pas de titre visible, mais elle en a besoin d'un. */
+.hors-ecran{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .champ-recherche{max-width:240px}
 .centre{text-align:center}
 .droite{text-align:right}
@@ -423,7 +512,7 @@ code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px
 .bas-marge{margin-bottom:16px}
 
 @media print{
-  .cote,.barre,footer,.actions,button,.filtres,.entete-droite{display:none !important}
+  .cote,.barre,footer,.actions,button,.filtres,.entete-droite,.plus{display:none !important}
   body{background:#fff}
   .appli{display:block}
   main,.entete{padding:0}
@@ -901,7 +990,9 @@ function ic(nom, taille){
 function tuileCompte(o){
   const attr = o.onglet ? ' data-onglet="' + o.onglet + '"'
                         : ' data-action="' + o.action + '" data-f="' + o.f + '"';
-  return '<button class="tuile' + (o.actif ? " actif" : "") + '"' + attr + ">" +
+  const titre = o.titre + (o.sous ? " — " + o.sous : "");
+  return '<button class="tuile' + (o.actif ? " actif" : "") + '" title="' + ech(titre) +
+    '"' + attr + ">" +
     '<span class="rond ' + o.couleur + '">' + (o.marque || ic(o.icone, 21)) + "</span>" +
     '<span class="txt">' +
       '<span class="n ' + o.couleur + '">' + o.n + "</span>" +
@@ -911,7 +1002,9 @@ function tuileCompte(o){
     '<span class="fleche">' + ic("fleche", 17) + "</span></button>";
 }
 
-const COULEURS = ["#2f6fb0","#1f8a4c","#b4632a","#7143b8","#0f7c8a","#b03a5b","#4a6480","#a06a12"];
+/* Huit fonds pour les initiales, tous assez sombres pour porter du blanc
+   (4,5:1 au minimum) et accordés à la charte. */
+const COULEURS = ["#2d5fa8","#1c7a4b","#a8590b","#6a4ba8","#0f6c7a","#9e315f","#3f5670","#7d6010"];
 /** format : "ligne" (défaut, dans un tableau ou une liste) ou "carte" (en tête de fiche). */
 function avatar(e, format){
   const p = (e.prenom || "").trim(), n = (e.nom || "").trim();
@@ -1324,55 +1417,68 @@ function vueEnfants(){
     return '<span class="puce ' + st.code + '"></span>' + ech(fmtFR(d));
   };
 
-  /* La notification tient dans une cellule : son état, sa date, et les gestes
-     qui s'imposent — réclamer, noter une relance, encoder la nouvelle date. */
+  /* La notification tient sur deux lignes : son état, puis sa date. Les gestes
+     sont regroupés au bout de la ligne, pour que toutes les lignes du tableau
+     gardent la même hauteur. */
   const celNotif = (e, st) => {
     const relances = e.relances || [];
     const derniere = relances.length
       ? " · " + pluriel(relances.length,"relance") + " le " + fmtFR(relances[relances.length-1]) : "";
-    /* Rien à faire quand tout est en ordre : le seul geste possible — signaler
-       que le papier n'est pas arrivé — tient dans une icône au bout de la ligne. */
-    const boutons = st.code === "vert" ? ""
-      : '<div class="actions haut-marge-court">' +
-        '<button class="b mini primaire" data-action="notif-recue" data-id="' + e.id +
-        '">✓ Reçue</button>' +
-        (st.code === "gris" ? "" :
-          '<button class="b mini" data-action="relance" data-id="' + e.id + '">Relance</button>' +
-          '<button class="b mini" data-action="tache-notif" data-id="' + e.id +
-          '" title="Créer la tâche de relance">+ tâche</button>') + "</div>";
-    const defaire = st.code === "vert"
-      ? '<button class="b mini pousse" data-action="notif-attente" data-id="' + e.id +
-        '" title="Signaler que la notification n\'est pas arrivée">↺</button>' : "";
-    return '<div class="notif-etat ' + st.code + '"><span class="marque-etat">' + st.marque +
-      "</span>" + ech(st.titre) + defaire + "</div>" +
-      '<div class="pt doux">' + ech(st.detail + derniere) + "</div>" + boutons;
+    const detail = st.detail + derniere;
+    return '<span class="notif-etat deux-lignes ' + st.code + '"><span class="marque-etat">' +
+      st.marque + "</span>" + ech(st.titre) + "</span>" +
+      '<span class="deux-lignes pt doux" title="' + ech(detail) + '">' + ech(detail) + "</span>";
+  };
+
+  /* Un seul bouton plein par ligne — celui qu'on cherche neuf fois sur dix —
+     et le reste sous « ⋯ ». Avant, la ligne la plus urgente en portait trois,
+     tous du même poids : rien ne disait par quoi commencer. */
+  const celActions = (e, st) => {
+    const principal = st.code === "vert" ? ""
+      : '<button class="b mini primaire" data-action="notif-recue" data-id="' + e.id +
+        '">✓ Reçue</button>';
+    const secondaires =
+      (st.code === "vert"
+        ? '<button class="b mini" data-action="notif-attente" data-id="' + e.id +
+          '">↺ Pas arrivée</button>' : "") +
+      (st.code === "vert" || st.code === "gris" ? "" :
+        '<button class="b mini" data-action="relance" data-id="' + e.id + '">Relance notée</button>' +
+        '<button class="b mini" data-action="tache-notif" data-id="' + e.id +
+        '">+ Tâche de relance</button>') +
+      '<button class="b mini" data-action="enfant-modifier" data-id="' + e.id +
+      '">✎ Modifier la fiche</button>' +
+      '<button class="b mini danger" data-action="enfant-supprimer" data-id="' + e.id +
+      '">✕ Supprimer</button>';
+    return '<div class="actions">' + principal +
+      '<details class="plus"><summary aria-label="Autres actions pour ' + ech(nomComplet(e)) +
+      '" title="Autres actions">⋯</summary><div class="menu">' + secondaires +
+      "</div></details></div>";
   };
 
   const lignes = liste.map(({enfant:e, st}) => `<tr class="ligne-${st.code}">
-      <td><div class="ligne-nom">${avatar(e)}
-        <span><b>${ech(nomComplet(e))}</b><br>
-        <span class="doux pt">${ech(ageTexte(e))}</span></span></div></td>
+      <td class="col-enfant"><div class="ligne-nom">${avatar(e)}
+        <span><b title="${ech(nomComplet(e))}">${ech(nomComplet(e))}</b>
+        <span class="doux pt deux-lignes">${ech(ageTexte(e))}</span></span></div></td>
       <td>${e.service ? '<span class="et info">' + ech(e.service) + "</span>"
                       : '<span class="et gris">à préciser</span>'}</td>
       <td class="col-notif">${celNotif(e, st)}</td>
       <td class="num pt">${cel(echeanceRapport(e,"semestriel"), DB.parametres.seuilRapportJours)}</td>
       <td class="num pt">${cel(echeanceRapport(e,"annuel"), DB.parametres.seuilRapportJours)}</td>
-      <td><div class="actions">
-        <button class="b mini" data-action="enfant-modifier" data-id="${e.id}">Modifier</button>
-        <button class="b mini danger" data-action="enfant-supprimer" data-id="${e.id}">✕</button>
-      </div></td>
+      <td class="col-actions">${celActions(e, st)}</td>
     </tr>`).join("");
 
   const incomplets = DB.enfants.filter(e => !estISO(e.notifFin) || !e.service || !estISO(e.naissance));
-  const tuile = (f, couleur, marque, titre, n) => tuileCompte({
-    action:"filtre-notif", f, actif:filtre === f, couleur, marque, n,
-    titre, sous:n > 1 ? "dossiers" : "dossier" });
+  /* Le nombre dit déjà « combien » : la ligne du dessous sert à dire ce que
+     l'état veut dire, pas à répéter le mot « dossiers ». */
+  const tuile = (f, couleur, marque, titre, sous, n) => tuileCompte({
+    action:"filtre-notif", f, actif:filtre === f, couleur, marque, n, titre, sous });
 
   return `<div class="tuiles">
-    ${tuile("recues","vert","✓","Notifications en ordre", nb("vert"))}
-    ${tuile("bientot","orange","!","À renouveler bientôt", nb("orange"))}
-    ${tuile("attente","rouge","✕","À réclamer", nb("rouge"))}
-    ${tuile("sansdate","gris","?","Sans date", nb("gris"))}
+    ${tuile("recues","vert","✓","Notifications en ordre","reçue et encore valable", nb("vert"))}
+    ${tuile("bientot","orange","!","À renouveler bientôt",
+      "moins de " + DB.parametres.seuilAlerteJours + " jours", nb("orange"))}
+    ${tuile("attente","rouge","✕","À réclamer","pas reçue ou dépassée", nb("rouge"))}
+    ${tuile("sansdate","gris","?","Sans date","date à encoder", nb("gris"))}
   </div>
 
   <div class="carte">
@@ -1398,8 +1504,11 @@ function vueEnfants(){
     <div class="tableau-enveloppe">
       <table class="tab-dossiers">
         <thead><tr>
-          <th>Enfant</th><th>Autorité</th><th>Notification de prise en charge</th>
-          <th class="num">Rapport semestriel</th><th class="num">Rapport annuel</th><th></th>
+          <th class="col-enfant">Enfant</th><th class="col-autorite">Autorité</th>
+          <th class="col-notif">Notification de prise en charge</th>
+          <th class="num col-echeance" title="Rapport d'évolution semestriel">Semestriel</th>
+          <th class="num col-echeance" title="Formalisation — rapport annuel">Annuel</th>
+          <th class="col-actions"><span class="hors-ecran">Actions</span></th>
         </tr></thead>
         <tbody>${lignes || '<tr><td colspan="6" class="vide">' +
           (q || filtre !== "tout" ? "Aucun dossier dans cette sélection."
@@ -1442,35 +1551,41 @@ function vueRapports(){
     });
   }));
 
+  /* Une seule ligne par rapport : la pastille « A » ou « S » dit lequel des deux
+     c'est, ce qui évite de répéter le libellé complet en capitales au-dessus de
+     chaque groupe. La date se range à droite, alignée d'une ligne à l'autre. */
   const item = o => {
     const envoye = rapportEnvoye(o.enfant, o.type, o.date);
     const st = envoye ? { code:"vert" } : statutEcheance(o.date, DB.parametres.seuilRapportJours);
     const retard = !envoye && o.date < aujourdHui();
+    const annuel = o.type === "annuel";
     return '<label class="item' + (envoye ? " envoye" : (retard ? " retard" : "")) + '">' +
       '<input type="checkbox" data-action="rapport-envoye" data-id="' + o.enfant.id +
       '" data-type="' + o.type + '" data-date="' + o.date + '"' + (envoye ? " checked" : "") +
       ' title="Cocher quand le rapport est envoyé">' +
       '<span class="puce ' + (retard ? "rouge" : st.code) + '"></span>' +
-      ech(nomComplet(o.enfant)) +
-      (o.enfant.service ? ' <span class="doux">· ' + ech(o.enfant.service) + "</span>" : "") +
-      ' <span class="doux">· ' + ech(fmtFR(o.date).slice(0,5)) + "</span></label>";
+      '<span class="badge-r ' + (annuel ? "a" : "s") + '" title="' +
+      (annuel ? "Formalisation — rapport annuel" : "Rapport d'évolution — semestriel") +
+      '">' + (annuel ? "A" : "S") + "</span>" +
+      '<span class="nom-rapport"' + (o.enfant.service ? ' title="' + ech(o.enfant.service) + '"' : "") +
+      ">" + ech(nomComplet(o.enfant)) + "</span>" +
+      '<span class="date-rapport">' + ech(fmtFR(o.date).slice(0,5)) + "</span></label>";
   };
 
   const auj = new Date();
   const cases = mois.map(m => {
     const courant = m.annee === auj.getFullYear() && m.mois === auj.getMonth();
-    const tri = l => l.sort((a,b) => a.date.localeCompare(b.date));
-    tri(m.annuels); tri(m.semestriels);
+    /* Annuels et semestriels dans la même liste, à la date : c'est l'ordre dans
+       lequel le travail arrive, pas le type de rapport, qui compte ici. */
+    const tous = m.annuels.concat(m.semestriels)
+      .sort((a,b) => a.date.localeCompare(b.date) || parNom(a.enfant, b.enfant));
     return `<div class="mois">
       <div class="tete-mois ${courant?"courant":""}">
         <span>${MOIS[m.mois].charAt(0).toUpperCase() + MOIS[m.mois].slice(1)}</span>
-        <span class="doux">${m.annee}</span>
+        <span class="doux">${m.annee}${tous.length ? " · " + tous.length : ""}</span>
       </div>
-      ${m.annuels.length ? '<div class="part"><div class="lib">Formalisations — rapport annuel</div>' +
-        m.annuels.map(item).join("") + "</div>" : ""}
-      ${m.semestriels.length ? '<div class="part"><div class="lib">Rapports d\'évolution — semestriel</div>' +
-        m.semestriels.map(item).join("") + "</div>" : ""}
-      ${(!m.annuels.length && !m.semestriels.length) ? '<div class="rien-mois">Rien de prévu</div>' : ""}
+      ${tous.length ? '<div class="part">' + tous.map(item).join("") + "</div>"
+                    : '<div class="rien-mois">Rien de prévu</div>'}
     </div>`;
   }).join("");
 
@@ -1500,6 +1615,13 @@ function vueRapports(){
       formalisation, le <b>rapport d'évolution semestriel</b> six mois plus tôt. Les deux se
       recalculent à chaque renouvellement de la notification.</p>
     <div class="mois-grille">${cases}</div>
+    <div class="legende">
+      <span><span class="badge-r a">A</span> formalisation — rapport annuel</span>
+      <span><span class="badge-r s">S</span> rapport d'évolution — semestriel</span>
+      <span><span class="puce rouge"></span>échéance dépassée</span>
+      <span><span class="puce orange"></span>dans moins de ${DB.parametres.seuilRapportJours} jours</span>
+      <span>case cochée = rapport envoyé</span>
+    </div>
     ${sansDate.length ? '<div class="encadre attention haut-marge"><div class="titre">' +
       pluriel(sansDate.length,"enfant") + " sans date de notification</div><span class=\"pt\">" +
       "Impossible de calculer leurs rapports : " +
@@ -1609,23 +1731,22 @@ function vueVisites(){
     n + (v.rencontres||[]).filter(r => aCompleter(r)).length, 0);
   const nbAremplir = avecDroit.filter(e => aRemplirDe(e) > 0).length;
 
+  /* Titres courts : « Dossiers à échéance proche » passait sur trois lignes et
+     décalait les quatre tuiles les unes par rapport aux autres. Le nombre dit
+     combien de dossiers, la ligne du dessous dit de quoi il s'agit. */
   const compteurs = `<div class="tuiles">
     ${tuileCompte({ action:"filtre-dossier", f:"sans", actif:fd === "sans",
       couleur:"rouge", marque:"!", n:nbEtat("rouge"),
-      titre: nbEtat("rouge") > 1 ? "Dossiers sans DV futur" : "Dossier sans DV futur",
-      sous:"aucun DV programmé" })}
+      titre:"Sans DV futur", sous:"aucun DV programmé" })}
     ${tuileCompte({ action:"filtre-dossier", f:"proche", actif:fd === "proche",
       couleur:"orange", icone:"horloge", n:nbEtat("orange"),
-      titre: nbEtat("orange") > 1 ? "Dossiers à échéance proche" : "Dossier à échéance proche",
-      sous:"DV dans moins d'un mois" })}
+      titre:"Échéance proche", sous:"DV dans moins d'un mois" })}
     ${tuileCompte({ action:"filtre-dossier", f:"ajour", actif:fd === "ajour",
       couleur:"vert", marque:"✓", n:nbEtat("vert"),
-      titre: nbEtat("vert") > 1 ? "Dossiers à jour" : "Dossier à jour",
-      sous:"DV programmé à plus d'un mois" })}
+      titre:"À jour", sous:"DV au-delà d'un mois" })}
     ${tuileCompte({ action:"filtre-dossier", f:"aremplir", actif:fd === "aremplir",
       couleur:"bleu", icone:"taches", n:nbAremplir,
-      titre: nbAremplir > 1 ? "Dossiers à compléter" : "Dossier à compléter",
-      sous:"rencontres passées sans compte rendu" })}
+      titre:"À compléter", sous:"rencontre sans compte rendu" })}
   </div>`;
 
   /* ------------------------------------------- 2. la liste : choisir un enfant */
@@ -1648,7 +1769,7 @@ function vueVisites(){
         ${aRemplirDe(e) ? '<span class="et info pousse" title="' +
           pluriel(aRemplirDe(e),"rencontre") + ' passée(s) sans compte rendu">' +
           aRemplirDe(e) + "</span>" : ""}</div></td>
-      <td class="pt doux">${ech(freq || "—")}</td>
+      <td class="pt doux"><span class="freq" title="${ech(freq || "—")}">${ech(freq || "—")}</span></td>
       <td>
         ${p.date ? '<span class="le-date ' + p.code + '">' + ech(fmtFR(p.date)) +
           ' <span class="le-marque">' + (p.code === "vert" ? "✓" : "!") + "</span></span>" : ""}
@@ -1665,7 +1786,7 @@ function vueVisites(){
       ${fd !== "tout" ? '<button class="b mini bas-marge" data-action="filtre-dossier" ' +
         'data-f="tout">← Tous les dossiers (' + avecDroit.length + ")</button>" : ""}
       ${visibles.length ? `<div class="liste-enfants"><table class="tab-enfants">
-          <thead><tr><th>Enfant</th><th>Fréquence</th><th>DV programmé</th></tr></thead>
+          <thead><tr><th>Enfant</th><th>Fréquence</th><th>Prochain DV</th></tr></thead>
           <tbody>${visibles.map(ligneEnfant).join("")}</tbody></table></div>`
         : '<p class="rien">' + (q || fd !== "tout" ? "Aucun enfant dans cette sélection."
                                                    : "Aucun droit de visite encodé.") + "</p>"}

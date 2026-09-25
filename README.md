@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.16.1-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.17.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -26,6 +26,14 @@ directement, y compris depuis une clé USB.
 ---
 
 ## Les écrans
+
+L'ensemble suit une même charte : fond papier chaud plutôt que gris bleuté, titres en
+caractères à empattements, et **quatre couleurs d'état** — vert *à jour*, orange
+*échéance proche*, rouge *rien de programmé*, violet *à compléter*. La couleur ne porte
+jamais l'information toute seule : elle est toujours accompagnée du mot et d'un signe,
+pour rester lisible quand on distingue mal le rouge du vert. Le programme suit aussi le
+**thème sombre** de Windows.
+
 
 ### Accueil
 **Tout tient sur un écran, sans avoir à faire défiler.** Quatre tuiles de comptage
@@ -61,15 +69,22 @@ Puis **une ligne par enfant**, avec un trait de couleur à gauche qui reprend l'
 
 * **Enfant** — nom, prénom et âge ; les noms s'affichent **NOM Prénom** ;
 * **Autorité** — SAJ ou SPJ ;
-* **Notification de prise en charge** — l'état, le détail (« échéance dépassée depuis
-  85 jours », les relances déjà notées) et les gestes qui s'imposent : **✓ Reçue**
-  (encode la nouvelle échéance, proposée un an plus tard), **Relance** (note la date du
-  jour) et **+ tâche** (crée la tâche de relance dans la to do de l'accueil). Quand tout est
-  en ordre, un discret **↺** permet de signaler que le papier n'est pas arrivé ;
-* **Rapport semestriel** et **Rapport annuel** — calculés tout seuls : le rapport annuel
+* **Notification de prise en charge** — l'état sur une ligne, le détail sur la suivante
+  (« échéance dépassée depuis 85 jours », les relances déjà notées). Quand le détail est
+  trop long, la phrase entière s'affiche en passant la souris dessus ;
+* **Semestriel** et **Annuel** — calculés tout seuls : le rapport annuel
   tombe à la date de notification, le semestriel six mois plus tôt. Quand les deux ne
   coïncident pas, remplissez *date du rapport annuel* dans la fiche : les échéances
-  suivent alors cette date.
+  suivent alors cette date ;
+* **les gestes**, au bout de la ligne. Un seul bouton plein, celui qu'on cherche neuf
+  fois sur dix : **✓ Reçue**, qui encode la nouvelle échéance, proposée un an plus tard.
+  Le **⋯** à côté ouvre le reste — *Relance notée* (inscrit la date du jour),
+  *+ Tâche de relance* (crée la tâche dans la to do de l'accueil), *Modifier la fiche*
+  et *Supprimer*. Sur un dossier en ordre, le menu propose *↺ Pas arrivée*, pour
+  signaler que le papier n'est finalement pas venu.
+
+Toutes les lignes ont **la même hauteur**, quel que soit l'état du dossier : avant, une
+ligne à réclamer portait trois boutons et dépassait d'un tiers les lignes en ordre.
 
 Le bouton **+ Nouvel enfant** est en haut de l'écran, et un second **Ajouter un enfant**
 en bas du tableau. Le tri se fait par **nom de famille** ou par **urgence de la
@@ -77,12 +92,17 @@ notification**. Un bandeau signale les fiches encore incomplètes.
 
 ### Rapports
 
-Le calendrier des douze prochains mois, dans la présentation de votre tableau Excel :
+Le calendrier des douze prochains mois, **quatre mois par rangée**. Chaque mois tient
+dans une case, une ligne par rapport, rangées à la date :
 
-| Ligne | Quand |
-|-------|-------|
-| **Formalisations — rapport annuel** | à la date de notification |
-| **Rapports d'évolution — semestriel** | exactement six mois plus tôt |
+| Pastille | Quel rapport | Quand |
+|----------|--------------|-------|
+| **A** | formalisation — rapport annuel | à la date de notification |
+| **S** | rapport d'évolution — semestriel | exactement six mois plus tôt |
+
+La lettre remplace le libellé complet, qui se répétait en capitales au-dessus de chaque
+groupe et remplissait les cases pour rien. La clé est rappelée en légende sous la grille,
+et le libellé entier s'affiche en passant la souris sur la pastille.
 
 Chaque échéance porte une **case à cocher** : cochez-la quand le rapport est envoyé, elle
 se barre et l'échéance suivante se place un an plus tard. Un rapport dépassé et non coché
@@ -90,7 +110,7 @@ s'affiche en rouge, et un bandeau **« Rapports en retard »** les rassemble en 
 Boutons pour reculer ou avancer de douze mois.
 
 ### Droits de visite
-L'écran s'ouvre sur **trois compteurs**, qui rangent chaque dossier selon la seule
+L'écran s'ouvre sur **quatre compteurs**, qui rangent chaque dossier selon la seule
 question qui compte — jusqu'à quand l'agenda est-il couvert :
 
 | | |
