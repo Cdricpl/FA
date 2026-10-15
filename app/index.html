@@ -258,7 +258,6 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .notif-etat.rouge{color:var(--rouge)} .notif-etat.gris{color:var(--gris)}
 .notif-etat .marque-etat{font-size:14px;line-height:1}
 .col-notif .actions{justify-content:flex-start;flex-wrap:wrap}
-.haut-marge-court{margin-top:6px}
 
 /* Toutes les lignes à la même hauteur, quel que soit l'état du dossier : sans
    ce calage, une ligne « à réclamer » portait trois boutons et mesurait 105 px
@@ -283,7 +282,8 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .tab-dossiers .col-enfant .ligne-nom>span{min-width:0}
 
 /* Une seule action pleine par ligne ; le reste sous « ⋯ ». Un <details> plutôt
-   qu'un menu maison : le clavier y arrive, et Échap le referme tout seul. */
+   qu'un menu maison : le clavier y arrive sans rien ajouter. Échap, le clic
+   ailleurs et « un seul ouvert à la fois » sont gérés en JS, plus bas. */
 .plus{display:inline-block}
 .plus>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;
   justify-content:center;min-width:32px;height:29px;border:1px solid var(--bord);
@@ -497,6 +497,12 @@ code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px
 .legende>span{display:inline-flex;align-items:center}
 .legende .badge-r{margin-right:5px}
 
+/* ---------- Reprise d'un fichier illisible ---------- */
+.reprise{max-width:860px}
+.reprise-raison{margin:0 0 4px;font-weight:600}
+.reprise-detail{margin:0 0 14px;word-break:break-all}
+.reprise ul.liste li{padding:12px 0}
+
 /* ---------- Utilitaires de mise en page ---------- */
 /* Un intitulé que seul le lecteur d'écran entend : la colonne d'actions n'a
    pas de titre visible, mais elle en a besoin d'un. */
@@ -667,14 +673,23 @@ function normaliser(d){
 }
 
 function charger(){
+  let brut = null;
   try{
-    const brut = localStorage.getItem(CLE);
+    brut = localStorage.getItem(CLE);
     if(brut){ DB = normaliser(JSON.parse(brut)); return; }
-  }catch(e){ console.warn("Lecture impossible :", e); }
+  }catch(e){
+    console.warn("Lecture impossible :", e);
+    // la copie abîmée est gardée à part avant d'être remplacée
+    try{ if(brut) localStorage.setItem(CLE + "-illisible", brut); }catch(e2){}
+  }
   DB = donneesInitiales();
   sauver();
 }
 function sauver(){
+  // Fichier illisible, reprise pas encore choisie : rien n'est gardé, ni sur
+  // le disque ni dans la copie interne. Sinon, des exemples retouchés
+  // passeraient au lancement suivant pour « la copie la plus récente ».
+  if(FS.verrou) return;
   DB.modifieLe = new Date().toISOString();
   try{ localStorage.setItem(CLE, JSON.stringify(DB)); }
   catch(e){ console.warn("Copie navigateur impossible :", e); }
@@ -723,7 +738,10 @@ const FS = {
   natif: NATIF,
   dispo: NATIF || typeof window.showDirectoryPicker === "function",
   dossier:null, enAttente:null, nom:"", chemin:"", fichier:"", dernier:null, erreur:"",
-  enCours:false, aRefaire:false, dernierBackup:0
+  enCours:false, aRefaire:false, dernierBackup:0,
+  // Posé quand le fichier n'a pas pu être lu : bloque toute écriture et
+  // remplace l'écran par le choix des données à reprendre.
+  verrou:null
 };
 
 function idbOuvrir(){
@@ -764,21 +782,67 @@ const nomDeChemin = c => String(c||"").replace(/[\\/]+$/,"").split(/[\\/]/).pop(
 
 /* ------------------------------ mode programme installé ------------------ */
 
-async function natifDemarrer(){
+/** Lit le fichier de données du dossier en cours.
+
+    S'il existe mais ne se lit pas, plus rien n'est écrit dessus tant qu'on
+    n'a pas choisi quoi reprendre. Avant, le programme le signalait d'une
+    pastille et continuait d'enregistrer : au premier clic, le fichier abîmé
+    — souvent récupérable aux deux tiers — était remplacé par ce qui était à
+    l'écran, c'est-à-dire les exemples sur un ordinateur neuf. */
+async function natifCharger(){
   const r = await window.programme.lire();
   natifRetenir(r);
-  if(!r.ok){
-    FS.erreur = r.erreur || "lecture impossible";
-  }else if(r.contenu){
-    try{
-      const d = JSON.parse(r.contenu);
-      if(!d || !Array.isArray(d.enfants)) throw new Error("contenu inattendu");
-      DB = normaliser(d);
-      try{ localStorage.setItem(CLE, JSON.stringify(DB)); }catch(e){}
-    }catch(e){ FS.erreur = "Fichier illisible (" + e.message + ")"; }
-  }else{
-    await fsEcrire();          // premier lancement : on crée le fichier
+  if(!r.ok){ await verrouiller("Le fichier n'a pas pu être ouvert.", r.erreur || ""); return; }
+  if(r.contenu === null){ await fsEcrire(); return; }   // premier lancement : on crée le fichier
+  try{
+    const d = JSON.parse(r.contenu);
+    if(!d || !Array.isArray(d.enfants)) throw new Error("contenu inattendu");
+    DB = normaliser(d);
+    FS.verrou = null; FS.erreur = "";
+    try{ localStorage.setItem(CLE, JSON.stringify(DB)); }catch(e){}
+  }catch(e){
+    await verrouiller(r.contenu.trim()
+      ? "Le fichier est incomplet ou abîmé — le plus souvent, une copie ou une synchronisation interrompue."
+      : "Le fichier est vide — le plus souvent, une copie ou une synchronisation interrompue.",
+      r.contenu.trim() ? e.message : "");
   }
+}
+async function natifDemarrer(){
+  await natifCharger();
+  rendre();
+}
+
+/** Bloque l'enregistrement et prépare l'écran de reprise : une copie du
+    fichier tel qu'il est, les sauvegardes qui se lisent, et la copie interne
+    du programme si elle contient autre chose que les exemples. */
+async function verrouiller(raison, detail){
+  FS.erreur = raison;
+  FS.verrou = { raison, detail:detail || "", copie:"", sauvegardes:[], totalSauvegardes:0,
+                interne: DB && !DB.initial
+                  ? { nb:DB.enfants.length, modifieLe:DB.modifieLe || "" } : null };
+  if(!NATIF) return;
+  const c = await window.programme.mettreDeCote().catch(() => null);
+  if(c && c.ok) FS.verrou.copie = c.nom;
+  const s = await window.programme.sauvegardes().catch(() => null);
+  if(s && s.ok){ FS.verrou.sauvegardes = s.liste; FS.verrou.totalSauvegardes = s.total; }
+}
+
+/** Reprise choisie à l'écran : on lève le verrou, puis on enregistre. */
+async function reprendre(source, nom){
+  if(source === "sauvegarde"){
+    const r = await window.programme.lireSauvegarde(nom);
+    let d = null;
+    try{ d = r.ok ? JSON.parse(r.contenu) : null; }catch(e){}
+    if(!d || !Array.isArray(d.enfants)){
+      alert("Cette sauvegarde ne se lit pas non plus" + (r.erreur ? " (" + r.erreur + ")" : "") + ".");
+      return;
+    }
+    DB = normaliser(d);
+  }
+  FS.verrou = null; FS.erreur = "";
+  try{ localStorage.setItem(CLE, JSON.stringify(DB)); }catch(e){}
+  await fsEcrire();
+  remonterEnHaut = true;
   rendre();
 }
 function natifRetenir(r){
@@ -788,23 +852,19 @@ function natifRetenir(r){
   FS.nom     = nomDeChemin(FS.chemin);
   FS.dossier = FS.chemin;
 }
+/** Le programme principal demande, si le dossier choisi a déjà des données,
+    lesquelles garder ; ici on applique sa réponse. */
 async function natifChangerDossier(){
-  const r = await window.programme.changerDossier();
+  const r = await window.programme.changerDossier({ nb:DB.enfants.length, exemple:!!DB.initial });
+  if(!r.ok){ rendre(); return; }
   natifRetenir(r);
-  if(r.ok) await fsEcrire();   // on dépose les données dans le nouveau dossier
+  if(r.mode === "ouvrir") await natifCharger();   // les données de ce dossier
+  else{ FS.verrou = null; FS.erreur = ""; await fsEcrire(); }   // dossier vide, ou remplacement voulu
+  remonterEnHaut = true;
   rendre();
 }
 async function natifRelire(){
-  const r = await window.programme.lire();
-  if(r.ok && r.contenu){
-    try{
-      const d = JSON.parse(r.contenu);
-      if(d && Array.isArray(d.enfants)){
-        DB = normaliser(d);
-        try{ localStorage.setItem(CLE, JSON.stringify(DB)); }catch(e){}
-      }
-    }catch(e){ alert("Fichier illisible : " + e.message); }
-  }
+  await natifCharger();
   rendre();
 }
 
@@ -853,6 +913,7 @@ async function fsLire(){
   try{
     const d = JSON.parse(await (await fh.getFile()).text());
     if(!d || !Array.isArray(d.enfants)) throw new Error("contenu inattendu");
+    FS.verrou = null; FS.erreur = "";
     const localPlusRecent = DB && !DB.initial && DB.modifieLe &&
                             (!d.modifieLe || DB.modifieLe > d.modifieLe);
     if(localPlusRecent){
@@ -864,7 +925,11 @@ async function fsLire(){
     }
     return true;
   }catch(e){
-    FS.erreur = "Fichier illisible (" + e.message + ")";
+    // même règle qu'avec le programme installé : on n'écrit plus sur un
+    // fichier qu'on n'a pas su lire
+    await verrouiller("Le fichier est incomplet ou abîmé — le plus souvent, une copie ou une " +
+                      "synchronisation interrompue.", e.message);
+    rendre();
     return true;
   }
 }
@@ -876,7 +941,8 @@ function fsPlanifierEcriture(){
   minuteurEcriture = setTimeout(fsEcrire, 300);
 }
 async function fsEcrire(){
-  if(!FS.dossier) return;
+  // fichier illisible au chargement : rien n'est écrit avant la reprise
+  if(!FS.dossier || FS.verrou) return;
   if(FS.enCours){ FS.aRefaire = true; return; }
   FS.enCours = true;
   const contenu = JSON.stringify(DB, null, 2);
@@ -1080,36 +1146,50 @@ const baseRapport = e => estISO(e.rapportAnnuel) ? e.rapportAnnuel
 const rapportEnvoye = (e, type, echeance) =>
   (e.rapports||[]).some(r => r.type === type && r.echeance === echeance && estISO(r.envoyeLe));
 
+/** k-ième échéance d'un rapport, comptée depuis la date de base (k = 0 :
+    celle de l'année de la base, k = 1 : l'année suivante, k = -1 : la
+    précédente). Toujours depuis la base, jamais d'une échéance à la
+    suivante : en passant par un 28 février, on ne retrouvait plus le 29
+    des années bissextiles, et le calendrier ne tombait plus le même jour que
+    la liste « à rendre ». */
+const echeanceN = (base, type, k) => decalerMois(base, 12*k - (type === "annuel" ? 0 : 6));
+
 /** Toutes les échéances d'un rapport comprises dans une période. */
 function occurrencesRapport(e, type, debut, fin){
   const base = baseRapport(e);
   if(!base) return [];
-  let d = type === "annuel" ? base : decalerMois(base, -6);
-  let garde = 0;
-  while(d > debut && garde++ < 80) d = decalerAns(d, -1);
+  const an = s => parseISO(s).getFullYear();
   const l = [];
-  garde = 0;
-  while(d <= fin && garde++ < 40){
-    if(d >= debut) l.push(d);
-    d = decalerAns(d, 1);
+  // une année de marge de chaque côté : le semestriel tombe six mois plus tôt
+  for(let k = an(debut) - an(base) - 1; k <= an(fin) - an(base) + 1; k++){
+    const d = echeanceN(base, type, k);
+    if(d >= debut && d <= fin) l.push(d);
   }
   return l;
 }
 
 /** Échéance en cours : la première qui n'a pas été cochée comme envoyée.
-    Tant que rien n'a jamais été coché pour cet enfant, on ne remonte pas
-    au-delà de RATTRAPAGE_RAPPORT jours, pour ne pas réclamer d'anciens rapports. */
+
+    On ne réclame pas les rapports d'avant le suivi : ceux de plus de
+    RATTRAPAGE_RAPPORT jours, et ceux qui précèdent le premier rapport coché
+    de ce type. Avant, cocher un premier rapport levait cette marge d'un coup
+    et faisait remonter cinq ans d'anniversaires jamais cochés — avec une
+    date de rapport annuel fixée en 2019, cocher celui de 2027 réclamait
+    aussitôt celui de 2022, « en retard ». */
 function echeanceRapport(e, type){
   const base = baseRapport(e);
   if(!base) return null;
-  let d = type === "annuel" ? base : decalerMois(base, -6);
-  const suivi = (e.rapports||[]).some(r => r.type === type);
-  const limite = suivi ? decalerAns(aujourdHui(), -5)
-                       : decalerJours(aujourdHui(), -RATTRAPAGE_RAPPORT);
+  let k = 0, d = echeanceN(base, type, 0);
+  const coches = (e.rapports||[]).filter(r => r.type === type && estISO(r.echeance))
+                                 .map(r => r.echeance).sort();
+  const rattrapage = decalerJours(aujourdHui(), -RATTRAPAGE_RAPPORT);
+  let limite = coches.length && coches[0] < rattrapage ? coches[0] : rattrapage;
+  const auPlusTot = decalerAns(aujourdHui(), -5);
+  if(limite < auPlusTot) limite = auPlusTot;
   let garde = 0;
-  while(d < limite && garde++ < 80) d = decalerAns(d, 1);
+  while(d < limite && garde++ < 80) d = echeanceN(base, type, ++k);
   garde = 0;
-  while(rapportEnvoye(e, type, d) && garde++ < 40) d = decalerAns(d, 1);
+  while(rapportEnvoye(e, type, d) && garde++ < 40) d = echeanceN(base, type, ++k);
   return d;
 }
 /** Rapports en cours, non cochés, dont l'échéance tombe d'ici « jours ».
@@ -1207,7 +1287,6 @@ window.addEventListener("scroll", () => { positionPage = window.scrollY; }, { pa
 
 function rendre(){
   const positionAvant = positionPage;
-  const aFaire = tachesEnCours().filter(t => t.enRetard || t.pourAuj).length;
   const aReclamer = DB.enfants.filter(e => statutNotif(e).code === "rouge").length;
   const u = DB.parametres.utilisateur;
 
@@ -1220,7 +1299,7 @@ function rendre(){
 
   document.getElementById("nav").innerHTML = ONGLETS.map(o => {
     let p = "";
-    if(o.id === "enfants" && aReclamer) p = '<span class="compte">' + aReclamer + "</span>";
+    if(o.id === "enfants" && aReclamer && !FS.verrou) p = '<span class="compte">' + aReclamer + "</span>";
     return '<button data-onglet="' + o.id + '" class="' + (onglet === o.id ? "actif" : "") +
            '" title="' + ech(o.titre) + '">' + ic(o.icone) +
            '<span class="lib">' + ech(o.titre) + "</span>" + p + "</button>";
@@ -1234,10 +1313,18 @@ function rendre(){
     : o.titre;
   document.getElementById("sous-titre").textContent = o.sous;
   document.getElementById("date-jour").innerHTML = ic("visites", 16) + " " + ech(fmtLong(aujourdHui()));
+  if(FS.verrou){
+    document.getElementById("titre").textContent = "Reprise des données";
+    document.getElementById("sous-titre").textContent =
+      "Rien n'est enregistré tant que vous n'avez pas choisi quelles données reprendre.";
+  }
 
   const vues = { accueil:vueAccueil, enfants:vueEnfants,
                  rapports:vueRapports, visites:vueVisites };
-  document.getElementById("vue").innerHTML = (vues[onglet] || vueAccueil)();
+  // Fichier illisible : aucun écran habituel. Ils montreraient les exemples
+  // ou une copie ancienne comme si c'étaient les dossiers du jour.
+  document.getElementById("vue").innerHTML = FS.verrou ? vueReprise()
+                                                       : (vues[onglet] || vueAccueil)();
   document.getElementById("pied").innerHTML = ic("cadenas", 15) +
     " Données stockées localement — " + (FS.dossier
       ? "enregistrement automatique dans <b>" + ech(FS.nom) + "</b>"
@@ -1254,6 +1341,63 @@ function rendre(){
 /* =========================================================================
    7. VUE — Accueil
    ========================================================================= */
+
+/** Écran de reprise, à la place des écrans habituels quand le fichier de
+    données n'a pas pu être lu. Il dit ce qui s'est passé, que rien n'est
+    perdu, et propose les copies lisibles — la plus récente en premier choix. */
+function vueReprise(){
+  const v = FS.verrou;
+  const modif = iso => {
+    const d = iso ? new Date(iso) : null;
+    return d && !isNaN(d) ? ", modifiée le " +
+      d.toLocaleString("fr-BE", { dateStyle:"long", timeStyle:"short" }) : "";
+  };
+  const choix = [];
+  if(v.interne) choix.push({ quand:v.interne.modifieLe, html:
+    "<b>Copie gardée par le programme</b>" +
+    '<div class="pt doux">' + pluriel(v.interne.nb, "enfant") + ech(modif(v.interne.modifieLe)) +
+    " — l'état de votre dernière séance sur cet ordinateur</div>",
+    bouton:'data-action="reprise" data-source="interne">Reprendre' });
+  v.sauvegardes.forEach(s => choix.push({ quand:s.modifieLe || s.jour, html:
+    "<b>Sauvegarde du " + ech(fmtLong(s.jour).replace(/^./, c => c.toLowerCase())) + "</b>" +
+    '<div class="pt doux">' + pluriel(s.nb, "enfant") + ech(modif(s.modifieLe)) + "</div>",
+    bouton:'data-action="reprise" data-source="sauvegarde" data-nom="' + ech(s.nom) + '">Restaurer' }));
+  // le premier choix proposé : la copie la plus récente
+  const recente = choix.reduce((m, c) => !m || String(c.quand) > String(m.quand) ? c : m, null);
+
+  const lignes = choix.map(c =>
+    '<li><div class="extensible">' + c.html + "</div>" +
+    '<button class="b' + (c === recente ? " primaire" : "") + '" ' + c.bouton +
+    (c === recente ? " — la plus récente" : "") + "</button></li>").join("");
+  const autres = v.totalSauvegardes - v.sauvegardes.length;
+
+  return `<div class="carte reprise">
+    <div class="tete">${ic("cadenas", 20)}<h2>Le fichier de données n'a pas pu être lu</h2></div>
+    <p class="reprise-raison">${ech(v.raison)}</p>
+    <p class="pt doux reprise-detail">${ech(FS.fichier || "")}${v.detail
+      ? "<br>Détail technique : " + ech(v.detail) : ""}</p>
+    <div class="encadre ok">
+      <div class="titre">Rien n'est perdu, rien n'est écrasé.</div>
+      <span class="pt">Le programme n'enregistre plus rien tant que vous n'avez pas choisi
+      ci-dessous.${v.copie ? " Le fichier tel qu'il est a été copié à côté de lui, sous le nom <code>" +
+      ech(v.copie) + "</code> : il reste récupérable." : ""}</span>
+    </div>
+    ${choix.length ? `<h3 class="titre-suivi">Quelles données reprendre ?</h3>
+      <ul class="liste">${lignes}</ul>
+      ${autres > 0 ? '<p class="aide">' + pluriel(autres, "sauvegarde plus ancienne",
+        "sauvegardes plus anciennes") + " dans le sous-dossier <code>sauvegardes</code>.</p>" : ""}`
+    : `<div class="encadre souci"><div class="titre">Aucune copie lisible n'a été trouvée.</div>
+      <span class="pt">Ouvrez le dossier des données : le fichier abîmé et ses copies y sont.
+      Si le dossier se synchronise (OneDrive…), attendez la fin de la synchronisation,
+      puis relisez le fichier.</span></div>`}
+    <div class="barre haut-marge">
+      ${NATIF ? '<button class="b" data-action="fs-ouvrir">Ouvrir le dossier des données</button>' : ""}
+      <button class="b" data-action="reprise-relire">Relire le fichier</button>
+    </div>
+    <p class="aide">« Relire le fichier » sert quand la cause est passagère : une synchronisation
+      OneDrive en cours, une clé USB rebranchée, un fichier réparé à la main.</p>
+  </div>`;
+}
 
 function vueAccueil(){
   const auj      = aujourdHui();
@@ -1705,17 +1849,12 @@ function visitesDe(enf){
 function vueVisites(){
   const auj = aujourdHui();
   const q = etat.recherche.trim().toLowerCase();
-  const total = toutesRencontres();
 
   const droits = [];
   DB.enfants.slice().sort(parNom).forEach(e => (e.visites||[]).forEach(v => droits.push({ e, v })));
   const avecDroit = DB.enfants.slice().sort(parNom).filter(e => visitesDe(e).length);
 
   /* ------------------------------------------------------ 1. les compteurs */
-  const ceMois  = r => String(r.date || "").slice(0, 7) === auj.slice(0, 7);
-  // un mois : les rencontres sont le plus souvent mensuelles, une quinzaine
-  // afficherait zéro la moitié du temps.
-  const horizon = decalerJours(auj, 30);
   /* L'état de chaque dossier : c'est lui qui colore la liste et alimente
      les trois compteurs, qui servent aussi de filtres. */
   const etats = new Map(avecDroit.map(e => [e.id, derniereProgrammee(e)]));
@@ -2339,11 +2478,13 @@ function formRencontresMultiples(e, v){
     const combien = Number(val(form,"combien")) || 6;
     const tb = document.getElementById("corps-dates");
     while(tb.children.length < combien) tb.insertAdjacentHTML("beforeend", ligne(tb.children.length));
-    let d = depart;
+    // Chaque date est comptée depuis la première, pas depuis la précédente :
+    // une série mensuelle partie du 31 retombait au 28 après février, et y
+    // restait (31/01, 28/02, 28/03, 28/04…).
     for(let i = 0; i < combien; i++){
-      form.elements["dt"+i].value = d;
-      if(rythme === "mois")      d = decalerMois(d, 1);
-      else if(rythme !== "0")    d = decalerJours(d, Number(rythme));
+      form.elements["dt"+i].value =
+        rythme === "mois" ? decalerMois(depart, i) :
+        rythme === "0"    ? depart : decalerJours(depart, i * Number(rythme));
     }
   });
 }
@@ -2560,11 +2701,46 @@ function ouvrirModale(titre, corps, onValider, largeur, onAnnuler){
   const f = document.getElementById("form-modale");
   f.addEventListener("submit", ev => {
     ev.preventDefault();
+    if(!datesValides(f)) return;
     if(soumission && soumission(f) !== false){ annulation = null; fermerModale(); }
   });
   clavierLineaire(f);
+  datesSaines(f);
   const prem = f.querySelector("input,select,textarea");
   if(prem) prem.focus();
+}
+
+/** Année tapée sur deux chiffres. Dans un champ date, « 26 » donne l'année
+    0026 : la date s'affichait 15/10/0026, mais les calculs la lisaient comme
+    1926 — une notification « dépassée depuis 36 525 jours ». On complète en
+    2026 quand on quitte le champ, et pas pendant la frappe : le « 2 » de
+    « 2026 » vaut déjà 0002 à ce moment-là. */
+const anneeComplete = v => /^00\d{2}-\d{2}-\d{2}$/.test(v) ? "20" + v.slice(2) : v;
+function datesSaines(form){
+  // un message d'erreur posé à l'enregistrement s'efface dès qu'on corrige,
+  // sinon le navigateur bloquerait l'envoi suivant avant même de revérifier
+  form.addEventListener("input", ev => {
+    if(ev.target.type === "date") ev.target.setCustomValidity("");
+  });
+  form.addEventListener("focusout", ev => {
+    const c = ev.target;
+    if(c.type !== "date" || !c.value) return;
+    const v = anneeComplete(c.value);
+    if(v !== c.value) c.value = v;
+  });
+}
+/** Au moment d'enregistrer : une année hors de 1900–2099 ne peut être
+    qu'une faute de frappe (« 202 » pour 2026). On le dit sur le champ
+    plutôt que d'enregistrer une date absurde. */
+function datesValides(form){
+  for(const c of form.querySelectorAll('input[type="date"]')){
+    c.value = anneeComplete(c.value);
+    const a = c.value ? Number(c.value.slice(0, 4)) : 0;
+    c.setCustomValidity(c.value && (a < 1900 || a > 2099)
+      ? "L'année " + a + " semble être une faute de frappe : vérifiez la date." : "");
+    if(!c.checkValidity()){ c.focus(); c.reportValidity(); return false; }
+  }
+  return true;
 }
 
 /** Une tabulation = un champ.
@@ -2852,7 +3028,28 @@ document.getElementById("nav").addEventListener("click", ev => {
   if(b) allerA(b.dataset.onglet);
 });
 document.getElementById("bouton-reglages").addEventListener("click", formReglages);
-document.addEventListener("keydown", ev => { if(ev.key === "Escape") fermerModale(); });
+document.addEventListener("keydown", ev => {
+  if(ev.key !== "Escape") return;
+  // Un menu « ⋯ » ouvert se referme d'abord, et rend la main à son bouton.
+  // Un <details> ne le fait pas de lui-même.
+  const menu = document.querySelector("details.plus[open]");
+  if(menu && !document.querySelector("#zone-modale .voile")){
+    menu.open = false;
+    menu.querySelector("summary").focus();
+    return;
+  }
+  fermerModale();
+});
+/* Un seul menu « ⋯ » ouvert à la fois, et un clic ailleurs le referme.
+   « toggle » ne remonte pas : on l'écoute à la descente. */
+document.addEventListener("toggle", ev => {
+  const d = ev.target;
+  if(!d.matches || !d.matches("details.plus") || !d.open) return;
+  document.querySelectorAll("details.plus[open]").forEach(x => { if(x !== d) x.open = false; });
+}, true);
+document.addEventListener("click", ev => {
+  document.querySelectorAll("details.plus[open]").forEach(d => { if(!d.contains(ev.target)) d.open = false; });
+});
 document.getElementById("zone-modale").addEventListener("click", ev => {
   if(ev.target.dataset && ev.target.dataset.fermer) fermerModale();
 });
@@ -3061,6 +3258,10 @@ function actionner(b){
       (NATIF ? natifChangerDossier() : fsChoisir().then(rendre));
       break;
     case "fs-ouvrir":      window.programme.ouvrirDossier(); break;
+    /* --- reprise après un fichier illisible --- */
+    case "reprise":        reprendre(b.dataset.source, b.dataset.nom); break;
+    case "reprise-relire":
+      (NATIF ? natifRelire() : fsLire().then(rendre)); break;
     case "fs-reconnecter": fsReconnecter(false).then(rendre); break;
     case "fs-maintenant":
       fsEcrire().then(() => fsSauvegardeDuJour(JSON.stringify(DB,null,2), true)).then(rendre);

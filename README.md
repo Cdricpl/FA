@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.17.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.18.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -81,7 +81,8 @@ Puis **une ligne par enfant**, avec un trait de couleur à gauche qui reprend l'
   Le **⋯** à côté ouvre le reste — *Relance notée* (inscrit la date du jour),
   *+ Tâche de relance* (crée la tâche dans la to do de l'accueil), *Modifier la fiche*
   et *Supprimer*. Sur un dossier en ordre, le menu propose *↺ Pas arrivée*, pour
-  signaler que le papier n'est finalement pas venu.
+  signaler que le papier n'est finalement pas venu. Le menu se referme avec **Échap**
+  ou d'un clic ailleurs, et un seul reste ouvert à la fois.
 
 Toutes les lignes ont **la même hauteur**, quel que soit l'état du dossier : avant, une
 ligne à réclamer portait trois boutons et dépassait d'un tiers les lignes en ordre.
@@ -108,6 +109,10 @@ Chaque échéance porte une **case à cocher** : cochez-la quand le rapport est 
 se barre et l'échéance suivante se place un an plus tard. Un rapport dépassé et non coché
 s'affiche en rouge, et un bandeau **« Rapports en retard »** les rassemble en haut de l'écran.
 Boutons pour reculer ou avancer de douze mois.
+
+Le programme ne réclame pas les rapports d'avant votre suivi : ni ceux de plus de 60 jours
+au moment où vous commencez, ni ceux qui précèdent le premier rapport coché. Cocher un
+rapport ne fait donc jamais réapparaître d'anciennes échéances en retard.
 
 ### Droits de visite
 L'écran s'ouvre sur **quatre compteurs**, qui rangent chaque dossier selon la seule
@@ -160,12 +165,17 @@ dont les créneaux ne sont pas encore encodés ; cliquez sur un nom pour ouvrir 
 **Programmer plusieurs dates d'un coup** : le bouton *+ Plusieurs dates* ouvre un tableau de
 dates. Un remplissage rapide propose une série — toutes les semaines, toutes les deux
 semaines ou tous les mois — que vous corrigez ligne par ligne avant d'enregistrer. Les
-horaires sont repris du schéma de récurrence.
+horaires sont repris du schéma de récurrence. Une série mensuelle garde son jour : partie
+du 31 janvier, elle donne 28 février, 31 mars, 30 avril, 31 mai.
 
 **Tout se tape au clavier.** Dans les formulaires, **Tab passe au champ suivant** — un seul
 appui, même depuis une date ou une heure. **Maj+Tab** revient en arrière. **Entrée** avance
 elle aussi de champ en champ au lieu d'enregistrer au milieu de la saisie ; dans le bloc
 *Remplissage rapide*, elle remplit le tableau. L'enregistrement se fait avec le bouton.
+
+**Une année tapée sur deux chiffres est complétée** : « 15 10 26 » devient le 15/10/2026
+dès qu'on quitte le champ. Une année manifestement fausse (« 202 ») est signalée sur le
+champ au moment d'enregistrer, au lieu d'être enregistrée.
 
 **Rencontres sans encadrement** : cochez la case sur le droit de visite quand les rencontres
 se déroulent sans votre présence. Il n'y a alors rien à programmer : la fiche de l'enfant
@@ -215,8 +225,39 @@ Documents\Gestion des dossiers\
 
 **Rien à enregistrer à la main.** Le fichier est écrit d'abord en version temporaire
 puis renommé : une coupure de courant ne peut pas laisser un fichier à moitié écrit.
-Menu *Fichier → Changer de dossier de données* pour le déplacer, par exemple dans
-OneDrive afin d'avoir une copie hors du PC.
+
+### Changer de dossier, ou retrouver ses données sur un autre ordinateur
+
+Menu *Fichier → Changer de dossier de données*, par exemple pour le mettre dans OneDrive
+et avoir une copie hors du PC.
+
+**Si le dossier choisi contient déjà des données**, le programme ne les touche pas sans
+demander :
+
+| Ce qui est à l'écran | Ce qui se passe |
+|---|---|
+| les dossiers d'exemple, jamais modifiés (programme tout juste installé) | les données du dossier s'ouvrent directement |
+| vos propres dossiers | une question : **ouvrir** les données de ce dossier, les **remplacer** par celles à l'écran, ou **annuler**. Pour remplacer, une copie de l'ancien fichier est d'abord gardée à côté de lui (`donnees-dossiers.remplace-…json`) |
+
+Sur un **nouvel ordinateur**, il suffit donc d'installer le programme, puis de le pointer
+vers le dossier OneDrive : vos dossiers apparaissent.
+
+### Si le fichier de données ne se lit plus
+
+Une copie ou une synchronisation interrompue (OneDrive, clé USB retirée trop tôt) peut
+laisser le fichier incomplet. Le programme **n'écrit alors plus rien** et affiche, à la
+place des écrans habituels, une page **Reprise des données** :
+
+* le fichier abîmé est d'abord **copié à côté de lui**
+  (`donnees-dossiers.illisible-…json`) : il reste récupérable ;
+* la page propose les copies qui se lisent : la **copie gardée par le programme** (l'état
+  de votre dernière séance sur cet ordinateur) et les **sauvegardes quotidiennes**, avec
+  pour chacune le nombre d'enfants et la date de dernière modification. La plus récente
+  est en premier choix ;
+* **Relire le fichier** sert quand la cause est passagère : une synchronisation encore en
+  cours, une clé rebranchée.
+
+Rien n'est enregistré tant qu'aucun choix n'est fait.
 
 ---
 
