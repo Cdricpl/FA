@@ -6,222 +6,205 @@
 <title>Gestion des dossiers</title>
 <style>
 :root{
-  /* Fond chaud plutôt que gris bleuté : les fiches blanches ressortent, et
-     l'outil ressemble moins à un tableur. */
-  --fond:#f6f4f0; --carte:#ffffff; --texte:#16202b; --doux:#4a5a6b; --bord:#e4e0d9;
-  --accent:#2d5fa8; --accent-doux:#eef3fa;
-  --marine:#132235; --marine-clair:#1e3550; --marine-texte:#c9d8e8;
+  /* Les couleurs du logo du Service Familles d'Accueil. Le prune du sol et
+     du mot « Service » est la couleur d'action : boutons, liens, sélection,
+     titre de page. Le jaune et l'orange du toit et du soleil réchauffent le
+     fond et la barre latérale, sans jamais servir d'alerte. Le gris de
+     « Familles d'Accueil » est celui des textes secondaires. Le rouge,
+     l'orange et le vert restent réservés à l'état des dossiers : une couleur
+     de la marque ne doit pas pouvoir passer pour une alerte. */
+  --fond:#f8f5f1; --carte:#ffffff; --texte:#2b2a2c; --doux:#636366; --bord:#e6dfd6;
+  --accent:#9c1c5b; --accent-doux:#f7e8ef;
+  --cote:#fcf3e8; --cote-actif:#ffffff; --cote-bord:#eedcc5;
+  /* bord d'un champ de saisie : 3:1 au moins, sinon on ne voit pas où taper */
+  --bord-champ:#8f8a84; --bord-bouton:#d3cbc1;
   --vert:#1c7a4b; --vert-f:#e6f2eb;
-  /* Orange assombri et fond éclairci : sur l'ancien couple, l'étiquette
-     « Renouvellement proche » tombait à 4,0:1, sous le seuil AA. */
+  /* Orange assombri : sur l'ancien, « Renouvellement proche » tombait à
+     4,0:1, sous le seuil AA. */
   --orange:#a8590b; --orange-f:#fdf3e8;
   --rouge:#b3312c; --rouge-f:#fbeae9;
-  --gris:#4a5a6b; --gris-f:#f1efea;
+  --gris:#636366; --gris-f:#f2eee9;
   --violet:#6a4ba8; --violet-f:#efeaf8;
-  --maman:#9e315f; --maman-f:#faeaf0;
+  /* catégories d'intervenant : le rose de la porte pour Maman, distinct du
+     prune des boutons */
+  --papa:#2f6db5; --maman:#d2426f; --maman-f:#fbe9ef;
   /* Encre posée sur un aplat de couleur (bouton plein, étiquette active).
      En thème clair les aplats sont sombres, en thème sombre ils sont clairs :
      le blanc ne convient pas aux deux. */
   --sur-aplat:#ffffff;
-  --ombre:0 1px 2px rgba(22,32,43,.04),0 6px 16px rgba(22,32,43,.05);
-  --r:14px;
-  /* Un serif pour les titres. Police du système : le programme doit
-     s'ouvrir sans réseau. */
-  --titre:Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;
+  --r:6px;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --fond:#141a20; --carte:#1c232b; --texte:#eceef0; --doux:#a9b6c2; --bord:#2c3540;
-    --accent:#7fb0e6; --accent-doux:#20303f;
-    --marine:#0f1c2c; --marine-clair:#1e3550; --marine-texte:#c2d2e2;
+    --fond:#191718; --carte:#221f21; --texte:#edeaeb; --doux:#aba6a9; --bord:#38323a;
+    --accent:#e58ab4; --accent-doux:#3a2230;
+    --cote:#1e1a1c; --cote-actif:#2c272a; --cote-bord:#38323a;
+    --bord-champ:#776f75; --bord-bouton:#4a434a;
     --vert:#6ad39a; --vert-f:#172f22;
     --orange:#e8ac62; --orange-f:#33291a;
     --rouge:#ef8e87; --rouge-f:#341f1e;
-    --gris:#a9b6c2; --gris-f:#232b34;
+    --gris:#aba6a9; --gris-f:#2c272a;
     --violet:#b7a0e8; --violet-f:#272040;
-    --maman:#e893b4; --maman-f:#3a2029;
-    --sur-aplat:#101a24;
-    --ombre:none;
+    --papa:#86b3e8; --maman:#f08fb0; --maman-f:#3a2029;
+    --sur-aplat:#1a0f14;
   }
 }
 *{box-sizing:border-box}
-/* Chiffres de largeur fixe partout : les dates et les compteurs s'alignent
-   d'une ligne à l'autre sans qu'on ait à le demander colonne par colonne. */
-/* « font-variant-numeric » vient après le raccourci « font », qui le remet à zéro. */
+/* La police de Windows, celle de tous les autres programmes du poste.
+   Chiffres de largeur fixe : les dates s'alignent d'une ligne à l'autre.
+   (« font-variant-numeric » après le raccourci « font », qui le remet à zéro.) */
 body{margin:0;background:var(--fond);color:var(--texte);
-  font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font:14px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
   font-variant-numeric:tabular-nums}
-h1{font-family:var(--titre);font-size:31px;font-weight:400;margin:0;line-height:1.1;
-  letter-spacing:-.01em}
-h2{font-family:var(--titre);font-size:19px;font-weight:400;margin:0 0 14px;line-height:1.2}
-h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--doux);margin:0 0 8px}
+h1{font-size:21px;font-weight:600;margin:0;line-height:1.25;color:var(--accent)}
+h2{font-size:15px;font-weight:600;margin:0 0 12px;line-height:1.3}
+h3{font-size:13px;font-weight:600;color:var(--doux);margin:0 0 6px}
 svg{flex:none}
 
 /* ---------- Ossature ---------- */
 .appli{display:flex;min-height:100vh}
-.cote{width:236px;flex:none;background:var(--marine);color:var(--marine-texte);
-  display:flex;flex-direction:column;padding:20px 14px;position:sticky;top:0;height:100vh}
-.marque{display:flex;flex-direction:column;align-items:center;gap:7px;padding:6px 0 20px;text-align:center}
-.marque .rond-logo{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.12);
-  display:flex;align-items:center;justify-content:center;color:#fff}
-.marque .nom{font-weight:700;font-size:14px;letter-spacing:.04em;color:#fff}
-.marque .role{font-size:12px;color:var(--marine-texte);opacity:.8}
-.cote nav{display:flex;flex-direction:column;gap:3px}
-.cote nav button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;
-  background:none;border:0;color:var(--marine-texte);font:inherit;font-size:14px;
-  padding:10px 12px;border-radius:10px;cursor:pointer}
-.cote nav button:hover{background:rgba(255,255,255,.08);color:#fff}
-.cote nav button.actif{background:var(--marine-clair);color:#fff;font-weight:600}
-.cote nav .compte{margin-left:auto;background:var(--rouge);color:var(--sur-aplat);font-size:11px;font-weight:700;
-  min-width:19px;padding:0 5px;line-height:19px;text-align:center;border-radius:10px}
-.cote .bas{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
-.profil{display:flex;align-items:center;gap:10px;padding:8px 6px 0}
-.profil .qui{min-width:0}
-.profil .qui b{display:block;color:#fff;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.profil .qui span{font-size:11.5px;opacity:.75}
+/* Barre de navigation claire, comme le volet de l'Explorateur ou d'Outlook :
+   elle se fait oublier, l'œil va au contenu. */
+.cote{width:220px;flex:none;background:var(--cote);color:var(--texte);border-right:1px solid var(--cote-bord);
+  display:flex;flex-direction:column;padding:16px 10px;position:sticky;top:0;height:100vh}
+/* L'en-tête reprend le mot-symbole du logo : « Service » en prune, au-dessus
+   du nom, en gris. */
+.marque{padding:2px 10px 16px}
+.marque .service{display:block;font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.02em}
+.marque .nom{display:block;font-weight:600;font-size:14.5px;color:var(--texte);line-height:1.25}
+.marque .role{display:block;font-size:12px;color:var(--doux)}
+.cote nav{display:flex;flex-direction:column;gap:2px}
+.cote nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  background:none;border:1px solid transparent;color:var(--texte);font:inherit;font-size:14px;
+  padding:7px 10px;border-radius:var(--r);cursor:pointer}
+.cote nav button svg{color:var(--doux)}
+.cote nav button:hover{background:rgba(120,70,20,.06)}
+.cote nav button.actif{background:var(--cote-actif);border-color:var(--cote-bord);font-weight:600;color:var(--accent)}
+.cote nav button.actif svg{color:var(--accent)}
+.cote nav .compte{margin-left:auto;background:var(--rouge);color:var(--sur-aplat);font-size:11px;
+  font-weight:700;min-width:18px;padding:0 5px;line-height:18px;text-align:center;border-radius:9px}
+.cote .bas{margin-top:auto;padding-top:10px;border-top:1px solid var(--cote-bord)}
+.date-cote{display:block;padding:0 10px 8px;font-size:12px;color:var(--doux)}
 
 .principal{flex:1;min-width:0;display:flex;flex-direction:column}
-.entete{padding:24px 30px 4px;display:flex;justify-content:space-between;align-items:flex-start;
+.entete{padding:18px 28px 6px;display:flex;justify-content:space-between;align-items:center;
   gap:16px;flex-wrap:wrap}
-.entete p{margin:5px 0 0;color:var(--doux);font-size:14px}
+.entete p{margin:4px 0 0;color:var(--doux);font-size:13.5px}
+.entete p:empty{display:none}
 .entete-droite{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
-.date-jour{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--doux);white-space:nowrap}
-.stockage{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--doux);
-  padding:5px 11px;border:1px solid var(--bord);border-radius:20px;background:var(--carte)}
+.stockage{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--doux)}
 .stockage b{color:var(--texte);font-weight:600}
-main{padding:16px 30px 26px;flex:1}
-footer{padding:10px 30px 26px;font-size:12.5px;color:var(--doux);
-  display:flex;align-items:center;justify-content:center;gap:8px}
+main{padding:10px 28px 28px;flex:1}
 
 @media(max-width:900px){
   .appli{flex-direction:column}
   .cote{width:auto;height:auto;position:static;flex-direction:row;align-items:center;
-    gap:10px;padding:10px 12px;overflow-x:auto}
-  .marque{flex-direction:row;padding:0;gap:9px}
-  .marque .rond-logo{width:34px;height:34px}
-  .marque .role{display:none}
+    gap:10px;padding:8px 10px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bord)}
+  .marque{padding:0 6px}
+  .marque .role,.date-cote{display:none}
   .cote nav{flex-direction:row;gap:2px}
   .cote nav button span.lib{display:none}
   .cote .bas{margin:0 0 0 auto;padding:0;border:0}
-  .profil{display:none}
-  .entete,main,footer{padding-left:16px;padding-right:16px}
+  .entete,main{padding-left:16px;padding-right:16px}
 }
 
-/* ---------- Cartes ---------- */
-.carte{background:var(--carte);border:1px solid var(--bord);border-radius:var(--r);
-  box-shadow:var(--ombre);padding:18px}
-.carte + .carte{margin-top:16px}
-.carte .tete{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+/* ---------- Panneaux ---------- */
+.carte{background:var(--carte);border:1px solid var(--bord);border-radius:var(--r);padding:16px}
+.carte + .carte{margin-top:14px}
+/* dans une grille, c'est l'espacement de la grille qui compte : sans ceci,
+   le deuxième et le troisième panneau descendaient de 14 px */
+.grille > .carte + .carte{margin-top:0}
+.carte .tete{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .carte .tete h2{margin:0;flex:1}
-.grille{display:grid;gap:16px;align-items:start}
-/* Accueil : sur une fenêtre courte, c'est la liste d'une carte qui défile,
+.grille{display:grid;gap:14px;align-items:start}
+/* Accueil : sur une fenêtre courte, c'est la liste d'un panneau qui défile,
    pas la page — l'aperçu du jour reste entier sous les yeux. */
 @media(max-height:820px){
-  .grille.g3 > .carte > ul.liste{max-height:calc(100vh - 452px);overflow-y:auto}
+  .grille.g3 > .carte > ul.liste{max-height:calc(100vh - 330px);overflow-y:auto}
 }
 @media(min-width:1000px){
   .g2{grid-template-columns:1fr 1fr}
   .g3{grid-template-columns:1fr 1fr 1fr}
 }
 
-/* ---------- Tuiles d'accueil ---------- */
-.tuiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(206px,1fr));margin-bottom:16px}
-.tuile{display:flex;align-items:center;gap:12px;background:var(--carte);border:1px solid var(--bord);
-  border-radius:var(--r);box-shadow:var(--ombre);padding:12px 14px;cursor:pointer;
-  font:inherit;color:inherit;text-align:left;width:100%}
-.tuile:hover{border-color:var(--accent)}
-.tuile.actif{border-color:var(--accent);background:var(--accent-doux);box-shadow:none}
-/* Pastille teintée plutôt que rond plein : du blanc sur une couleur vive ne
-   tient pas le contraste, et la teinte claire laisse le nombre dominer. */
-.tuile .rond{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;
-  justify-content:center;flex:none}
-.tuile .rond.gris{background:var(--gris-f);color:var(--gris)}
-.tuile .rond.rouge{background:var(--rouge-f);color:var(--rouge)}
-.tuile .rond.bleu{background:var(--accent-doux);color:var(--accent)}
-.tuile .rond.vert{background:var(--vert-f);color:var(--vert)}
-.tuile .rond.orange{background:var(--orange-f);color:var(--orange)}
-.tuile .rond.violet{background:var(--violet-f);color:var(--violet)}
-.tuile .txt{flex:1;min-width:0}
-/* Le nombre en premier : c'est lui qu'on vient lire. */
-.tuile .n{display:block;font-size:24px;font-weight:700;line-height:1.1}
-.tuile .n.bleu{color:var(--accent)}  .tuile .n.vert{color:var(--vert)}
-.tuile .n.rouge{color:var(--rouge)}  .tuile .n.orange{color:var(--orange)}
-.tuile .n.violet{color:var(--violet)} .tuile .n.gris{color:var(--gris)}
-/* Une ligne chacun : un libellé un peu long passait sur trois lignes et
-   décalait les quatre tuiles les unes par rapport aux autres. Le texte entier
-   reste dans l'info-bulle. */
-.tuile .t{display:block;font-weight:600;font-size:13.5px;line-height:1.25;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tuile .s{display:block;font-size:12px;color:var(--doux);line-height:1.3;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tuile .rond{font-size:18px;font-weight:700;line-height:1}
-.tuile .fleche{color:var(--doux)}
+/* ---------- Barre de chiffres ----------
+   Une seule bande, des cases séparées par un filet : on y lit des nombres,
+   pas des cartes. Le chiffre ne prend de la couleur que s'il y a quelque
+   chose à faire (rouge, orange) ; sinon il reste à l'encre normale. La case
+   choisie comme filtre est soulignée, comme un onglet. */
+.tuiles{display:flex;flex-wrap:wrap;background:var(--carte);border:1px solid var(--bord);
+  border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+.tuile{flex:1 1 160px;display:flex;align-items:baseline;gap:8px;background:none;border:0;
+  border-left:1px solid var(--bord);padding:10px 14px;cursor:pointer;
+  font:inherit;color:inherit;text-align:left;min-width:0}
+.tuile:first-child{border-left:0}
+.tuile:hover{background:var(--fond)}
+.tuile.actif{background:var(--accent-doux);box-shadow:inset 0 -2px 0 var(--accent)}
+.tuile .n{font-size:20px;font-weight:600;line-height:1.2}
+.tuile .n.rouge{color:var(--rouge)} .tuile .n.orange{color:var(--orange)}
+.tuile .n.zero{color:var(--doux);font-weight:400}
+.tuile .t{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ---------- Listes ---------- */
 ul.liste{list-style:none;margin:0;padding:0}
-ul.liste li{padding:11px 0;border-top:1px solid var(--bord);display:flex;gap:11px;align-items:center}
-ul.liste li:first-child{border-top:0;padding-top:2px}
-ul.liste li:last-child{padding-bottom:2px}
-/* Deux tailles seulement : « ligne » dans un tableau ou une liste,
-   « carte » en tête d'une fiche. La couleur, elle, dépend du nom. */
-.avatar{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;
-  justify-content:center;font-weight:700;font-size:12px;color:#fff;flex:none;letter-spacing:.02em}
-.avatar.carte-av{width:40px;height:40px;font-size:14px}
-.ligne-nom{display:flex;align-items:center;gap:10px}
-input.coche{width:auto;margin-top:3px}
+ul.liste li{padding:8px 0;border-top:1px solid var(--bord);display:flex;gap:10px;align-items:center}
+ul.liste li:first-child{border-top:0;padding-top:0}
+ul.liste li:last-child{padding-bottom:0}
+input.coche{width:auto;margin:0}
 label.coche-ligne{display:flex;gap:9px;align-items:flex-start}
 label.coche-ligne>span{margin:0;font-size:14px;color:var(--texte)}
-input.coche-tache{width:auto}
+input.coche-tache{width:auto;margin:0}
 select.tri-court{width:auto;margin-left:5px}
-.aide.chapeau{margin:-6px 0 14px}
 .pousse{margin-left:auto}
 .lien{background:none;border:0;color:var(--accent);font:inherit;font-size:13.5px;cursor:pointer;
-  padding:12px 0 0;display:inline-block}
+  padding:10px 0 0;display:inline-block}
 .lien:hover{text-decoration:underline}
-.rien{color:var(--doux);font-size:13.5px;font-style:italic;padding:8px 0}
+.rien{color:var(--doux);font-size:13.5px;padding:6px 0;margin:0}
+.nom-enfant{font-weight:600}
 
-/* ---------- Tableaux ---------- */
+/* ---------- Tableaux ----------
+   En-têtes en casse normale : les capitales espacées sont une manie de
+   tableau de bord, et se lisent moins vite. */
 .tableau-enveloppe{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:14px}
-th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--doux);
-  padding:8px 10px;border-bottom:1px solid var(--bord);white-space:nowrap}
-td{padding:10px;border-bottom:1px solid var(--bord);vertical-align:middle}
-tbody tr:hover{background:var(--accent-doux)}
+th{text-align:left;font-size:12.5px;font-weight:600;color:var(--doux);
+  padding:7px 10px;border-bottom:1px solid var(--bord);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--bord);vertical-align:middle}
+tbody tr:hover{background:var(--fond)}
 tbody tr:last-child td{border-bottom:0}
-td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.vide{padding:30px 10px;text-align:center;color:var(--doux);font-style:italic}
+td.num,th.num{text-align:right;white-space:nowrap}
+.vide{padding:24px 10px;text-align:center;color:var(--doux)}
 
-/* ---------- Étiquettes ---------- */
-.et{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
-.et.vert{background:var(--vert-f);color:var(--vert)}
-.et.orange{background:var(--orange-f);color:var(--orange)}
-.et.rouge{background:var(--rouge-f);color:var(--rouge)}
-.et.gris{background:var(--gris-f);color:var(--gris)}
-.et.info{background:var(--accent-doux);color:var(--accent)}
-.puce{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+/* ---------- États ----------
+   Un mot en couleur, sans pastille de fond : la couleur suffit à attirer
+   l'œil sur ce qui presse, le mot dit de quoi il s'agit. */
+.et{display:inline;font-size:13px;font-weight:600;white-space:nowrap}
+.et.vert{color:var(--vert)} .et.orange{color:var(--orange)} .et.rouge{color:var(--rouge)}
+.et.gris,.et.info{color:var(--doux);font-weight:400}
+.puce{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
 .puce.vert{background:var(--vert)} .puce.orange{background:var(--orange)}
 .puce.rouge{background:var(--rouge)} .puce.gris{background:var(--gris)}
 .puce.info{background:var(--accent)}
-.puce.papa{background:var(--accent)} .puce.maman{background:var(--maman)}
+.puce.papa{background:var(--papa)} .puce.maman{background:var(--maman)}
 .puce.fratrie{background:var(--violet)} .puce.autre{background:var(--gris)}
 
 /* ---------- Boutons ---------- */
 button.b{display:inline-flex;align-items:center;gap:6px;background:var(--carte);color:var(--texte);
-  border:1px solid var(--bord);border-radius:9px;padding:7px 13px;font:inherit;font-size:13.5px;cursor:pointer}
-button.b:hover{background:var(--accent-doux);border-color:var(--accent)}
+  border:1px solid var(--bord-bouton);border-radius:var(--r);padding:6px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+button.b:hover{background:var(--fond)}
 button.b.primaire{background:var(--accent);border-color:var(--accent);color:var(--sur-aplat)}
-button.b.primaire:hover{filter:brightness(1.08)}
+button.b.primaire:hover{filter:brightness(1.1)}
 button.b.danger{color:var(--rouge)}
-button.b.danger:hover{background:var(--rouge-f);border-color:var(--rouge)}
-button.b.mini{padding:3px 9px;font-size:12.5px}
+button.b.danger:hover{background:var(--rouge-f)}
+button.b.mini{padding:3px 9px;font-size:13px}
 .actions{display:flex;gap:6px;flex-wrap:wrap}
 td .actions{flex-wrap:nowrap;justify-content:flex-end}
 td:last-child{white-space:nowrap}
-.barre{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.barre{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 
 /* ---------- Formulaires ---------- */
 input[type=text],input[type=date],input[type=time],input[type=number],input[type=search],select,textarea{
-  font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--bord);border-radius:9px;
+  font:inherit;font-size:14px;padding:6px 9px;border:1px solid var(--bord-champ);border-radius:var(--r);
   background:var(--carte);color:var(--texte);width:100%}
 textarea{resize:vertical}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
@@ -230,15 +213,15 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .ligne{display:grid;gap:12px}
 @media(min-width:560px){.ligne.c2{grid-template-columns:1fr 1fr}.ligne.c3{grid-template-columns:1fr 1fr 1fr}}
 .radios{display:flex;gap:8px;flex-wrap:wrap}
-.radios label{display:flex;align-items:center;gap:6px;border:1px solid var(--bord);border-radius:9px;
+.radios label{display:flex;align-items:center;gap:6px;border:1px solid var(--bord);border-radius:var(--r);
   padding:7px 12px;cursor:pointer;font-size:13.5px}
 .radios input{width:auto;margin:0}
 .aide{font-size:12.5px;color:var(--doux);margin:5px 0 0}
 
 /* ---------- Modale ---------- */
-.voile{position:fixed;inset:0;background:rgba(8,18,30,.55);display:flex;align-items:flex-start;
+.voile{position:fixed;inset:0;background:rgba(20,22,25,.45);display:flex;align-items:flex-start;
   justify-content:center;padding:26px 14px;overflow:auto;z-index:100}
-.modale{background:var(--carte);border-radius:var(--r);box-shadow:0 20px 55px rgba(0,0,0,.32);
+.modale{background:var(--carte);border-radius:var(--r);box-shadow:0 12px 32px rgba(0,0,0,.22);
   width:100%;max-width:620px;border:1px solid var(--bord)}
 .modale header{padding:18px 20px 0}
 .modale header h2{margin:0}
@@ -246,10 +229,16 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 .modale .pied{padding:14px 20px;border-top:1px solid var(--bord);display:flex;gap:8px;justify-content:flex-end}
 
 /* ---------- Notifications ---------- */
-.filtres{display:flex;gap:6px;flex-wrap:wrap}
-.filtres button{border:1px solid var(--bord);background:var(--carte);color:var(--doux);
-  border-radius:20px;padding:5px 14px;font:inherit;font-size:13px;cursor:pointer}
-.filtres button.actif{background:var(--accent);border-color:var(--accent);color:var(--sur-aplat);font-weight:600}
+/* Filtres : un sélecteur d'un seul tenant, comme dans les logiciels de
+   bureau, plutôt qu'une rangée de pastilles arrondies. */
+.filtres{display:inline-flex;flex-wrap:wrap;border:1px solid var(--bord-bouton);border-radius:var(--r);overflow:hidden}
+.filtres button{border:0;border-left:1px solid var(--bord);background:var(--carte);color:var(--texte);
+  padding:5px 12px;font:inherit;font-size:13px;cursor:pointer}
+.filtres button:first-child{border-left:0}
+.filtres button:hover{background:var(--fond)}
+.filtres button.actif{background:var(--accent-doux);color:var(--accent);font-weight:600}
+.filtres .n{color:var(--doux);margin-left:3px}
+.filtres button.actif .n{color:inherit}
 /* État de la notification, dans sa colonne du tableau des dossiers */
 .col-notif{min-width:212px}
 .notif-etat{display:flex;align-items:center;gap:7px;font-weight:600;font-size:13px}
@@ -262,8 +251,8 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 /* Toutes les lignes à la même hauteur, quel que soit l'état du dossier : sans
    ce calage, une ligne « à réclamer » portait trois boutons et mesurait 105 px
    quand une ligne « en ordre » en mesurait 75. L'œil n'avait aucun repère. */
-.tab-dossiers tbody tr{height:68px}
-.tab-dossiers tbody td{padding-top:8px;padding-bottom:8px}
+.tab-dossiers tbody tr{height:54px}
+.tab-dossiers tbody td{padding-top:6px;padding-bottom:6px}
 /* Largeurs posées à la main : sans elles, un détail de notification un peu
    long vole la place du nom, qui passe alors sur deux lignes et casse le
    rythme qu'on vient d'établir. */
@@ -278,171 +267,115 @@ label.champ>span{display:block;font-size:12.5px;color:var(--doux);margin-bottom:
 /* Deux lignes, jamais trois : au-delà, c'est l'info-bulle qui prend le relais. */
 .deux-lignes{display:block;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .deux-lignes + .deux-lignes{margin-top:2px}
-.tab-dossiers .col-enfant b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tab-dossiers .col-enfant .ligne-nom>span{min-width:0}
 
 /* Une seule action pleine par ligne ; le reste sous « ⋯ ». Un <details> plutôt
    qu'un menu maison : le clavier y arrive sans rien ajouter. Échap, le clic
    ailleurs et « un seul ouvert à la fois » sont gérés en JS, plus bas. */
 .plus{display:inline-block}
 .plus>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;
-  justify-content:center;min-width:32px;height:29px;border:1px solid var(--bord);
-  border-radius:9px;background:var(--carte);color:var(--doux);font-size:15px;line-height:1}
+  justify-content:center;min-width:30px;height:27px;border:1px solid var(--bord-bouton);
+  border-radius:var(--r);background:var(--carte);color:var(--texte);font-size:15px;line-height:1}
 .plus>summary::-webkit-details-marker{display:none}
 .plus>summary::marker{content:""}
-.plus>summary:hover{border-color:var(--accent);color:var(--accent)}
-.plus[open]>summary{border-color:var(--accent);color:var(--accent);background:var(--accent-doux)}
-.plus .menu{display:flex;flex-direction:column;gap:4px;margin-top:5px;padding:6px;
-  border:1px solid var(--bord);border-radius:11px;background:var(--fond)}
-.plus .menu button{justify-content:flex-start;width:100%;background:var(--carte)}
+.plus>summary:hover{background:var(--fond)}
+.plus[open]>summary{background:var(--accent-doux)}
+/* Le menu ouvert : une liste de commandes, comme un menu Windows, pas une
+   pile de boutons encadrés. */
+.plus .menu{display:flex;flex-direction:column;margin-top:4px;padding:3px;min-width:170px;
+  border:1px solid var(--bord-bouton);border-radius:var(--r);background:var(--carte);text-align:left}
+.plus .menu button.b{justify-content:flex-start;width:100%;border:0;background:none;
+  padding:5px 9px;border-radius:4px}
+.plus .menu button.b:hover{background:var(--fond)}
 
-/* La couleur de l'état se retrouve sur le bord gauche de la ligne */
-.tab-dossiers tr td:first-child{border-left:3px solid transparent}
-.tab-dossiers tr.ligne-vert   td:first-child{border-left-color:var(--vert)}
-.tab-dossiers tr.ligne-orange td:first-child{border-left-color:var(--orange)}
-.tab-dossiers tr.ligne-rouge  td:first-child{border-left-color:var(--rouge)}
-.tab-dossiers tr.ligne-gris   td:first-child{border-left-color:var(--gris)}
-.tab-dossiers td:first-child{padding-left:11px}
 
-/* ---------- Calendrier des rapports ---------- */
-/* Quatre mois par rangée sur un grand écran : douze cases souvent presque
-   vides tenaient sur trois rangées de trois, et l'année ne se lisait pas d'un
-   seul coup d'œil. */
-.mois-grille{display:grid;gap:12px;grid-template-columns:1fr;align-items:start}
-@media(min-width:720px){.mois-grille{grid-template-columns:1fr 1fr}}
-@media(min-width:1100px){.mois-grille{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:1280px){.mois-grille{grid-template-columns:repeat(4,1fr)}}
-.mois{border:1px solid var(--bord);border-radius:12px;background:var(--carte);overflow:hidden}
-.mois>.tete-mois{padding:8px 13px;background:var(--gris-f);font-weight:700;font-size:13.5px;
-  display:flex;justify-content:space-between;align-items:baseline}
-.mois>.tete-mois.courant{background:var(--accent-doux);color:var(--accent)}
-.mois .part{padding:7px 11px;border-top:1px solid var(--bord)}
-.mois .part .item{font-size:13px;padding:3px 0;display:flex;align-items:center;gap:6px;cursor:pointer}
-.mois .part .item input{width:auto;margin:0;flex:none}
-.mois .part .item.envoye{color:var(--doux);text-decoration:line-through}
-.mois .part .item.retard{color:var(--rouge);font-weight:600}
-.mois .rien-mois{padding:9px 11px;color:var(--doux);font-size:12.5px;font-style:italic}
-/* « A » ou « S » devant le nom, au lieu de répéter « Formalisations — rapport
-   annuel » en capitales dans chaque case du calendrier. La légende sous la
-   grille donne la clé une fois pour toutes. */
-.badge-r{flex:none;width:18px;height:18px;border-radius:6px;font-size:11px;font-weight:700;
-  display:inline-flex;align-items:center;justify-content:center;letter-spacing:0}
-.badge-r.a{background:var(--accent-doux);color:var(--accent)}
-.badge-r.s{background:var(--violet-f);color:var(--violet)}
-.item.envoye .badge-r{opacity:.55}
-.nom-rapport{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.date-rapport{flex:none;color:var(--doux);margin-left:auto}
-.item.retard .date-rapport{color:var(--rouge)}
+/* ---------- Rapports : l'année civile ----------
+   Deux tableaux côte à côte, janvier–juin et juillet–décembre, mois par mois.
+   Un rapport envoyé reste à sa place avec sa date d'envoi : on voit d'un
+   coup d'œil ce qui est fait dans l'année. */
+.annee{display:grid;gap:22px;grid-template-columns:1fr;align-items:start}
+@media(min-width:1100px){.annee{grid-template-columns:1fr 1fr}}
+.tab-annee{table-layout:fixed}
+.tab-annee th.case,.tab-annee td.case{width:30px;padding-right:0}
+.tab-annee th.num,.tab-annee td.num{width:58px}
+.tab-annee th:nth-child(4){width:90px}
+.tab-annee th:nth-child(5){width:118px}
+.tab-annee td{padding-top:5px;padding-bottom:5px}
+.tab-annee td input{margin:0;width:auto}
+.tab-annee .nom-rapport{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tab-annee tbody tr:last-child td{border-bottom:1px solid var(--bord)}
+.tab-annee tr.mois-tete th{padding:12px 10px 5px;font-size:13.5px;color:var(--texte);
+  border-bottom:1px solid var(--bord-champ)}
+.tab-annee tbody:first-of-type tr.mois-tete th{padding-top:6px}
+.tab-annee tr.mois-tete.courant th{color:var(--accent)}
+.tab-annee tr.mois-tete:hover{background:none}
+.tab-annee tr.mois-vide td{color:var(--doux);font-size:13px}
+.tab-annee tr.avant td{color:var(--doux)}
+.bilan{font-size:13.5px}
 
 /* ---------- Droits de visite ---------- */
-/* La liste des enfants à gauche, le dossier de celui qu'on a choisi à droite. */
+/* La liste des enfants à gauche, le dossier de celui qu'on a choisi à droite.
+   La liste reste en place quand on fait défiler le dossier : on ne la perd
+   plus de vue en descendant dans les rencontres. */
 @media(min-width:1050px){
-  .grille.dv{grid-template-columns:360px minmax(0,1fr);align-items:start}
+  .grille.dv{grid-template-columns:380px minmax(0,1fr);align-items:start}
+  .dv-liste{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto}
 }
-.liste-enfants{overflow-x:hidden;margin:0 -18px}
-/* Le suivi tient beaucoup de colonnes : cellules resserrées pour qu'il
-   entre dans le volet sans barre de défilement horizontale. */
-.tab-suivi td,.tab-suivi th{padding:9px 7px}
-.tab-suivi .bascule button{padding:5px 8px;font-size:12px}
-/* le « à compléter » sous la date ne doit pas être plus large que la date */
-.tab-suivi .et{font-size:11px;padding:1px 6px}
-.tab-enfants{font-size:13px;table-layout:fixed;width:100%}
-.tab-enfants th:nth-child(1){width:48%}
-.tab-enfants th:nth-child(2){width:22%}
-.tab-enfants th:nth-child(3){width:30%}
-.tab-enfants th{white-space:nowrap}
-.tab-enfants .ligne-nom>span{min-width:0;overflow:hidden}
-/* Même hauteur pour chaque dossier, qu'il porte une fréquence d'un mot ou
-   de quatre : la liste se parcourt à l'œil, pas ligne à ligne. */
-.tab-enfants tbody tr{height:54px}
-.tab-enfants .freq{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tab-enfants td{padding:7px 6px}
-.tab-enfants td:first-child,.tab-enfants th:first-child{padding-left:18px}
-.tab-enfants td:last-child,.tab-enfants th:last-child{padding-right:18px}
-.tab-enfants th{padding:8px 6px;font-size:10.5px}
-.tab-enfants .ligne-nom{gap:8px}
+.dv-liste{padding:0}
+.tab-enfants{table-layout:fixed;width:100%}
+.tab-enfants th:nth-child(1){width:57%}
+.tab-enfants td.num{font-size:13px}
+.tab-enfants th{position:sticky;top:0;background:var(--carte);z-index:1}
+.tab-enfants tbody tr{height:50px}
+.tab-enfants td{padding:5px 10px}
+.tab-enfants th{padding:8px 10px}
 .tab-enfants tr.le{cursor:pointer}
-/* Le trait de couleur à gauche donne l'état du dossier avant même de lire. */
-.tab-enfants tr.le td:first-child{border-left:3px solid transparent}
-.tab-enfants tr.le.vert   td:first-child{border-left-color:var(--vert)}
-.tab-enfants tr.le.orange td:first-child{border-left-color:var(--orange)}
-.tab-enfants tr.le.rouge  td:first-child{border-left-color:var(--rouge)}
-.tab-enfants tr.le.actif{background:var(--accent-doux)}
-.tab-enfants tr.le.actif td{font-weight:500}
-.le-nom{display:block;font-weight:700;font-size:12.5px;line-height:1.2;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.le-prenom{display:block;font-size:12px;color:var(--doux);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.le-date{display:block;font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
-.le-date.vert{color:var(--vert)} .le-date.orange{color:var(--orange)}
-.le-date.rouge{color:var(--rouge)}
-.le-sous{display:block;font-size:11.5px;color:var(--doux)}
-.le-sous.orange{color:var(--orange)} .le-sous.rouge{color:var(--rouge)}
-.le-marque{font-weight:700}
-.le-marque.vert{color:var(--vert)} .le-marque.orange{color:var(--orange)}
-.le-marque.rouge{color:var(--rouge)}
-.lien-nom{background:none;border:0;padding:0;font:inherit;font-size:12.5px;color:var(--accent);
-  cursor:pointer;text-decoration:underline}
-
-/* Le bandeau de faits : ce qu'on veut savoir sans avoir à chercher. */
-.faits{display:flex;flex-wrap:wrap;border-top:1px solid var(--bord);
-  border-bottom:1px solid var(--bord);margin-bottom:4px}
-.fait{flex:1 1 118px;padding:11px 14px;border-left:1px solid var(--bord)}
-.fait:first-child{border-left:0;padding-left:0}
-.fait .l{display:block;font-size:11.5px;color:var(--doux);margin-bottom:3px}
-.fait .v{display:block;font-size:14.5px;font-weight:600}
-.fait .v.vert{color:var(--vert)} .fait .v.orange{color:var(--orange)}
-.fait .v.rouge{color:var(--rouge)}
-.fait .v .s{display:block;font-size:11.5px;font-weight:400;color:var(--doux)}
+.tab-enfants tr.le.actif,.tab-enfants tr.le.actif:hover{background:var(--accent-doux)}
+.tab-enfants tr.le.actif .nom-enfant{color:var(--accent)}
+.tab-enfants tr.le:focus{outline:2px solid var(--accent);outline-offset:-2px}
+.lien-nom{background:none;border:0;padding:0;font:inherit;color:var(--accent);
+  cursor:pointer;text-align:left}
+.lien-nom:hover{text-decoration:underline}
 
 .dv-tete{flex-wrap:wrap}
 /* plus spécifique que « .carte .tete h2 », sinon le titre s'étire
    et pousse les boutons à la ligne */
-.carte .tete.dv-tete h2{flex:0 1 auto;white-space:nowrap}
-.dv-droit{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--bord);
-  font-size:13px}
-.dv-droit:last-of-type{padding-bottom:14px}
-.rond-parent{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;
-  justify-content:center;flex:none;background:var(--gris-f);color:var(--doux)}
-.rond-parent.papa{background:var(--accent-doux);color:var(--accent)}
-.rond-parent.maman{background:var(--maman-f);color:var(--maman)}
-.rond-parent.fratrie{background:var(--violet-f);color:var(--violet)}
+.carte .tete.dv-tete h2{flex:0 1 auto;white-space:nowrap;font-size:17px}
 
-/* Titre de section dans une carte : lisible, pas la petite capitale des h3 */
-h3.titre-suivi{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700;
-  text-transform:none;letter-spacing:0;color:var(--texte);
-  margin:16px 0 12px;padding-top:14px;border-top:1px solid var(--bord)}
-/* Une rencontre à venir se distingue de l'historique par un fond léger. */
-.tab-suivi tr.a-venir{background:var(--accent-doux)}
-.tab-suivi tr.a-venir:hover{background:var(--accent-doux)}
+/* Le bandeau de faits : ce qu'on veut savoir sans avoir à chercher. */
+.faits{display:flex;flex-wrap:wrap;border:1px solid var(--bord);border-radius:var(--r);margin:0 0 4px}
+.fait{flex:1 1 120px;padding:8px 12px;border-left:1px solid var(--bord)}
+.fait:first-child{border-left:0}
+.fait .l{display:block;font-size:12px;color:var(--doux)}
+.fait .v{display:block;font-size:14px;font-weight:600}
+.fait .s{display:block;font-size:12px;color:var(--doux)}
 
+/* Titres de section dans le dossier : simples, alignés à gauche. */
+h3.titre-section{font-size:14px;color:var(--texte);margin:18px 0 6px}
+.tete-section{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 8px}
+.tete-section h3.titre-section{margin:0}
+.tab-droits td{padding:6px 10px 6px 0;font-size:13.5px}
+.tab-droits tbody tr:last-child td{border-bottom:1px solid var(--bord)}
+.tab-droits tbody tr:hover{background:none}
 
-.schema{display:grid;gap:10px;grid-template-columns:1fr}
+/* Les rencontres : resserrées pour que tout entre sans barre horizontale. */
+.tab-suivi td,.tab-suivi th{padding:7px 7px}
+/* Le repère du jour sépare ce qui est à venir de ce qui est passé. */
+.tab-suivi tr.repere-jour td{padding:5px 7px;font-size:12.5px;font-weight:600;color:var(--accent);
+  border-top:2px solid var(--accent);border-bottom:1px solid var(--bord);background:var(--accent-doux)}
+.tab-suivi tr.repere-jour:hover{background:none}
+.tab-suivi tr.a-venir td{color:var(--doux)}
+
+/* ---------- Schéma de récurrence ---------- */
+.schema{display:grid;gap:12px;grid-template-columns:1fr}
 @media(min-width:620px){.schema{grid-template-columns:1fr 1fr}}
 @media(min-width:1000px){.schema{grid-template-columns:repeat(5,1fr)}}
+.sem{border:1px solid var(--bord);border-radius:var(--r);padding:10px 12px}
+.sem h3{font-size:14px;color:var(--texte);margin:0 0 6px;padding-bottom:6px;border-bottom:1px solid var(--bord)}
 .sem.hors{background:var(--fond)}
-.sem.hors .sem-tete{background:var(--gris);color:var(--sur-aplat)}
-.hs-noms{font-size:12.5px;line-height:1.7}
-/* la virgule reste collée au nom qui la précède, jamais en début de ligne */
-.hs-item{white-space:nowrap}
-.hs-item:not(:last-child)::after{content:","}
-.hs-aide{font-size:11.5px;color:var(--doux);margin-top:7px;line-height:1.4}
-.sem{border:1px solid var(--bord);border-radius:12px;overflow:hidden;background:var(--carte)}
-.sem-tete{background:var(--marine);color:#fff;font-weight:600;font-size:13.5px;padding:9px 12px;text-align:center}
-.sem-corps{padding:10px;display:flex;flex-direction:column;gap:9px;min-height:70px}
-.sem-vide{color:var(--doux);font-size:12.5px;text-align:center;padding:12px 0}
-.creneau{border-radius:10px;padding:10px 11px;border:1px solid transparent}
-/* La bordure reprend la couleur de la catégorie, en transparence : une seule
-   règle sert les deux thèmes, plus besoin de reprise en sombre. */
-.creneau.papa{background:var(--accent-doux);border-color:color-mix(in srgb,var(--accent) 34%,transparent)}
-.creneau.maman{background:var(--maman-f);border-color:color-mix(in srgb,var(--maman) 34%,transparent)}
-.creneau.fratrie{background:var(--violet-f);border-color:color-mix(in srgb,var(--violet) 34%,transparent)}
-.creneau.autre{background:var(--gris-f);border-color:var(--bord)}
-.creneau.barre{opacity:.72}
-.cr-haut{display:flex;align-items:center;gap:7px}
-.cr-nom{font-weight:700;font-size:13.5px}
-.cr-h{font-size:13px;font-variant-numeric:tabular-nums;margin:3px 0 1px}
-.cr-bas{font-size:12px;color:var(--doux);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+ul.sch{list-style:none;margin:0;padding:0}
+ul.sch li{padding:6px 0;border-top:1px solid var(--bord);display:flex;flex-direction:column;gap:1px}
+ul.sch li:first-child{border-top:0}
+.sch-h{font-size:13px;font-weight:600}
 
 .choix-rapides{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
 .choix-rapides button{border:1px solid var(--bord);background:var(--carte);color:var(--doux);
@@ -452,20 +385,17 @@ h3.titre-suivi{display:flex;align-items:center;gap:8px;font-size:14.5px;font-wei
   max-height:170px;overflow:auto;border:1px solid var(--bord);border-radius:9px;padding:9px}
 .cases label{display:flex;gap:7px;align-items:center;font-size:13.5px}
 .cases input{width:auto;margin:0}
-.ce-libre{display:inline-block;font-size:11.5px;color:var(--vert);font-weight:600}
-.ce-groupe{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--accent)}
-.cr-prenom{font-size:12px;color:var(--doux);margin-top:1px}
 
-.bascule{display:inline-flex;border:1px solid var(--bord);border-radius:8px;overflow:hidden}
-.bascule button{border:0;background:var(--carte);color:var(--doux);font:inherit;font-size:12.5px;
-  padding:5px 10px;cursor:pointer;white-space:nowrap}
-.bascule button + button{border-left:1px solid var(--bord)}
+.bascule{display:inline-flex;border:1px solid var(--bord-bouton);border-radius:var(--r);overflow:hidden}
+.bascule button{border:0;background:var(--carte);color:var(--texte);font:inherit;font-size:13px;
+  padding:3px 9px;cursor:pointer;white-space:nowrap}
+.bascule button + button{border-left:1px solid var(--bord-bouton)}
 .bascule .oui:hover{background:var(--vert-f);color:var(--vert)}
 .bascule .non:hover{background:var(--rouge-f);color:var(--rouge)}
-.bascule .oui.actif{background:var(--vert);color:var(--sur-aplat);font-weight:700}
-.bascule .non.actif{background:var(--rouge);color:var(--sur-aplat);font-weight:700}
-.note-vive{font-size:13px;padding:7px 9px;border:1px solid transparent;border-radius:8px;
-  min-height:38px;white-space:pre-wrap;cursor:text;line-height:1.45}
+.bascule .oui.actif{background:var(--vert);color:var(--sur-aplat);font-weight:600}
+.bascule .non.actif{background:var(--rouge);color:var(--sur-aplat);font-weight:600}
+.note-vive{font-size:13px;padding:7px 9px;border:1px solid transparent;border-radius:var(--r);
+  min-height:34px;white-space:pre-wrap;cursor:text;line-height:1.45}
 /* Une note de synthèse peut faire une page : au repos, on n'en montre que
    le début, sinon une seule ligne du tableau occupe tout l'écran. Le texte
    entier reste lisible dans la zone de saisie, qui défile. */
@@ -486,16 +416,12 @@ textarea.note-vive{border-color:var(--bord);background:var(--carte);width:100%;
 /* ---------- Divers ---------- */
 .doux{color:var(--doux)} .pt{font-size:12.5px} .nowrap{white-space:nowrap}
 .tache-faite{text-decoration:line-through;color:var(--doux)}
-.encadre{border:1px solid var(--bord);border-radius:12px;padding:12px 14px;background:var(--fond);margin-bottom:12px}
+.encadre{border:1px solid var(--bord);border-radius:var(--r);padding:10px 12px;background:var(--fond);margin-bottom:12px}
 .encadre.ok{border-color:var(--vert);background:var(--vert-f)}
 .encadre.attention{border-color:var(--orange);background:var(--orange-f)}
 .encadre.souci{border-color:var(--rouge);background:var(--rouge-f)}
 .encadre .titre{font-weight:600;margin-bottom:3px}
 code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px}
-.legende{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:12.5px;
-  color:var(--doux);margin-top:12px}
-.legende>span{display:inline-flex;align-items:center}
-.legende .badge-r{margin-right:5px}
 
 /* ---------- Reprise d'un fichier illisible ---------- */
 .reprise{max-width:860px}
@@ -513,20 +439,18 @@ code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px
 .droite{text-align:right}
 .col-note{min-width:135px;width:99%}
 .extensible{flex:1;min-width:0}
-.pleine{width:100%;justify-content:center}
 .haut-marge{margin-top:16px}
-.bas-marge{margin-bottom:16px}
 
 @media print{
   .cote,.barre,footer,.actions,button,.filtres,.entete-droite,.plus{display:none !important}
   body{background:#fff}
   .appli{display:block}
   main,.entete{padding:0}
-  .carte,.fiche,.mois,.sem,.dv-droit{break-inside:avoid;box-shadow:none;border-color:#bbb}
-  .et{border:1px solid #999}
-  /* Les compteurs résument la page : ils restent, sans leur chevron. */
-  .tuile{display:flex !important;box-shadow:none;border-color:#bbb}
-  .tuile .fleche{display:none !important}
+  .carte,.sem,.tab-annee tbody{break-inside:avoid;border-color:#bbb}
+  /* Les compteurs résument la page : ils restent. */
+  .tuile{display:flex !important}
+  /* la liste des enfants n'est plus une colonne qui défile : tout s'imprime */
+  .dv-liste{position:static !important;max-height:none !important;overflow:visible !important}
   /* Présence et onglet actif sont portés par des boutons : sans ces règles,
      la feuille imprimée perdrait la colonne « le parent ». */
   /* Sur papier, la note doit être entière : on lève la coupure à trois lignes. */
@@ -543,14 +467,14 @@ code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px
 <div class="appli">
   <aside class="cote">
     <div class="marque">
-      <span class="rond-logo" id="logo"></span>
-      <span class="nom">GESTION DOSSIERS</span>
+      <span class="service">Service Familles d'Accueil</span>
+      <span class="nom">Gestion des dossiers</span>
       <span class="role" id="role-marque">Intervenant SAAF</span>
     </div>
     <nav id="nav"></nav>
     <div class="bas">
+      <span class="date-cote" id="date-jour"></span>
       <nav><button id="bouton-reglages"></button></nav>
-      <div class="profil" id="profil"></div>
     </div>
   </aside>
 
@@ -562,11 +486,9 @@ code{background:var(--gris-f);padding:1px 5px;border-radius:4px;font-size:12.5px
       </div>
       <div class="entete-droite">
         <div class="stockage" id="etat-stockage"></div>
-        <div class="date-jour" id="date-jour"></div>
       </div>
     </div>
     <main id="vue"></main>
-    <footer id="pied"></footer>
   </div>
 </div>
 
@@ -638,7 +560,7 @@ let DB = null;
 let onglet = "accueil";
 let etat = { recherche:"", tri:"nom", tachesFaites:false, anneeRapports:0,
              filtreNotif:"tout", filtreVisite:"tout", ouvertes:{},
-             enfantVisite:"", filtreDossier:"tout", tachesToutes:false };
+             enfantVisite:"", filtreDossier:"tout", tachesToutes:false, vueDV:"enfant" };
 
 function baseVide(){
   return {
@@ -1050,37 +972,29 @@ function ic(nom, taille){
     (TRACES[nom] || "") + "</svg>";
 }
 
-/** Tuile de comptage — la même sur tous les écrans : le nombre d'abord,
-    parce que c'est lui qu'on vient lire, puis ce qu'il compte.
-    Le chevron n'apparaît que si la tuile mène quelque part. */
+/** Une case de la barre de chiffres — la même sur tous les écrans : le
+    nombre, puis ce qu'il compte. La couleur ne vient que si le nombre
+    signale quelque chose à faire (o.alerte : "rouge" ou "orange") ; un zéro
+    reste discret. La phrase d'explication passe dans l'info-bulle. */
 function tuileCompte(o){
   const attr = o.onglet ? ' data-onglet="' + o.onglet + '"'
                         : ' data-action="' + o.action + '" data-f="' + o.f + '"';
-  const titre = o.titre + (o.sous ? " — " + o.sous : "");
-  return '<button class="tuile' + (o.actif ? " actif" : "") + '" title="' + ech(titre) +
-    '"' + attr + ">" +
-    '<span class="rond ' + o.couleur + '">' + (o.marque || ic(o.icone, 21)) + "</span>" +
-    '<span class="txt">' +
-      '<span class="n ' + o.couleur + '">' + o.n + "</span>" +
-      '<span class="t">' + ech(o.titre) + "</span>" +
-      '<span class="s">' + ech(o.sous || "") + "</span>" +
-    "</span>" +
-    '<span class="fleche">' + ic("fleche", 17) + "</span></button>";
+  const couleur = !o.n ? " zero" : (o.alerte ? " " + o.alerte : "");
+  return '<button class="tuile' + (o.actif ? " actif" : "") + '" title="' +
+    ech(o.titre + (o.sous ? " — " + o.sous : "")) + '"' + attr + ">" +
+    '<span class="n' + couleur + '">' + o.n + "</span>" +
+    '<span class="t">' + ech(o.titre) + "</span></button>";
 }
 
-/* Huit fonds pour les initiales, tous assez sombres pour porter du blanc
-   (4,5:1 au minimum) et accordés à la charte. */
-const COULEURS = ["#2d5fa8","#1c7a4b","#a8590b","#6a4ba8","#0f6c7a","#9e315f","#3f5670","#7d6010"];
-/** format : "ligne" (défaut, dans un tableau ou une liste) ou "carte" (en tête de fiche). */
-function avatar(e, format){
-  const p = (e.prenom || "").trim(), n = (e.nom || "").trim();
-  const ini = ((n[0] || "") + (p[0] || n[1] || "")).toUpperCase() || "?";
-  const cle = nomComplet(e) || "?";
-  let h = 0;
-  for(let i = 0; i < cle.length; i++) h = (h * 31 + cle.charCodeAt(i)) >>> 0;
-  return '<span class="avatar' + (format === "carte" ? " carte-av" : "") +
-    '" style="background:' + COULEURS[h % COULEURS.length] + '">' + ech(ini) + "</span>";
+/** Sélecteur d'un seul tenant : « Tous 22 | En ordre 14 | À réclamer 7 ».
+    Il se pose juste au-dessus de ce qu'il filtre. items : [code, libellé, nombre]. */
+function selecteur(action, actuel, items){
+  return '<div class="filtres" role="group">' + items.map(([f, lib, n]) =>
+    '<button data-action="' + action + '" data-f="' + f + '" class="' + (actuel === f ? "actif" : "") +
+    '"' + (actuel === f ? ' aria-pressed="true"' : ' aria-pressed="false"') + ">" + ech(lib) +
+    (n == null ? "" : '<span class="n">' + n + "</span>") + "</button>").join("") + "</div>";
 }
+
 
 function age(naissance){
   if(!estISO(naissance)) return null;
@@ -1168,6 +1082,20 @@ function occurrencesRapport(e, type, debut, fin){
   return l;
 }
 
+/** Date à partir de laquelle un rapport non coché est réclamé : la plus
+    ancienne entre « il y a RATTRAPAGE_RAPPORT jours » et le premier rapport
+    coché de ce type, sans remonter au-delà de cinq ans. Avant, c'est
+    l'époque d'avant le programme : rien n'est réclamé. Partagée par la liste
+    « à rendre » et le calendrier, qui disent ainsi la même chose. */
+function debutSuivi(e, type){
+  const coches = (e.rapports||[]).filter(r => r.type === type && estISO(r.echeance))
+                                 .map(r => r.echeance).sort();
+  const rattrapage = decalerJours(aujourdHui(), -RATTRAPAGE_RAPPORT);
+  let limite = coches.length && coches[0] < rattrapage ? coches[0] : rattrapage;
+  const auPlusTot = decalerAns(aujourdHui(), -5);
+  return limite < auPlusTot ? auPlusTot : limite;
+}
+
 /** Échéance en cours : la première qui n'a pas été cochée comme envoyée.
 
     On ne réclame pas les rapports d'avant le suivi : ceux de plus de
@@ -1180,12 +1108,7 @@ function echeanceRapport(e, type){
   const base = baseRapport(e);
   if(!base) return null;
   let k = 0, d = echeanceN(base, type, 0);
-  const coches = (e.rapports||[]).filter(r => r.type === type && estISO(r.echeance))
-                                 .map(r => r.echeance).sort();
-  const rattrapage = decalerJours(aujourdHui(), -RATTRAPAGE_RAPPORT);
-  let limite = coches.length && coches[0] < rattrapage ? coches[0] : rattrapage;
-  const auPlusTot = decalerAns(aujourdHui(), -5);
-  if(limite < auPlusTot) limite = auPlusTot;
+  const limite = debutSuivi(e, type);
   let garde = 0;
   while(d < limite && garde++ < 80) d = echeanceN(base, type, ++k);
   garde = 0;
@@ -1216,7 +1139,7 @@ function ligneRapport(o){
            data-type="${o.type}" data-date="${o.date}" class="coche"
            aria-label="Marquer le rapport comme envoyé">
     <div class="extensible">
-      <b>${ech(nomComplet(o.enfant))}</b>
+      <span class="nom-enfant">${ech(nomComplet(o.enfant))}</span>
       <span class="doux pt">${o.enfant.service ? " · " + ech(o.enfant.service) : ""}</span><br>
       <span class="pt doux">${ech(nomRapport(o.type))} — à rendre pour le ${ech(fmtFR(o.date))}</span>
     </div>
@@ -1266,17 +1189,12 @@ function tachesEnCours(){
    ========================================================================= */
 
 const ONGLETS = [
-  { id:"accueil",  titre:"Accueil",   icone:"accueil",
-    sous:"Voici un aperçu de vos dossiers et tâches du jour." },
-  { id:"enfants",  titre:"Enfants",   icone:"enfants",
-    sous:"Les fiches, les notifications de prise en charge et les dates de rapport." },
-  { id:"rapports", titre:"Rapports",  icone:"rapports",
-    sous:"Les échéances, mois par mois." },
-  { id:"visites",  titre:"Droits de visite", icone:"visites",
-    sous:"Fréquence par parent et journal des rencontres." }
+  { id:"accueil",  titre:"Accueil",          icone:"accueil"  },
+  { id:"enfants",  titre:"Enfants",          icone:"enfants"  },
+  { id:"rapports", titre:"Rapports",         icone:"rapports" },
+  { id:"visites",  titre:"Droits de visite", icone:"visites"  }
 ];
 
-const prenomUtilisateur = () => (DB.parametres.utilisateur.nom || "").trim().split(" ")[0] || "";
 
 let remonterEnHaut = false;   // vrai uniquement quand on change d'écran
 
@@ -1290,12 +1208,7 @@ function rendre(){
   const aReclamer = DB.enfants.filter(e => statutNotif(e).code === "rouge").length;
   const u = DB.parametres.utilisateur;
 
-  document.getElementById("logo").innerHTML = ic("enfants", 24);
   document.getElementById("role-marque").textContent = u.fonction || "";
-  document.getElementById("profil").innerHTML =
-    '<span class="avatar" style="background:var(--marine-clair);width:34px;height:34px">' +
-    ic("personne", 17) + '</span><span class="qui"><b>' + ech(u.nom || "—") +
-    "</b><span>" + ech(u.fonction || "") + "</span></span>";
 
   document.getElementById("nav").innerHTML = ONGLETS.map(o => {
     let p = "";
@@ -1307,12 +1220,13 @@ function rendre(){
   document.getElementById("bouton-reglages").innerHTML =
     ic("reglages") + '<span class="lib">Paramètres</span>';
 
+  /* Pas de formule d'accueil ni de phrase sous le titre : l'accueil porte
+     la date du jour, les autres écrans leur nom, et c'est tout. */
   const o = ONGLETS.find(x => x.id === onglet) || ONGLETS[0];
-  document.getElementById("titre").textContent = onglet === "accueil"
-    ? "Bonjour " + (prenomUtilisateur() || "!") + ","
-    : o.titre;
-  document.getElementById("sous-titre").textContent = o.sous;
-  document.getElementById("date-jour").innerHTML = ic("visites", 16) + " " + ech(fmtLong(aujourdHui()));
+  const jour = fmtLong(aujourdHui());
+  document.getElementById("titre").textContent = onglet === "accueil" ? jour : o.titre;
+  document.getElementById("sous-titre").textContent = "";
+  document.getElementById("date-jour").textContent = onglet === "accueil" ? "" : jour;
   if(FS.verrou){
     document.getElementById("titre").textContent = "Reprise des données";
     document.getElementById("sous-titre").textContent =
@@ -1325,10 +1239,6 @@ function rendre(){
   // ou une copie ancienne comme si c'étaient les dossiers du jour.
   document.getElementById("vue").innerHTML = FS.verrou ? vueReprise()
                                                        : (vues[onglet] || vueAccueil)();
-  document.getElementById("pied").innerHTML = ic("cadenas", 15) +
-    " Données stockées localement — " + (FS.dossier
-      ? "enregistrement automatique dans <b>" + ech(FS.nom) + "</b>"
-      : "voir <b>Paramètres</b> pour choisir le dossier");
   majEtatStockage();
   // Le repositionnement force un recalcul complet de la mise en page : on le
   // repousse après l'affichage, et on ne le fait que s'il est nécessaire.
@@ -1382,7 +1292,7 @@ function vueReprise(){
       ci-dessous.${v.copie ? " Le fichier tel qu'il est a été copié à côté de lui, sous le nom <code>" +
       ech(v.copie) + "</code> : il reste récupérable." : ""}</span>
     </div>
-    ${choix.length ? `<h3 class="titre-suivi">Quelles données reprendre ?</h3>
+    ${choix.length ? `<h3 class="titre-section">Quelles données reprendre ?</h3>
       <ul class="liste">${lignes}</ul>
       ${autres > 0 ? '<p class="aide">' + pluriel(autres, "sauvegarde plus ancienne",
         "sauvegardes plus anciennes") + " dans le sous-dossier <code>sauvegardes</code>.</p>" : ""}`
@@ -1411,15 +1321,18 @@ function vueAccueil(){
      renvoie vers son onglet pour la suite. */
   const MAX = 4;
 
+  const s = (n, un, plusieurs) => n > 1 ? plusieurs : un;
   const tuiles = `<div class="tuiles">
-    ${tuileCompte({onglet:"rapports", couleur:"bleu",   icone:"rapports", n:rapports.length,
-                   titre:"Rapports",      sous:"à préparer"})}
-    ${tuileCompte({action:"taches-toutes", f:"", couleur:"vert", icone:"taches", n:taches.length,
-                   titre:"Tâches",        sous:"à faire"})}
-    ${tuileCompte({onglet:"enfants",  couleur:"orange", icone:"notifs",   n:notifs,
-                   titre:"Notifications", sous:"à réclamer"})}
-    ${tuileCompte({onglet:"visites",  couleur:"violet", icone:"visites",  n:visites.length,
-                   titre:"Visites à venir", sous:"prévue(s)"})}
+    ${tuileCompte({onglet:"rapports", n:rapports.length,
+      titre:s(rapports.length, "rapport à préparer", "rapports à préparer"),
+      alerte: rapports.some(o => o.date < auj) ? "rouge" : "orange"})}
+    ${tuileCompte({action:"taches-toutes", f:"", n:taches.length,
+      titre:s(taches.length, "tâche à faire", "tâches à faire"),
+      alerte: taches.some(t => t.enRetard) ? "rouge" : ""})}
+    ${tuileCompte({onglet:"enfants", n:notifs,
+      titre:s(notifs, "notification à réclamer", "notifications à réclamer"), alerte:"rouge"})}
+    ${tuileCompte({onglet:"visites", n:visites.length,
+      titre:s(visites.length, "rencontre à venir", "rencontres à venir")})}
   </div>`;
 
   const dujour = taches.filter(t => t.enRetard || t.pourAuj || t.demain).slice(0, MAX);
@@ -1438,10 +1351,10 @@ function vueAccueil(){
 
   const carteTaches = `
     <div class="carte">
-      <div class="tete">${ic("taches",18)}<h2>${toutes ? "Mes tâches" : "À faire aujourd'hui"}</h2>
+      <div class="tete"><h2>${toutes ? "Mes tâches" : "À faire aujourd'hui"}</h2>
         ${toutes ? '<span class="doux pt">' + pluriel(taches.length,"tâche") + " en cours · " +
           faites.length + " terminée(s)</span>" : ""}
-        <button class="b mini pousse" data-action="tache-nouvelle">${ic("plus",14)} Ajouter</button>
+        <button class="b mini pousse" data-action="tache-nouvelle">Ajouter</button>
         ${toutes ? '<button class="b mini" data-action="taches-basculer">' +
           (etat.tachesFaites ? "Masquer" : "Afficher") + " les tâches faites</button>" : ""}</div>
       ${toutes
@@ -1468,17 +1381,14 @@ function vueAccueil(){
 
   const carteRapports = `
     <div class="carte">
-      <div class="tete">${ic("rapports",18)}<h2>Rapports à rendre</h2>
-        ${rapports.length ? '<span class="et ' +
-          (rapports.some(o => o.date < aujourdHui()) ? "rouge" : "info") + '">' +
-          rapports.length + "</span>" : ""}</div>
+      <div class="tete"><h2>Rapports à rendre</h2></div>
       ${rapports.length ? '<ul class="liste">' + rapports.slice(0, MAX).map(o => {
         const retard = o.date < aujourdHui();
         return `<li>
           <input type="checkbox" data-action="rapport-envoye" data-id="${o.enfant.id}"
                  data-type="${o.type}" data-date="${o.date}" class="coche"
                  aria-label="Marquer le rapport comme envoyé">
-          <span class="extensible"><b>${ech(nomComplet(o.enfant))}</b>
+          <span class="extensible"><span class="nom-enfant">${ech(nomComplet(o.enfant))}</span>
             <br><span class="doux pt">${ech(nomRapport(o.type))} — ${ech(fmtFR(o.date))}</span></span>
           <span class="et ${retard ? "rouge" : o.st.code}">${retard
             ? "Retard " + pluriel(joursEntre(o.date, aujourdHui()),"j","j")
@@ -1490,18 +1400,17 @@ function vueAccueil(){
 
   const carteVisites = `
     <div class="carte">
-      <div class="tete">${ic("visites",18)}<h2>Droits de visite à venir</h2></div>
+      <div class="tete"><h2>Rencontres à venir</h2></div>
       ${visites.length ? '<ul class="liste">' + visites.slice(0, MAX).map(o => `<li>
-        ${avatar(o.enfant)}
-        <span class="extensible"><b>${ech(libelleDroit(o.enfant, o.visite))}</b>
+        <span class="extensible"><span class="nom-enfant">${ech(libelleDroit(o.enfant, o.visite))}</span>
           <br><span class="doux pt">${ech(libelleParent(o.visite))}</span></span>
         <span class="nowrap pt droite">
           ${ech(jourCourt(o.rencontre.date))}
           ${heuresDe(o.rencontre) ? '<br><span class="doux">' + ech(heuresDe(o.rencontre)) + "</span>" : ""}
         </span></li>`).join("") + "</ul>"
         : '<p class="rien">Aucune rencontre programmée.</p>'}
-      ${aRemplir.length ? '<p class="aide">⚠︎ ' + pluriel(aRemplir.length,"rencontre") +
-        " passée(s) sans compte rendu.</p>" : ""}
+      ${aRemplir.length ? '<p class="aide"><span class="et orange">' +
+        pluriel(aRemplir.length,"rencontre") + " passée(s) sans compte rendu</span></p>" : ""}
       <button class="lien" data-onglet="visites">Voir tous les droits de visite</button>
     </div>`;
 
@@ -1556,9 +1465,11 @@ function vueEnfants(){
     : ORDRE_STATUT[a.st.code] - ORDRE_STATUT[b.st.code] ||
       String(a.enfant.notifFin||"9").localeCompare(String(b.enfant.notifFin||"9")));
 
+  // la date seule ; elle ne prend de couleur que si elle approche ou est passée
   const cel = (d, seuil) => {
     const st = statutEcheance(d, seuil);
-    return '<span class="puce ' + st.code + '"></span>' + ech(fmtFR(d));
+    return st.code === "orange" || st.code === "rouge"
+      ? '<span class="et ' + st.code + '">' + ech(fmtFR(d)) + "</span>" : ech(fmtFR(d));
   };
 
   /* La notification tient sur deux lignes : son état, puis sa date. Les gestes
@@ -1569,8 +1480,7 @@ function vueEnfants(){
     const derniere = relances.length
       ? " · " + pluriel(relances.length,"relance") + " le " + fmtFR(relances[relances.length-1]) : "";
     const detail = st.detail + derniere;
-    return '<span class="notif-etat deux-lignes ' + st.code + '"><span class="marque-etat">' +
-      st.marque + "</span>" + ech(st.titre) + "</span>" +
+    return '<span class="notif-etat deux-lignes ' + st.code + '">' + ech(st.titre) + "</span>" +
       '<span class="deux-lignes pt doux" title="' + ech(detail) + '">' + ech(detail) + "</span>";
   };
 
@@ -1580,19 +1490,19 @@ function vueEnfants(){
   const celActions = (e, st) => {
     const principal = st.code === "vert" ? ""
       : '<button class="b mini primaire" data-action="notif-recue" data-id="' + e.id +
-        '">✓ Reçue</button>';
+        '">Reçue</button>';
     const secondaires =
       (st.code === "vert"
         ? '<button class="b mini" data-action="notif-attente" data-id="' + e.id +
-          '">↺ Pas arrivée</button>' : "") +
+          '">Pas arrivée</button>' : "") +
       (st.code === "vert" || st.code === "gris" ? "" :
         '<button class="b mini" data-action="relance" data-id="' + e.id + '">Relance notée</button>' +
         '<button class="b mini" data-action="tache-notif" data-id="' + e.id +
         '">+ Tâche de relance</button>') +
       '<button class="b mini" data-action="enfant-modifier" data-id="' + e.id +
-      '">✎ Modifier la fiche</button>' +
+      '">Modifier la fiche</button>' +
       '<button class="b mini danger" data-action="enfant-supprimer" data-id="' + e.id +
-      '">✕ Supprimer</button>';
+      '">Supprimer</button>';
     return '<div class="actions">' + principal +
       '<details class="plus"><summary aria-label="Autres actions pour ' + ech(nomComplet(e)) +
       '" title="Autres actions">⋯</summary><div class="menu">' + secondaires +
@@ -1600,11 +1510,10 @@ function vueEnfants(){
   };
 
   const lignes = liste.map(({enfant:e, st}) => `<tr class="ligne-${st.code}">
-      <td class="col-enfant"><div class="ligne-nom">${avatar(e)}
-        <span><b title="${ech(nomComplet(e))}">${ech(nomComplet(e))}</b>
-        <span class="doux pt deux-lignes">${ech(ageTexte(e))}</span></span></div></td>
-      <td>${e.service ? '<span class="et info">' + ech(e.service) + "</span>"
-                      : '<span class="et gris">à préciser</span>'}</td>
+      <td class="col-enfant"><span class="nom-enfant deux-lignes" title="${ech(nomComplet(e))}">${
+          ech(nomComplet(e))}</span>
+        <span class="doux pt deux-lignes">${ech(ageTexte(e))}</span></td>
+      <td>${e.service ? ech(e.service) : '<span class="doux">à préciser</span>'}</td>
       <td class="col-notif">${celNotif(e, st)}</td>
       <td class="num pt">${cel(echeanceRapport(e,"semestriel"), DB.parametres.seuilRapportJours)}</td>
       <td class="num pt">${cel(echeanceRapport(e,"annuel"), DB.parametres.seuilRapportJours)}</td>
@@ -1612,33 +1521,26 @@ function vueEnfants(){
     </tr>`).join("");
 
   const incomplets = DB.enfants.filter(e => !estISO(e.notifFin) || !e.service || !estISO(e.naissance));
-  /* Le nombre dit déjà « combien » : la ligne du dessous sert à dire ce que
-     l'état veut dire, pas à répéter le mot « dossiers ». */
-  const tuile = (f, couleur, marque, titre, sous, n) => tuileCompte({
-    action:"filtre-notif", f, actif:filtre === f, couleur, marque, n, titre, sous });
-
-  return `<div class="tuiles">
-    ${tuile("recues","vert","✓","Notifications en ordre","reçue et encore valable", nb("vert"))}
-    ${tuile("bientot","orange","!","À renouveler bientôt",
-      "moins de " + DB.parametres.seuilAlerteJours + " jours", nb("orange"))}
-    ${tuile("attente","rouge","✕","À réclamer","pas reçue ou dépassée", nb("rouge"))}
-    ${tuile("sansdate","gris","?","Sans date","date à encoder", nb("gris"))}
-  </div>
-
-  <div class="carte">
+  /* Tout ce qui agit sur le tableau se tient au-dessus de lui, dans le même
+     panneau : le filtre d'état, la recherche, le tri. Les quatre tuiles d'avant,
+     en haut de page, filtraient un tableau qu'elles ne touchaient pas. */
+  return `<div class="carte">
     <div class="barre">
-      <button class="b primaire" data-action="enfant-nouveau">${ic("plus",15)} Nouvel enfant</button>
+      ${selecteur("filtre-notif", filtre, [
+        ["tout", "Tous", tout.length],
+        ["attente", "À réclamer", nb("rouge")],
+        ["bientot", "À renouveler", nb("orange")],
+        ["recues", "En ordre", nb("vert")],
+        ["sansdate", "Sans date", nb("gris")]])}
       <input type="search" id="recherche" placeholder="Rechercher un nom…" class="champ-recherche"
              value="${ech(etat.recherche)}">
       <label class="nowrap pt doux">Trier par
         <select id="tri" class="tri-court">
-          <option value="date"${etat.tri==="date"?" selected":""}>urgence de la notification</option>
-          <option value="nom"${etat.tri==="nom"?" selected":""}>nom de famille</option>
+          <option value="date"${etat.tri==="date"?" selected":""}>urgence</option>
+          <option value="nom"${etat.tri==="nom"?" selected":""}>nom</option>
         </select></label>
-      ${filtre !== "tout" ? '<button class="b" data-action="filtre-notif" data-f="tout">' +
-        "← Tous les dossiers (" + tout.length + ")</button>" : ""}
-      <span class="pousse doux pt">${pluriel(liste.length,"enfant")} sur ${DB.enfants.length}</span>
-      <button class="b" onclick="window.print()">Imprimer</button>
+      <button class="b pousse" onclick="window.print()">Imprimer</button>
+      <button class="b primaire" data-action="enfant-nouveau">Nouvel enfant</button>
     </div>
     ${incomplets.length ? '<div class="encadre attention"><div class="titre">' +
       pluriel(incomplets.length,"fiche") + ' incomplète(s)</div><span class="pt">' +
@@ -1659,16 +1561,8 @@ function vueEnfants(){
                                   : "Aucun enfant encodé.") + "</td></tr>"}</tbody>
       </table>
     </div>
-    <button class="b pleine haut-marge" data-action="enfant-nouveau">${ic("plus",15)}
-      Ajouter un enfant</button>
-    <div class="legende">
-      <span><span class="puce vert"></span>notification reçue et valable</span>
-      <span><span class="puce orange"></span>renouvellement dans moins de ${DB.parametres.seuilAlerteJours} jours</span>
-      <span><span class="puce rouge"></span>pas reçue ou échéance dépassée</span>
-      <span><span class="puce gris"></span>date manquante</span>
-    </div>
-    <p class="aide">Les dates de rapport se calculent à partir de la date de notification :
-      le <b>rapport annuel</b> tombe à cette date, le <b>rapport semestriel</b> six mois plus tôt.</p>
+    <p class="aide">Dates de rapport en <span class="et orange">orange</span> : dans moins de
+      ${DB.parametres.seuilRapportJours} jours ; en <span class="et rouge">rouge</span> : dépassées.</p>
   </div>`;
 }
 
@@ -1676,96 +1570,115 @@ function vueEnfants(){
    11. VUE — Rapports (calendrier mois par mois)
    ========================================================================= */
 
-function vueRapports(){
-  const dep = new Date();
-  const debut = new Date(dep.getFullYear(), dep.getMonth() + etat.anneeRapports*12, 1);
-
-  const mois = [];
-  for(let i = 0; i < 12; i++){
-    const d = new Date(debut.getFullYear(), debut.getMonth()+i, 1);
-    mois.push({ annee:d.getFullYear(), mois:d.getMonth(), annuels:[], semestriels:[] });
-  }
-  const premier = dISO(debut);
-  const dernier = dISO(new Date(debut.getFullYear(), debut.getMonth()+12, 0));
-  DB.enfants.forEach(e => [["annuels","annuel"],["semestriels","semestriel"]].forEach(([col,type]) => {
-    occurrencesRapport(e, type, premier, dernier).forEach(date => {
-      const d = parseISO(date);
-      const c = mois.find(m => m.annee === d.getFullYear() && m.mois === d.getMonth());
-      if(c) c[col].push({ enfant:e, date, type });
+/* Une année civile, de janvier à décembre. Avant, le calendrier partait du
+   mois en cours sur douze mois glissants : les rapports déjà envoyés cette
+   année sortaient de l'écran à mesure que l'année avançait, et on ne voyait
+   plus ce qui avait été fait. */
+function rapportsDeLAnnee(an){
+  const debut = an + "-01-01", fin = an + "-12-31";
+  const l = [];
+  DB.enfants.forEach(e => ["annuel","semestriel"].forEach(type => {
+    const dates = new Set(occurrencesRapport(e, type, debut, fin));
+    // Un rapport coché reste à sa place même si le calcul ne retombe plus sur
+    // sa date (notification renouvelée à un autre jour depuis) : ce qui a été
+    // envoyé ne doit jamais disparaître de l'année.
+    (e.rapports||[]).forEach(r => {
+      if(r.type === type && estISO(r.echeance) && r.echeance >= debut && r.echeance <= fin)
+        dates.add(r.echeance);
     });
+    dates.forEach(date => l.push({ enfant:e, type, date }));
   }));
+  const auj = aujourdHui();
+  l.forEach(o => {
+    const envoi = (o.enfant.rapports||[]).find(r =>
+      r.type === o.type && r.echeance === o.date && estISO(r.envoyeLe));
+    if(envoi){
+      o.etat = "envoye";
+      o.texte = "envoyé le " + (envoi.envoyeLe.slice(0,4) === String(an)
+        ? fmtFR(envoi.envoyeLe).slice(0,5) : fmtFR(envoi.envoyeLe));
+    }else if(o.date < auj){
+      // avant le début du suivi dans le programme : ni en retard, ni à faire
+      if(o.date >= debutSuivi(o.enfant, o.type)){ o.etat = "retard"; o.texte = "en retard"; }
+      else{ o.etat = "avant"; o.texte = ""; }
+    }else{
+      const st = statutEcheance(o.date, DB.parametres.seuilRapportJours);
+      o.etat = "avenir";
+      o.texte = st.code === "orange" ? st.label.toLowerCase() : "";
+      o.proche = st.code === "orange";
+    }
+  });
+  return l.sort((x,y) => x.date.localeCompare(y.date) || parNom(x.enfant, y.enfant));
+}
 
-  /* Une seule ligne par rapport : la pastille « A » ou « S » dit lequel des deux
-     c'est, ce qui évite de répéter le libellé complet en capitales au-dessus de
-     chaque groupe. La date se range à droite, alignée d'une ligne à l'autre. */
-  const item = o => {
-    const envoye = rapportEnvoye(o.enfant, o.type, o.date);
-    const st = envoye ? { code:"vert" } : statutEcheance(o.date, DB.parametres.seuilRapportJours);
-    const retard = !envoye && o.date < aujourdHui();
-    const annuel = o.type === "annuel";
-    return '<label class="item' + (envoye ? " envoye" : (retard ? " retard" : "")) + '">' +
-      '<input type="checkbox" data-action="rapport-envoye" data-id="' + o.enfant.id +
-      '" data-type="' + o.type + '" data-date="' + o.date + '"' + (envoye ? " checked" : "") +
-      ' title="Cocher quand le rapport est envoyé">' +
-      '<span class="puce ' + (retard ? "rouge" : st.code) + '"></span>' +
-      '<span class="badge-r ' + (annuel ? "a" : "s") + '" title="' +
-      (annuel ? "Formalisation — rapport annuel" : "Rapport d'évolution — semestriel") +
-      '">' + (annuel ? "A" : "S") + "</span>" +
-      '<span class="nom-rapport"' + (o.enfant.service ? ' title="' + ech(o.enfant.service) + '"' : "") +
-      ">" + ech(nomComplet(o.enfant)) + "</span>" +
-      '<span class="date-rapport">' + ech(fmtFR(o.date).slice(0,5)) + "</span></label>";
+function vueRapports(){
+  const auj = aujourdHui();
+  const an = new Date().getFullYear() + etat.anneeRapports;
+  const liste = rapportsDeLAnnee(an);
+  const nb = c => liste.filter(o => o.etat === c).length;
+
+  const ligne = o => {
+    const cls = o.etat === "envoye" ? "fait" : o.etat === "avant" ? "avant" : "";
+    const statut = o.etat === "envoye" ? '<span class="et vert">' + ech(o.texte) + "</span>"
+                 : o.etat === "retard" ? '<span class="et rouge">en retard</span>'
+                 : o.proche ? '<span class="et orange">' + ech(o.texte) + "</span>" : "";
+    return `<tr class="${cls}">
+      <td class="case"><input type="checkbox" data-action="rapport-envoye" data-id="${o.enfant.id}"
+        data-type="${o.type}" data-date="${o.date}"${o.etat === "envoye" ? " checked" : ""}
+        aria-label="${ech(nomRapport(o.type) + " de " + nomComplet(o.enfant) + " envoyé")}"></td>
+      <td class="num">${ech(fmtFR(o.date).slice(0,5))}</td>
+      <td class="nom-rapport" title="${ech(o.enfant.service || "")}">${ech(nomComplet(o.enfant))}</td>
+      <td class="doux">${o.type}</td>
+      <td class="statut">${statut}</td>
+    </tr>`;
   };
 
-  const auj = new Date();
-  const cases = mois.map(m => {
-    const courant = m.annee === auj.getFullYear() && m.mois === auj.getMonth();
-    /* Annuels et semestriels dans la même liste, à la date : c'est l'ordre dans
-       lequel le travail arrive, pas le type de rapport, qui compte ici. */
-    const tous = m.annuels.concat(m.semestriels)
-      .sort((a,b) => a.date.localeCompare(b.date) || parNom(a.enfant, b.enfant));
-    return `<div class="mois">
-      <div class="tete-mois ${courant?"courant":""}">
-        <span>${MOIS[m.mois].charAt(0).toUpperCase() + MOIS[m.mois].slice(1)}</span>
-        <span class="doux">${m.annee}${tous.length ? " · " + tous.length : ""}</span>
-      </div>
-      ${tous.length ? '<div class="part">' + tous.map(item).join("") + "</div>"
-                    : '<div class="rien-mois">Rien de prévu</div>'}
-    </div>`;
-  }).join("");
+  const moisCourant = new Date().getFullYear() === an ? new Date().getMonth() : -1;
+  const semestre = (de, a) => `<table class="tab-annee">
+    <thead><tr><th class="case"><span class="hors-ecran">Envoyé</span></th>
+      <th class="num">Date</th><th>Enfant</th><th>Rapport</th><th>État</th></tr></thead>
+    ${[...Array(a - de + 1).keys()].map(i => de + i).map(m => {
+      const duMois = liste.filter(o => parseISO(o.date).getMonth() === m);
+      const nom = MOIS[m].charAt(0).toUpperCase() + MOIS[m].slice(1);
+      return `<tbody><tr class="mois-tete${m === moisCourant ? " courant" : ""}">
+          <th colspan="5">${ech(nom)}${duMois.length ? '<span class="doux"> · ' + duMois.length + "</span>" : ""}</th></tr>
+        ${duMois.length ? duMois.map(ligne).join("")
+          : '<tr class="mois-vide"><td colspan="5">Aucun rapport</td></tr>'}</tbody>`;
+    }).join("")}
+  </table>`;
 
-  const sansDate = DB.enfants.filter(e => !baseRapport(e));
-
-  const retards = rapportsEnRetard();
+  /* Les retards de l'année affichée sont déjà en rouge dans le tableau. Ce
+     panneau ne montre que ceux d'une autre année, qu'on ne verrait pas sinon. */
+  const retards = rapportsEnRetard().filter(o => o.date.slice(0,4) !== String(an));
   const bandeau = retards.length ? `
     <div class="carte">
-      <div class="tete">${ic("rapports",18)}<h2>Rapports en retard</h2>
-        <span class="et rouge">${retards.length}</span></div>
+      <div class="tete"><h2>En retard, hors ${an}</h2><span class="doux">${retards.length}</span></div>
       <ul class="liste">${retards.map(ligneRapport).join("")}</ul>
-      <p class="aide">Cochez la case quand le rapport est envoyé.</p>
     </div>` : "";
+
+  const avant = nb("avant");
+  const sansDate = DB.enfants.filter(e => !baseRapport(e));
 
   return bandeau + `
   <div class="carte">
-    <div class="tete">${ic("visites",18)}<h2>Calendrier des échéances</h2>
-      <span class="et info">De ${ech(MOIS[debut.getMonth()])} ${debut.getFullYear()}
-        à ${ech(MOIS[mois[11].mois])} ${mois[11].annee}</span></div>
     <div class="barre">
-      <button class="b" data-action="annee" data-delta="-1">← 12 mois avant</button>
-      <button class="b" data-action="annee" data-delta="0">Aujourd'hui</button>
-      <button class="b" data-action="annee" data-delta="1">12 mois après →</button>
+      <div class="filtres" role="group" aria-label="Année">
+        <button data-action="annee" data-delta="-1">‹ ${an - 1}</button>
+        <button class="actif" data-action="annee" data-delta="0" title="Revenir à l'année en cours">${an}</button>
+        <button data-action="annee" data-delta="1">${an + 1} ›</button>
+      </div>
+      <span class="bilan"><b>${pluriel(liste.length, "rapport")}</b> en ${an} :
+        <span class="et vert">${nb("envoye")} envoyé${nb("envoye") > 1 ? "s" : ""}</span>
+        · ${nb("retard") ? '<span class="et rouge">' + nb("retard") + " en retard</span>" : "0 en retard"}
+        · ${nb("avenir")} à venir${avant ? ' · <span class="doux">' + avant +
+          " d'avant le début du suivi</span>" : ""}</span>
       <button class="b pousse" onclick="window.print()">Imprimer</button>
     </div>
-    <p class="aide chapeau">Le <b>rapport annuel</b> tombe à la date de
-      formalisation, le <b>rapport d'évolution semestriel</b> six mois plus tôt. Les deux se
-      recalculent à chaque renouvellement de la notification.</p>
-    <div class="mois-grille">${cases}</div>
-    <div class="legende">
-      <span><span class="badge-r a">A</span> formalisation — rapport annuel</span>
-      <span><span class="badge-r s">S</span> rapport d'évolution — semestriel</span>
-      <span><span class="puce rouge"></span>échéance dépassée</span>
-      <span><span class="puce orange"></span>dans moins de ${DB.parametres.seuilRapportJours} jours</span>
-      <span>case cochée = rapport envoyé</span>
+    <div class="annee">
+      ${semestre(0, 5)}
+      ${semestre(6, 11)}
     </div>
+    <p class="aide">Cochez la case quand un rapport est envoyé.${avant ? " En gris : les échéances d'avant " +
+      "le début du suivi dans le programme, qui ne sont pas réclamées." : ""}</p>
     ${sansDate.length ? '<div class="encadre attention haut-marge"><div class="titre">' +
       pluriel(sansDate.length,"enfant") + " sans date de notification</div><span class=\"pt\">" +
       "Impossible de calculer leurs rapports : " +
@@ -1846,20 +1759,31 @@ function visitesDe(enf){
   return l;
 }
 
+/* Deux vues, au choix en haut de l'écran : « Par enfant » (la liste et le
+   dossier de l'enfant choisi) et « Schéma de récurrence » (les quatre semaines
+   du mois, tous enfants confondus). Avant, les deux s'empilaient sur une même
+   longue page, avec l'export Word au bout : on passait du dossier d'un enfant
+   au planning de tous sans s'en rendre compte. */
 function vueVisites(){
   const auj = aujourdHui();
   const q = etat.recherche.trim().toLowerCase();
+  const vue = etat.vueDV === "schema" ? "schema" : "enfant";
 
   const droits = [];
   DB.enfants.slice().sort(parNom).forEach(e => (e.visites||[]).forEach(v => droits.push({ e, v })));
   const avecDroit = DB.enfants.slice().sort(parNom).filter(e => visitesDe(e).length);
 
-  /* ------------------------------------------------------ 1. les compteurs */
-  /* L'état de chaque dossier : c'est lui qui colore la liste et alimente
-     les trois compteurs, qui servent aussi de filtres. */
+  const outils = `<div class="barre">
+      ${selecteur("vue-dv", vue, [["enfant","Par enfant"],["schema","Schéma de récurrence"]])}
+      <button class="b pousse" data-action="word">Exporter les notes</button>
+      <button class="b" onclick="window.print()">Imprimer</button>
+      <button class="b primaire" data-action="visite-nouvelle">Nouveau droit de visite</button>
+    </div>`;
+  if(vue === "schema") return outils + vueSchema(droits);
+
+  /* ------------------------------------------- 1. l'état de chaque dossier */
   const etats = new Map(avecDroit.map(e => [e.id, derniereProgrammee(e)]));
   const nbEtat = c => avecDroit.filter(e => etats.get(e.id).code === c).length;
-
   const CODES = { rouge:"sans", orange:"proche", vert:"ajour" };
   const fd = etat.filtreDossier;
 
@@ -1870,23 +1794,17 @@ function vueVisites(){
     n + (v.rencontres||[]).filter(r => aCompleter(r)).length, 0);
   const nbAremplir = avecDroit.filter(e => aRemplirDe(e) > 0).length;
 
-  /* Titres courts : « Dossiers à échéance proche » passait sur trois lignes et
-     décalait les quatre tuiles les unes par rapport aux autres. Le nombre dit
-     combien de dossiers, la ligne du dessous dit de quoi il s'agit. */
-  const compteurs = `<div class="tuiles">
-    ${tuileCompte({ action:"filtre-dossier", f:"sans", actif:fd === "sans",
-      couleur:"rouge", marque:"!", n:nbEtat("rouge"),
-      titre:"Sans DV futur", sous:"aucun DV programmé" })}
-    ${tuileCompte({ action:"filtre-dossier", f:"proche", actif:fd === "proche",
-      couleur:"orange", icone:"horloge", n:nbEtat("orange"),
-      titre:"Échéance proche", sous:"DV dans moins d'un mois" })}
-    ${tuileCompte({ action:"filtre-dossier", f:"ajour", actif:fd === "ajour",
-      couleur:"vert", marque:"✓", n:nbEtat("vert"),
-      titre:"À jour", sous:"DV au-delà d'un mois" })}
-    ${tuileCompte({ action:"filtre-dossier", f:"aremplir", actif:fd === "aremplir",
-      couleur:"bleu", icone:"taches", n:nbAremplir,
-      titre:"À compléter", sous:"rencontre sans compte rendu" })}
-  </div>`;
+  // les raccourcis d'état, juste au-dessus de la liste qu'ils filtrent
+  const filtresDossiers = `<div class="barre">
+      ${selecteur("filtre-dossier", fd, [
+        ["tout", "Tous", avecDroit.length],
+        ["sans", "Sans DV futur", nbEtat("rouge")],
+        ["proche", "Échéance proche", nbEtat("orange")],
+        ["ajour", "À jour", nbEtat("vert")],
+        ["aremplir", "À compléter", nbAremplir]])}
+      <input type="search" id="recherche" placeholder="Rechercher un enfant…"
+             class="champ-recherche" value="${ech(etat.recherche)}">
+    </div>`;
 
   /* ------------------------------------------- 2. la liste : choisir un enfant */
   const visibles = avecDroit.filter(e =>
@@ -1900,47 +1818,36 @@ function vueVisites(){
   const ligneEnfant = e => {
     const p = etats.get(e.id);
     const freq = visitesDe(e).map(({v}) => v.frequence).filter(Boolean).join(" · ");
-    return `<tr class="le ${p.code} ${choisi && e.id === choisi.id ? "actif" : ""}"
+    const n = aRemplirDe(e);
+    const date = p.code === "rouge" ? '<span class="et rouge">Aucun DV futur</span>'
+               : !p.date ? ech(p.court)
+               : p.code === "orange" ? '<span class="et orange">' + ech(fmtFR(p.date)) + "</span>"
+               : ech(fmtFR(p.date));
+    const dessous = n ? '<span class="et orange">' + n + " à compléter</span>"
+                  : p.code === "rouge" ? (p.date ? "dernier le " + ech(fmtFR(p.date)) : "")
+                  : p.jours != null ? ech(p.court.toLowerCase()) : "";
+    return `<tr class="le${choisi && e.id === choisi.id ? " actif" : ""}"
         data-action="choisir-enfant" data-id="${e.id}" tabindex="0">
-      <td><div class="ligne-nom">${avatar(e)}
-        <span><span class="le-nom">${ech(e.nom)}</span>
-          <span class="le-prenom">${ech(e.prenom)}</span></span>
-        ${aRemplirDe(e) ? '<span class="et info pousse" title="' +
-          pluriel(aRemplirDe(e),"rencontre") + ' passée(s) sans compte rendu">' +
-          aRemplirDe(e) + "</span>" : ""}</div></td>
-      <td class="pt doux"><span class="freq" title="${ech(freq || "—")}">${ech(freq || "—")}</span></td>
-      <td>
-        ${p.date ? '<span class="le-date ' + p.code + '">' + ech(fmtFR(p.date)) +
-          ' <span class="le-marque">' + (p.code === "vert" ? "✓" : "!") + "</span></span>" : ""}
-        <span class="le-sous ${p.code}">${ech(p.court)}</span>
-      </td>
+      <td><span class="nom-enfant deux-lignes">${ech(nomComplet(e))}</span>
+        <span class="pt doux deux-lignes" title="${ech(freq)}">${ech(freq || "fréquence à préciser")}</span></td>
+      <td class="num"><span class="deux-lignes">${date}</span>
+        <span class="pt doux deux-lignes">${dessous}</span></td>
     </tr>`;
   };
 
   const carteListe = `
-    <div class="carte">
-      <div class="tete">${ic("enfants",18)}<h2>Liste des enfants</h2></div>
-      <input type="search" id="recherche" placeholder="Rechercher un enfant…"
-             class="bas-marge" value="${ech(etat.recherche)}">
-      ${fd !== "tout" ? '<button class="b mini bas-marge" data-action="filtre-dossier" ' +
-        'data-f="tout">← Tous les dossiers (' + avecDroit.length + ")</button>" : ""}
-      ${visibles.length ? `<div class="liste-enfants"><table class="tab-enfants">
-          <thead><tr><th>Enfant</th><th>Fréquence</th><th>Prochain DV</th></tr></thead>
-          <tbody>${visibles.map(ligneEnfant).join("")}</tbody></table></div>`
+    <div class="carte dv-liste">
+      ${visibles.length ? `<table class="tab-enfants">
+          <thead><tr><th>Enfant</th><th class="num">Programmé jusqu'au</th></tr></thead>
+          <tbody>${visibles.map(ligneEnfant).join("")}</tbody></table>`
         : '<p class="rien">' + (q || fd !== "tout" ? "Aucun enfant dans cette sélection."
                                                    : "Aucun droit de visite encodé.") + "</p>"}
-      <div class="barre haut-marge">
-        <span class="doux pt">${pluriel(visibles.length,"enfant")}${
-          visibles.length !== avecDroit.length ? " sur " + avecDroit.length : ""}</span>
-        <button class="b mini pousse" data-action="visite-nouvelle">${ic("plus",14)}
-          Droit de visite</button>
-      </div>
     </div>`;
 
   /* ------------------------------------------------------ 3. le dossier choisi */
   const delai = iso => {
     const n = joursEntre(auj, iso);
-    return n <= 0 ? "Aujourd'hui" : n === 1 ? "Demain" : "Dans " + n + " jours";
+    return n <= 0 ? "aujourd'hui" : n === 1 ? "demain" : "dans " + n + " jours";
   };
 
   const f = etat.filtreVisite;
@@ -1960,157 +1867,163 @@ function vueVisites(){
 
     const rencontres = [];
     mesDroits.forEach(({e:o, v}) => (v.rencontres||[]).forEach(r => rencontres.push({ o, v, r })));
-
-    /* Les deux onglets se partagent les rencontres à la date du jour : celle
-       d'aujourd'hui est à la fois la prochaine et celle qu'on vient noter. */
-    const aVenir = rencontres
+    const prochaine = rencontres
       .filter(x => estISO(x.r.date) && x.r.date >= auj)
       .sort((a,b) => a.r.date.localeCompare(b.r.date) ||
-                     String(a.r.debut||"").localeCompare(String(b.r.debut||"")));
-    const passees = rencontres.filter(x => !estISO(x.r.date) || x.r.date <= auj);
+                     String(a.r.debut||"").localeCompare(String(b.r.debut||"")))[0];
 
     const freq = mesDroits.map(({v}) => v.frequence).filter(Boolean).join(" · ");
     const avecQui = [...new Set(mesDroits.map(({v}) => libelleParent(v)))].join(" / ");
-    const dernierRealise = passees
-      .filter(x => x.r.presence === "venu" && estISO(x.r.date))
+    const dernierRealise = rencontres
+      .filter(x => x.r.presence === "venu" && estISO(x.r.date) && x.r.date <= auj)
       .map(x => x.r.date).sort().pop();
 
     /* Le bandeau de faits : ce qu'on veut savoir sans avoir à chercher. */
-    const fait = (l, v, code) =>
-      '<div class="fait"><span class="l">' + ech(l) + "</span>" +
-      '<span class="v' + (code ? " " + code : "") + '">' + v + "</span></div>";
-
+    const fait = (l, v, s) =>
+      '<div class="fait"><span class="l">' + ech(l) + '</span><span class="v">' + v + "</span>" +
+      (s ? '<span class="s">' + s + "</span>" : "") + "</div>";
     const bandeauFaits = '<div class="faits">' +
-      fait("Fréquence", ech(freq || "à préciser")) +
       fait("Avec qui", ech(avecQui || "à préciser")) +
-      fait("Dernier DV réalisé", dernierRealise ? ech(fmtFR(dernierRealise))
-           : '<span class="doux">aucun</span>') +
+      fait("Fréquence", ech(freq || "à préciser")) +
+      fait("Dernier DV réalisé", dernierRealise ? ech(fmtFR(dernierRealise)) : '<span class="doux">aucun</span>') +
+      fait("Prochain DV", prochaine ? ech(fmtFR(prochaine.r.date)) : '<span class="et rouge">aucun</span>',
+           prochaine ? ech(delai(prochaine.r.date)) : "") +
       fait("Programmé jusqu'au",
-           (p.date ? ech(fmtFR(p.date)) : "—") + '<span class="s">' + ech(p.court) + "</span>",
-           p.code) +
-      fait("Autorité", e.service ? '<span class="et info">' + ech(e.service) + "</span>"
-           : '<span class="doux">à préciser</span>') +
+           p.code === "rouge" ? '<span class="et rouge">rien de programmé</span>'
+           : p.code === "orange" ? '<span class="et orange">' + ech(fmtFR(p.date)) + "</span>"
+           : ech(p.date ? fmtFR(p.date) : p.court),
+           p.code === "orange" ? "échéance proche" : "") +
       "</div>";
 
-    /* le rappel des droits : intervenant, fréquence, créneaux, et de quoi corriger */
-    const lignesDroits = mesDroits.map(({e:o, v}) => {
+    /* Chaque droit de visite : intervenant, fréquence, créneaux du mois. */
+    const menuDroit = (o, v) => '<details class="plus"><summary aria-label="Actions sur ce droit de visite" ' +
+      'title="Autres actions">⋯</summary><div class="menu">' +
+      '<button class="b mini" data-action="visite-modifier" data-id="' + o.id + '" data-vid="' + v.id +
+      '">Modifier ce droit de visite</button>' +
+      '<button class="b mini danger" data-action="visite-supprimer" data-id="' + o.id + '" data-vid="' + v.id +
+      '">Supprimer ce droit de visite</button></div></details>';
+    const lignesDroits = '<table class="tab-droits"><tbody>' + mesDroits.map(({e:o, v}) => {
       const cat = categorieParent(v);
       const cr = (v.creneaux||[]).map(c =>
-        "semaine " + c.semaine + " " + (c.debut || "?") + "–" + (c.fin || "?")).join(", ");
-      return `<div class="dv-droit">
-        <span class="rond-parent ${CATEGORIES[cat].classe}">${ic(CATEGORIES[cat].icone, 16)}</span>
-        <div class="extensible">
-          <div><b>${ech(libelleParent(v))}</b>${v.frequence ? ' <span class="doux">· ' +
-            ech(v.frequence) + "</span>" : ""}</div>
-          <div class="pt doux">${cr ? ech(cr) : "aucun créneau encodé"}</div>
-          ${v.sansEncadrement ? '<span class="ce-libre">rencontres sans encadrement</span>' : ""}
-          ${(v.partageAvec||[]).length ? '<span class="ce-groupe">' + ic("enfants",12) +
-            " regroupé : " + ech(libelleDroit(o, v)) + "</span>" : ""}
-        </div>
-        <div class="actions">
-          <button class="b mini" data-action="visite-modifier" data-id="${o.id}"
-                  data-vid="${v.id}" title="Modifier ce droit de visite">✎</button>
-          <button class="b mini danger" data-action="visite-supprimer" data-id="${o.id}"
-                  data-vid="${v.id}" title="Supprimer ce droit de visite">✕</button>
-        </div>
-      </div>`;
-    }).join("");
+        "semaine " + c.semaine + ", " + (c.debut || "?") + "–" + (c.fin || "?")).join(" ; ");
+      const notes = [v.sansEncadrement ? "sans encadrement" : "",
+        (v.partageAvec||[]).length ? "regroupé : " + libelleDroit(o, v) : ""].filter(Boolean).join(" · ");
+      return `<tr>
+        <td class="nowrap"><span class="puce ${CATEGORIES[cat].classe}"></span>${ech(libelleParent(v))}</td>
+        <td>${ech(v.frequence || "fréquence à préciser")}</td>
+        <td class="doux">${ech(cr || "aucun créneau encodé")}${notes ? "<br>" + ech(notes) : ""}</td>
+        <td class="droite">${menuDroit(o, v)}</td>
+      </tr>`;
+    }).join("") + "</tbody></table>";
 
-    /* --- onglet « prochaines rencontres » --- */
-    const boutonsRencontre = ({o,v,r}) => `<div class="actions">
-      <button class="b mini" data-action="rencontre-modifier" data-id="${o.id}"
-              data-vid="${v.id}" data-rid="${r.id}" title="Modifier">✎</button>
-      <button class="b mini danger" data-action="rencontre-supprimer" data-id="${o.id}"
-              data-vid="${v.id}" data-rid="${r.id}" title="Supprimer">🗑</button>
-    </div>`;
-
-    /* --- une seule liste : les rencontres à venir, puis les passées ---------
-       Deux onglets affichaient les mêmes colonnes pour les mêmes rencontres.
-       Le tableau les réunit, à venir en tête, et les filtres remplacent les
-       onglets. */
+    /* --- les rencontres : une ligne du temps, de la plus lointaine à venir à
+       la plus ancienne, coupée par un repère « Aujourd'hui ». Avant, les
+       rencontres à venir étaient rangées dans l'autre sens au-dessus des
+       passées : on lisait 14/11, 14/12, 14/01 puis 14/10, 14/09, sans savoir
+       où l'on était. */
     const compte = {
       tout:      rencontres.length,
-      avenir:    aVenir.length,
+      avenir:    rencontres.filter(x => estISO(x.r.date) && x.r.date >= auj).length,
       completer: rencontres.filter(x => aCompleter(x.r)).length,
       venu:      rencontres.filter(x => x.r.presence === "venu").length,
       absent:    rencontres.filter(x => x.r.presence === "absent").length
     };
-    const puce = (id, texte, n) =>
-      '<button data-action="filtre-visite" data-f="' + id + '" class="' +
-      (f === id ? "actif" : "") + '">' + texte + " " + n + "</button>";
-
-    const futur = x => estISO(x.r.date) && x.r.date >= auj;
-    const lignes = rencontres.filter(x => garde(x.r)).sort((a,b) => {
-      const fa = futur(a), fb = futur(b);
-      if(fa !== fb) return fa ? -1 : 1;                       // à venir d'abord
-      const sens = fa ? 1 : -1;                               // puis au plus proche
-      return sens * (String(a.r.date||"").localeCompare(String(b.r.date||"")) ||
-                     String(a.r.debut||"").localeCompare(String(b.r.debut||"")));
-    });
-    /* Les rencontres à venir restent toujours visibles : ce sont celles
-       sur lesquelles il y a quelque chose à faire. */
+    const desc = (a,b) => String(b.r.date||"").localeCompare(String(a.r.date||"")) ||
+                          String(b.r.debut||"").localeCompare(String(a.r.debut||""));
+    const choisies = rencontres.filter(x => garde(x.r));
+    const apres  = choisies.filter(x => estISO(x.r.date) && x.r.date > auj).sort(desc);
+    const avant  = choisies.filter(x => !(estISO(x.r.date) && x.r.date > auj)).sort(desc);
+    // tout ce qui est à venir reste affiché ; du passé, les dix plus récentes
     const deplie = !!etat.ouvertes[e.id];
-    const plancher = Math.max(10, lignes.filter(futur).length);
-    const affichees = deplie ? lignes : lignes.slice(0, plancher);
+    const avantVues = deplie ? avant : avant.slice(0, 10);
 
-    const suivi = `
-      <div class="filtres bas-marge">
-        ${puce("tout","Toutes", compte.tout)}${puce("avenir","À venir", compte.avenir)}
-        ${puce("completer","À compléter", compte.completer)}
-        ${puce("venu","Honorées", compte.venu)}${puce("absent","Manquées", compte.absent)}
-      </div>
-      ${lignes.length ? `<div class="tableau-enveloppe"><table class="tab-suivi">
-        <thead><tr><th class="num">Date</th><th>Intervenant</th><th class="num">Horaire</th>
-          <th class="centre">Le parent</th><th class="col-note">Note</th><th></th></tr></thead>
-        <tbody>${affichees.map(x => `<tr class="${futur(x) ? "a-venir" : ""}">
-          <td class="num nowrap">${ech(fmtFR(x.r.date))}${
-            futur(x) ? '<br><span class="et info">' + ech(delai(x.r.date)) + "</span>"
-                     : (aCompleter(x.r) ? '<br><span class="et orange">à compléter</span>' : "")}</td>
-          <td>${ech(libelleParent(x.v))}${(x.v.partageAvec||[]).length
-            ? '<br><span class="doux pt">avec ' + ech(libelleDroit(x.o, x.v)) + "</span>" : ""}</td>
-          <td class="num nowrap">${ech(heuresDe(x.r) || "—")}</td>
-          <td class="centre"><div class="bascule">
-            <button class="oui ${x.r.presence === "venu" ? "actif" : ""}"
-                    data-action="presence" data-p="venu" data-id="${x.o.id}" data-vid="${x.v.id}"
-                    data-rid="${x.r.id}" title="Le parent est venu">✓ Présent</button>
-            <button class="non ${x.r.presence === "absent" ? "actif" : ""}"
-                    data-action="presence" data-p="absent" data-id="${x.o.id}" data-vid="${x.v.id}"
-                    data-rid="${x.r.id}" title="Le parent n'est pas venu">✕ Absent</button>
-          </div></td>
-          <td class="col-note"><div class="note-vive" data-note="1"
-              data-id="${x.o.id}" data-vid="${x.v.id}" data-rid="${x.r.id}" tabindex="0"
-              title="Cliquez ou tabulez pour écrire">${x.r.note ? ech(x.r.note)
-                : '<span class="doux">Note de synthèse…</span>'}</div></td>
-          <td>${boutonsRencontre(x)}</td>
-        </tr>`).join("")}</tbody></table></div>
-        ${lignes.length > plancher ? '<button class="b pleine haut-marge" data-action="deplier" ' +
-          'data-id="' + e.id + '">' + (deplie ? "Réduire"
-            : "Voir les " + lignes.length + " rencontres") + "</button>" : ""}
-        <p class="aide">La présence et la note se saisissent directement dans le tableau :
-          un clic sur ✓ Présent ou ✕ Absent, et la note s'enregistre en quittant la case.</p>`
-        : '<p class="rien">Aucune rencontre' +
-          (f === "tout" ? " encodée pour cet enfant." : " pour ce filtre.") + "</p>"}`;
+    const menuRencontre = x => '<details class="plus"><summary aria-label="Actions sur la rencontre du ' +
+      ech(fmtFR(x.r.date)) + '" title="Autres actions">⋯</summary><div class="menu">' +
+      '<button class="b mini" data-action="rencontre-modifier" data-id="' + x.o.id + '" data-vid="' +
+      x.v.id + '" data-rid="' + x.r.id + '">Modifier la rencontre</button>' +
+      '<button class="b mini danger" data-action="rencontre-supprimer" data-id="' + x.o.id +
+      '" data-vid="' + x.v.id + '" data-rid="' + x.r.id + '">Supprimer la rencontre</button></div></details>';
+
+    const ligne = x => {
+      const futur = estISO(x.r.date) && x.r.date > auj;
+      const sous = futur ? '<span class="doux">' + ech(delai(x.r.date)) + "</span>"
+                 : aCompleter(x.r) ? '<span class="et orange">à compléter</span>' : "";
+      // une rencontre à venir n'a pas encore de présence à noter
+      const presence = futur ? '<span class="doux">prévue</span>' : `<div class="bascule">
+          <button class="oui ${x.r.presence === "venu" ? "actif" : ""}" data-action="presence" data-p="venu"
+                  data-id="${x.o.id}" data-vid="${x.v.id}" data-rid="${x.r.id}"
+                  aria-pressed="${x.r.presence === "venu"}">Présent</button>
+          <button class="non ${x.r.presence === "absent" ? "actif" : ""}" data-action="presence" data-p="absent"
+                  data-id="${x.o.id}" data-vid="${x.v.id}" data-rid="${x.r.id}"
+                  aria-pressed="${x.r.presence === "absent"}">Absent</button></div>`;
+      return `<tr class="${futur ? "a-venir" : ""}">
+        <td class="num nowrap">${ech(fmtFR(x.r.date))}${sous ? "<br>" + sous : ""}</td>
+        <td>${ech(libelleParent(x.v))}${(x.v.partageAvec||[]).length
+          ? '<br><span class="doux pt">avec ' + ech(libelleDroit(x.o, x.v)) + "</span>" : ""}</td>
+        <td class="num nowrap">${ech(heuresDe(x.r) || "—")}</td>
+        <td class="centre">${presence}</td>
+        <td class="col-note"><div class="note-vive" data-note="1"
+            data-id="${x.o.id}" data-vid="${x.v.id}" data-rid="${x.r.id}" tabindex="0"
+            title="Cliquez ou tabulez pour écrire">${x.r.note ? ech(x.r.note)
+              : futur ? "" : '<span class="doux">Note de synthèse…</span>'}</div></td>
+        <td class="droite">${menuRencontre(x)}</td>
+      </tr>`;
+    };
+
+    // le repère du jour, dans la liste complète ; il dit aussi quand rien
+    // n'est programmé après aujourd'hui
+    const repere = f === "tout" || f === "avenir"
+      ? `<tr class="repere-jour"><td colspan="6">Aujourd'hui, ${ech(fmtLong(auj).replace(/^./, c => c.toLowerCase()))}${
+          !apres.length ? ' — <span class="et rouge">aucune rencontre programmée après aujourd\'hui</span>' : ""}</td></tr>`
+      : "";
+
+    const suivi = choisies.length || repere ? `<div class="tableau-enveloppe"><table class="tab-suivi">
+        <thead><tr><th class="num">Date</th><th>Avec</th><th class="num">Horaire</th>
+          <th class="centre">Présence</th><th class="col-note">Note de synthèse</th>
+          <th><span class="hors-ecran">Actions</span></th></tr></thead>
+        <tbody>${apres.map(ligne).join("")}${repere}${avantVues.map(ligne).join("")}</tbody></table></div>
+        ${avant.length > 10 ? '<button class="b haut-marge" data-action="deplier" data-id="' + e.id + '">' +
+          (deplie ? "Ne montrer que les dix dernières" : "Afficher les " + (avant.length - 10) +
+          " rencontres plus anciennes") + "</button>" : ""}`
+      : '<p class="rien">Aucune rencontre' + (f === "tout" ? " encodée pour cet enfant." : " pour ce filtre.") + "</p>";
 
     carteDetail = `
       <div class="carte">
         <div class="tete dv-tete">
-          ${avatar(e, "carte")}
           <h2>${ech(nomComplet(e))}</h2>
-          <button class="b mini pousse" data-action="enfant-modifier" data-id="${e.id}">
-            ✎ Modifier la fiche</button>
-          <button class="b mini" data-action="rencontre-enfant" data-id="${e.id}">
-            ${ic("plus",13)} Rencontre</button>
-          <button class="b mini primaire" data-action="rencontres-enfant" data-id="${e.id}">
-            ${ic("plus",13)} Plusieurs dates</button>
+          <span class="doux">${ech([e.service, age(e.naissance) != null ? ageTexte(e) : ""].filter(Boolean).join(" · "))}</span>
+          <button class="b mini pousse" data-action="rencontre-enfant" data-id="${e.id}">Nouvelle rencontre</button>
+          <button class="b mini" data-action="rencontres-enfant" data-id="${e.id}">Plusieurs dates</button>
+          <details class="plus"><summary aria-label="Autres actions pour ${ech(nomComplet(e))}"
+            title="Autres actions">⋯</summary><div class="menu">
+            <button class="b mini" data-action="enfant-modifier" data-id="${e.id}">Modifier la fiche</button>
+            <button class="b mini" data-action="visite-nouvelle" data-id="${e.id}">Ajouter un droit de visite</button>
+          </div></details>
         </div>
         ${bandeauFaits}
+        <h3 class="titre-section">Droits de visite</h3>
         ${lignesDroits}
-        <h3 class="titre-suivi">${ic("taches",16)} Rencontres</h3>
+        <div class="tete-section"><h3 class="titre-section">Rencontres</h3>
+          ${selecteur("filtre-visite", f, [
+            ["tout", "Toutes", compte.tout], ["avenir", "À venir", compte.avenir],
+            ["completer", "À compléter", compte.completer],
+            ["venu", "Honorées", compte.venu], ["absent", "Manquées", compte.absent]])}
+        </div>
         ${suivi}
       </div>`;
   }
 
-  /* ------------------------------------------- 4. schéma de récurrence mensuel */
+  return outils + filtresDossiers + `
+  <div class="grille dv">
+    ${carteListe}
+    ${carteDetail}
+  </div>`;
+}
+
+/* Les quatre semaines du mois côte à côte, tous enfants confondus, et une
+   cinquième colonne pour les droits dont les créneaux ne sont pas encodés.
+   Un nom ouvre le dossier de l'enfant. */
+function vueSchema(droits){
   const semaines = [1,2,3,4].map(n => {
     const items = [];
     droits.forEach(({e,v}) => (v.creneaux||[]).forEach(c => {
@@ -2121,62 +2034,32 @@ function vueVisites(){
   });
   const sansSchema = droits.filter(({v}) => !(v.creneaux||[]).length);
 
-  const colonnes = semaines.map(({n, items}) => `
-    <div class="sem">
-      <div class="sem-tete">Semaine ${n}</div>
-      <div class="sem-corps">
-        ${items.length ? items.map(({e,v,c}) => {
-          const cat = categorieParent(v);
-          return `<div class="creneau ${CATEGORIES[cat].classe}">
-            <div class="cr-haut">${ic(CATEGORIES[cat].icone, 15)}
-              <span class="cr-nom">${ech(e.nom)}</span></div>
-            <div class="cr-prenom">${ech(enfantsDuDroit(e,v).map(x => x.prenom).join(" + "))}</div>
-            <div class="cr-h">${ech((c.debut || "?") + " – " + (c.fin || "?"))}</div>
-            <div class="cr-bas">${ech(libelleParent(v))}</div>
-          </div>`;
-        }).join("") : '<div class="sem-vide">—</div>'}
-      </div>
-    </div>`).join("") +
-    /* Cinquième colonne : les droits dont les créneaux ne sont pas encodés.
-       Ils ne disparaissent plus dans une note de bas de tableau. */
-    `<div class="sem hors">
-      <div class="sem-tete">Hors semaine</div>
-      <div class="sem-corps">
-        ${sansSchema.length ? '<div class="hs-noms">' +
-          sansSchema.map(({e,v}) => '<span class="hs-item"><button class="lien-nom" ' +
-            'data-action="choisir-enfant" data-id="' + e.id + '">' + ech(libelleDroit(e, v)) +
-            "</button></span>").join(" ") +
-          '</div><div class="hs-aide">Selon calendrier spécifique — le ✎ du droit de visite ' +
-          "permet d'encoder les semaines et les heures.</div>"
-          : '<div class="sem-vide">—</div>'}
-      </div>
-    </div>`;
+  const entree = ({e, v, c}) => {
+    const cat = categorieParent(v);
+    return `<li>
+      <span class="sch-h">${ech((c.debut || "?") + "–" + (c.fin || "?"))}</span>
+      <button class="lien-nom" data-action="choisir-enfant" data-id="${e.id}">${ech(libelleDroit(e, v))}</button>
+      <span class="pt doux"><span class="puce ${CATEGORIES[cat].classe}"></span>${ech(libelleParent(v))}</span>
+    </li>`;
+  };
+  const colonnes = semaines.map(({n, items}) => `<section class="sem">
+      <h3>Semaine ${n}</h3>
+      ${items.length ? '<ul class="sch">' + items.map(entree).join("") + "</ul>"
+                     : '<p class="rien">—</p>'}
+    </section>`).join("") +
+    `<section class="sem hors">
+      <h3>Hors semaine</h3>
+      ${sansSchema.length ? '<ul class="sch">' + sansSchema.map(({e,v}) =>
+          '<li><button class="lien-nom" data-action="choisir-enfant" data-id="' + e.id + '">' +
+          ech(libelleDroit(e, v)) + "</button></li>").join("") + "</ul>" +
+          '<p class="aide">Selon un calendrier spécifique : les créneaux ne sont pas encodés.</p>'
+        : '<p class="rien">—</p>'}
+    </section>`;
 
-  /* --------------------------------------------------------------- assemblage */
-  return compteurs + `
-  <div class="grille dv">
-    ${carteListe}
-    ${carteDetail}
-  </div>
-
-  <div class="carte">
-    <div class="tete">${ic("visites",18)}<h2>Schéma de récurrence (mensuel)</h2></div>
+  return `<div class="carte">
     <div class="schema">${colonnes}</div>
-    <div class="legende">
-      ${["papa","maman","fratrie","autre"].map(k =>
-        '<span><span class="puce ' + k + '"></span>' + CATEGORIES[k].label + "</span>").join("")}
-    </div>
-  </div>
-
-  <div class="carte">
-    <div class="tete">${ic("rapports",18)}<h2>Exporter les notes</h2></div>
-    <p class="aide">Un document Word reprenant les notes des rencontres, un chapitre par enfant.
-      Vous choisissez la période, les enfants et les rencontres à retenir : le document est
-      directement utilisable dans vos rapports.</p>
-    <div class="barre haut-marge">
-      <button class="b primaire" data-action="word">${ic("rapports",15)} Exporter les notes</button>
-      <button class="b pousse" onclick="window.print()">Imprimer</button>
-    </div>
+    <p class="aide">${["papa","maman","fratrie","autre"].map(k =>
+      '<span class="nowrap"><span class="puce ' + k + '"></span>' + CATEGORIES[k].label + "</span>").join(" &nbsp; ")}</p>
   </div>`;
 }
 
@@ -3206,8 +3089,11 @@ function actionner(b){
       etat.filtreDossier = (etat.filtreDossier === b.dataset.f) ? "tout" : b.dataset.f;
       rendre();
       break;
+    case "vue-dv":
+      etat.vueDV = b.dataset.f; remonterEnHaut = true; rendre(); break;
     case "choisir-enfant":
       etat.enfantVisite = id;
+      etat.vueDV = "enfant";   // depuis le schéma, un nom ouvre le dossier
       if(onglet !== "visites"){ allerA("visites"); break; }
       rendre();
       break;

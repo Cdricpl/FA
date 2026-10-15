@@ -9,7 +9,7 @@ Tout reste sur votre ordinateur : aucune connexion internet, aucun compte.
 ## Installation
 
 1. Ouvrez la page **[Releases](../../releases)** du dépôt.
-2. Téléchargez **`Gestion-des-dossiers-1.18.0-installateur.exe`**.
+2. Téléchargez **`Gestion-des-dossiers-1.19.0-installateur.exe`**.
 3. Double-cliquez et suivez l'assistant.
 
 L'installation se fait **pour votre compte utilisateur : aucun droit administrateur
@@ -27,140 +27,165 @@ directement, y compris depuis une clé USB.
 
 ## Les écrans
 
-L'ensemble suit une même charte : fond papier chaud plutôt que gris bleuté, titres en
-caractères à empattements, et **quatre couleurs d'état** — vert *à jour*, orange
-*échéance proche*, rouge *rien de programmé*, violet *à compléter*. La couleur ne porte
-jamais l'information toute seule : elle est toujours accompagnée du mot et d'un signe,
-pour rester lisible quand on distingue mal le rouge du vert. Le programme suit aussi le
-**thème sombre** de Windows.
+L'ensemble reprend **les couleurs du logo du Service Familles d'Accueil** : le prune du
+mot « Service » pour les boutons, les liens, la sélection et les titres ; un fond crème et
+une barre latérale abricot très pâle, tirés du toit et du soleil ; le gris de « Familles
+d'Accueil » pour les textes secondaires.
 
+Le **rouge**, l'**orange** et le **vert** sont réservés à l'état des dossiers — en
+retard, bientôt, en ordre — et n'apparaissent que là : une couleur qui attire l'œil veut
+toujours dire qu'il y a quelque chose à faire. La couleur accompagne toujours un mot
+(« À réclamer », « en retard ») : elle ne porte jamais l'information toute seule.
+
+Pas de décor : ni icônes dans les titres, ni pastilles d'initiales, ni bandes de couleur,
+ni phrases d'explication sous chaque bloc. La police est celle de Windows. Le programme
+suit aussi le **thème sombre** de Windows.
+
+Chaque écran suit le même ordre : le **titre**, puis **la barre de ce qui agit sur
+l'écran** (filtres, recherche, boutons), puis le contenu. Un filtre se trouve toujours
+juste au-dessus de ce qu'il filtre.
 
 ### Accueil
-**Tout tient sur un écran, sans avoir à faire défiler.** Quatre tuiles de comptage
-(rapports à préparer, tâches à faire, notifications à réclamer, visites à venir), puis
-trois cartes : les **tâches du jour**, les **rapports à rendre prochainement** — avec leur
-retard éventuel et la case à cocher quand c'est envoyé — et les **prochaines rencontres**.
-Chaque carte s'arrête à quatre lignes.
+**Tout tient sur un écran, sans avoir à faire défiler.** Le titre est **la date du jour**.
+En dessous, une barre de quatre chiffres — rapports à préparer, tâches à faire,
+notifications à réclamer, rencontres à venir ; un chiffre en rouge signale un retard,
+un clic mène à l'écran concerné. Puis trois panneaux : les **tâches du jour**, les
+**rapports à rendre** — avec leur retard éventuel et la case à cocher quand c'est envoyé —
+et les **rencontres à venir**. Chaque panneau s'arrête à quatre lignes.
 
 **La to do vit ici.** Repliée, elle ne montre que le jour même : ce qui est en retard,
-pour aujourd'hui ou pour demain. Le lien **Voir toutes mes tâches** — ou la tuile
-*Tâches* — la déplie en pleine largeur : les quatre groupes *En retard* / *Aujourd'hui* /
-*À venir* / *Sans date*, chaque tâche avec **Modifier** et une croix pour la supprimer,
-et de quoi **afficher les tâches faites** puis les supprimer d'un bloc. Une tâche peut
-être rattachée à un enfant. *Ne montrer que le jour même* revient à l'aperçu.
+pour aujourd'hui ou pour demain. Le lien **Voir toutes mes tâches** — ou le chiffre
+*tâches à faire* — la déplie en pleine largeur : les quatre groupes *En retard* /
+*Aujourd'hui* / *À venir* / *Sans date*, chaque tâche avec **Modifier** et une croix
+pour la supprimer, et de quoi **afficher les tâches faites** puis les supprimer d'un
+bloc. Une tâche peut être rattachée à un enfant. *Ne montrer que le jour même* revient
+à l'aperçu.
 
 ### Enfants
 **Un seul écran pour un dossier** : la fiche, la notification de prise en charge et les
-dates de rapport étaient répartis sur deux onglets qui répétaient les mêmes informations.
-Ils n'en font plus qu'un.
+dates de rapport.
 
-En haut, **quatre compteurs** rangent les dossiers selon l'état de la notification —
-en ordre, à renouveler bientôt, à réclamer, sans date. **Cliquez sur l'un d'eux** pour
-n'afficher que ceux-là ; un second clic, ou *← Tous les dossiers*, revient à la liste.
+Au-dessus du tableau, un **sélecteur** range les dossiers selon l'état de la
+notification, avec leur nombre : **Tous**, **À réclamer** (pas reçue, ou échéance
+dépassée), **À renouveler** (dans moins de 30 jours), **En ordre**, **Sans date**.
+À côté : la recherche, le tri (par urgence ou par nom), *Imprimer* et
+**Nouvel enfant**.
 
-| | |
-|---|---|
-| ✓ **vert** | reçue et valable |
-| ! **orange** | renouvellement dans moins de 30 jours |
-| ✕ **rouge** | pas reçue, ou échéance dépassée : à réclamer |
-| ? **gris** | date manquante |
+Puis **une ligne par enfant** :
 
-Puis **une ligne par enfant**, avec un trait de couleur à gauche qui reprend l'état :
-
-* **Enfant** — nom, prénom et âge ; les noms s'affichent **NOM Prénom** ;
+* **Enfant** — **NOM Prénom** et l'âge ;
 * **Autorité** — SAJ ou SPJ ;
-* **Notification de prise en charge** — l'état sur une ligne, le détail sur la suivante
-  (« échéance dépassée depuis 85 jours », les relances déjà notées). Quand le détail est
-  trop long, la phrase entière s'affiche en passant la souris dessus ;
-* **Semestriel** et **Annuel** — calculés tout seuls : le rapport annuel
-  tombe à la date de notification, le semestriel six mois plus tôt. Quand les deux ne
-  coïncident pas, remplissez *date du rapport annuel* dans la fiche : les échéances
-  suivent alors cette date ;
+* **Notification de prise en charge** — l'état en couleur sur une ligne, le détail sur
+  la suivante (« échéance dépassée depuis 85 jours », les relances déjà notées). Quand le
+  détail est trop long, la phrase entière s'affiche en passant la souris dessus ;
+* **Semestriel** et **Annuel** — calculés tout seuls : le rapport annuel tombe à la date
+  de notification, le semestriel six mois plus tôt. Une date en orange approche, une date
+  en rouge est dépassée. Quand les deux ne coïncident pas, remplissez *date du rapport
+  annuel* dans la fiche : les échéances suivent alors cette date ;
 * **les gestes**, au bout de la ligne. Un seul bouton plein, celui qu'on cherche neuf
-  fois sur dix : **✓ Reçue**, qui encode la nouvelle échéance, proposée un an plus tard.
+  fois sur dix : **Reçue**, qui encode la nouvelle échéance, proposée un an plus tard.
   Le **⋯** à côté ouvre le reste — *Relance notée* (inscrit la date du jour),
   *+ Tâche de relance* (crée la tâche dans la to do de l'accueil), *Modifier la fiche*
-  et *Supprimer*. Sur un dossier en ordre, le menu propose *↺ Pas arrivée*, pour
-  signaler que le papier n'est finalement pas venu. Le menu se referme avec **Échap**
-  ou d'un clic ailleurs, et un seul reste ouvert à la fois.
+  et *Supprimer*. Sur un dossier en ordre, le menu propose *Pas arrivée*, pour signaler
+  que le papier n'est finalement pas venu. Le menu se referme avec **Échap** ou d'un clic
+  ailleurs, et un seul reste ouvert à la fois.
 
-Toutes les lignes ont **la même hauteur**, quel que soit l'état du dossier : avant, une
-ligne à réclamer portait trois boutons et dépassait d'un tiers les lignes en ordre.
-
-Le bouton **+ Nouvel enfant** est en haut de l'écran, et un second **Ajouter un enfant**
-en bas du tableau. Le tri se fait par **nom de famille** ou par **urgence de la
-notification**. Un bandeau signale les fiches encore incomplètes.
+Toutes les lignes ont **la même hauteur**, quel que soit l'état du dossier. Un bandeau
+signale les fiches encore incomplètes.
 
 ### Rapports
 
-Le calendrier des douze prochains mois, **quatre mois par rangée**. Chaque mois tient
-dans une case, une ligne par rapport, rangées à la date :
+**L'année civile, de janvier à décembre**, pour voir d'un coup d'œil ce qui est déjà
+envoyé dans l'année et ce qui reste à faire. Les flèches **‹ 2025** et **2027 ›** changent
+d'année ; un clic sur l'année affichée revient à l'année en cours.
 
-| Pastille | Quel rapport | Quand |
-|----------|--------------|-------|
-| **A** | formalisation — rapport annuel | à la date de notification |
-| **S** | rapport d'évolution — semestriel | exactement six mois plus tôt |
+Une ligne de bilan résume l'année : *44 rapports en 2026 : 21 envoyés · 2 en retard ·
+13 à venir*.
 
-La lettre remplace le libellé complet, qui se répétait en capitales au-dessus de chaque
-groupe et remplissait les cases pour rien. La clé est rappelée en légende sous la grille,
-et le libellé entier s'affiche en passant la souris sur la pastille.
+En dessous, deux tableaux côte à côte, **janvier–juin** et **juillet–décembre**, mois
+par mois, le mois en cours en prune. Pour chaque rapport : la case à cocher, la date, l'enfant,
+*annuel* ou *semestriel*, et son état :
 
-Chaque échéance porte une **case à cocher** : cochez-la quand le rapport est envoyé, elle
-se barre et l'échéance suivante se place un an plus tard. Un rapport dépassé et non coché
-s'affiche en rouge, et un bandeau **« Rapports en retard »** les rassemble en haut de l'écran.
-Boutons pour reculer ou avancer de douze mois.
+| État | Ce que ça veut dire |
+|---|---|
+| **envoyé le 12/03** (vert) | la case est cochée, avec la date d'envoi |
+| **en retard** (rouge) | échéance passée, pas encore cochée |
+| **dans 12 jours** (orange) | échéance dans moins de 45 jours |
+| ligne en gris | échéance d'avant le début du suivi dans le programme : elle n'est pas réclamée, mais vous pouvez la cocher pour garder trace de l'envoi |
+
+Le rapport **annuel** tombe à la date de notification (la formalisation), le
+**semestriel** six mois plus tôt.
+
+**Cochez la case quand le rapport est envoyé** : la ligne affiche aussitôt « envoyé le … »,
+et l'échéance suivante se place un an plus tard. Un rapport envoyé reste à sa place dans
+l'année, même si la notification a été renouvelée à une autre date depuis.
 
 Le programme ne réclame pas les rapports d'avant votre suivi : ni ceux de plus de 60 jours
 au moment où vous commencez, ni ceux qui précèdent le premier rapport coché. Cocher un
 rapport ne fait donc jamais réapparaître d'anciennes échéances en retard.
 
+Les retards d'une **autre année** que celle affichée (un rapport de décembre dernier,
+par exemple) sont rassemblés dans un panneau au-dessus du calendrier, pour ne pas les
+perdre de vue.
+
 ### Droits de visite
-L'écran s'ouvre sur **quatre compteurs**, qui rangent chaque dossier selon la seule
-question qui compte — jusqu'à quand l'agenda est-il couvert :
+
+En haut, deux vues au choix : **Par enfant** et **Schéma de récurrence**. À droite,
+*Exporter les notes* (le document Word), *Imprimer* et **Nouveau droit de visite**.
+
+#### Par enfant
+
+Sous le choix de vue, un **sélecteur** range chaque dossier selon la seule question qui
+compte — jusqu'à quand l'agenda est-il couvert :
 
 | | |
 |---|---|
-| ! **rouge** | **sans DV futur** : plus rien n'est programmé, il faut rappeler la famille |
-| ! **orange** | **échéance proche** : le dernier DV programmé tombe dans moins d'un mois |
-| ✓ **vert** | **à jour** : programmé à plus d'un mois |
-| ☑ **bleu** | **à compléter** : des rencontres passées attendent leur compte rendu |
+| **Sans DV futur** | plus rien n'est programmé, il faut rappeler la famille |
+| **Échéance proche** | le dernier DV programmé tombe dans moins d'un mois |
+| **À jour** | programmé à plus d'un mois |
+| **À compléter** | des rencontres passées attendent leur compte rendu |
 
 Les trois premiers regardent l'agenda, le quatrième le travail en retard : un dossier
-peut être **à jour et à compléter** en même temps. Dans la liste, une pastille bleue
-indique combien de comptes rendus attendent pour cet enfant.
+peut être **à jour et à compléter** en même temps. **Tous** revient à la liste complète.
 
-**Cliquez sur un compteur** pour ne garder que ces dossiers ; un second clic, ou le bouton
-*← Tous les dossiers*, revient à la liste complète.
+En dessous, **la liste des enfants à gauche, le dossier de celui que vous avez choisi à
+droite.** La liste **reste à l'écran quand vous faites défiler** le dossier : on ne la
+perd plus de vue en descendant dans les rencontres.
 
-En dessous, l'écran est coupé en deux : **la liste des enfants à gauche, le dossier de
-celui que vous avez choisi à droite.**
+**À gauche** — tous les dossiers d'un coup : l'enfant et sa fréquence, et la date
+**jusqu'à laquelle son agenda est couvert** (*Programmé jusqu'au*), avec le nombre de
+jours restants. « **Aucun DV futur** » en rouge signale ceux qui demandent un appel ;
+« **2 à compléter** » en orange, les comptes rendus qui attendent.
 
-**À gauche** — un tableau, **tous les dossiers visibles d'un coup** : l'enfant, sa
-fréquence, et la date **jusqu'à laquelle son agenda est couvert** avec le nombre de jours
-restants. Un trait de couleur à gauche de chaque ligne reprend l'état du dossier, pour
-repérer d'un coup d'œil ceux qui demandent un appel. Le champ de recherche ne sert qu'à
-retrouver un nom précis dans une longue liste.
+**À droite** — le dossier de l'enfant. En tête, son nom, l'autorité et l'âge, et les
+boutons **Nouvelle rencontre** et **Plusieurs dates** ; le **⋯** propose *Modifier la
+fiche* et *Ajouter un droit de visite*. Juste en dessous, un bandeau qui répond sans
+chercher : **avec qui, fréquence, dernier DV réalisé, prochain DV, programmé jusqu'au**.
+Puis **Droits de visite** : l'intervenant, la fréquence, les créneaux du mois, et un
+**⋯** pour le modifier ou le supprimer.
 
-**À droite** — le dossier de l'enfant. En tête, son nom et les boutons *Modifier la
-fiche*, *+ Rencontre* et *+ Plusieurs dates*. Juste en dessous, un bandeau qui répond
-sans chercher : **fréquence, avec qui, dernier DV réalisé, programmé jusqu'au, autorité**.
-Puis chaque droit de visite : l'intervenant, la fréquence, les créneaux du mois, et le ✎
-pour le corriger.
+Enfin **Rencontres**, une **ligne du temps** : de la plus lointaine à venir à la plus
+ancienne, coupée par un repère **« Aujourd'hui »**. Au-dessus du repère, ce qui est
+programmé, avec le nombre de jours restants ; en dessous, ce qui est passé. Si rien
+n'est programmé après aujourd'hui, le repère le dit en rouge.
 
-Enfin **Rencontres**, une seule liste : les rendez-vous **à venir en tête**, sur fond bleu
-clair avec le nombre de jours restants, puis les rencontres passées, de la plus récente à
-la plus ancienne. Pour chacune : date, intervenant, horaire, **✓ Présent / ✕ Absent en un
-clic**, et la **note qui s'écrit directement dans le tableau** — cliquez sur la note (ou
-atteignez-la à la tabulation), écrivez, quittez la case, c'est enregistré ; Échap annule
-la saisie. Une note longue n'est montrée que sur **trois lignes**, pour que le tableau
-reste lisible : le texte entier apparaît dès qu'on clique dessus, et s'imprime en entier. Filtres *Toutes /
-À venir / À compléter / Honorées / Manquées*. Les rencontres à venir restent toujours
-affichées ; du passé, les dix dernières, le reste sur demande.
+Pour une rencontre passée : **Présent / Absent en un clic**, et la **note de synthèse
+qui s'écrit directement dans le tableau** — cliquez sur la note (ou atteignez-la à la
+tabulation), écrivez, quittez la case, c'est enregistré ; Échap annule la saisie. Une
+note longue n'est montrée que sur **trois lignes**, pour que le tableau reste lisible :
+le texte entier apparaît dès qu'on clique dessus, et s'imprime en entier. Une rencontre
+à venir affiche simplement « prévue ». Le **⋯** de chaque ligne la modifie ou la
+supprime.
 
-Plus bas, le **schéma de récurrence (mensuel)** : les quatre semaines du mois côte à côte,
-tous enfants confondus, colorés selon l'intervenant — Papa en bleu, Maman en rose,
-Fratrie en violet. Une cinquième colonne, **Hors semaine**, rassemble les droits de visite
-dont les créneaux ne sont pas encore encodés ; cliquez sur un nom pour ouvrir son dossier.
+Filtres *Toutes / À venir / À compléter / Honorées / Manquées*. Tout ce qui est à venir
+reste affiché ; du passé, les dix dernières rencontres, le reste sur demande.
+
+#### Schéma de récurrence
+
+Les quatre semaines du mois côte à côte, tous enfants confondus : l'horaire, l'enfant,
+et l'intervenant avec un point de couleur — Papa en bleu, Maman en rose, Fratrie en
+violet. Une cinquième colonne, **Hors semaine**, rassemble les droits de visite dont les
+créneaux ne sont pas encodés. **Un clic sur un nom ouvre son dossier.**
 
 **Programmer plusieurs dates d'un coup** : le bouton *+ Plusieurs dates* ouvre un tableau de
 dates. Un remplissage rapide propose une série — toutes les semaines, toutes les deux
@@ -190,9 +215,8 @@ cochez-les dans « Regrouper avec un autre enfant » sur le droit de visite. La 
 s'encode alors qu'une fois et apparaît dans le suivi de chacun, avec la même note.
 Célia et Lucas THEISMANN sont déjà regroupés.
 
-Tout en bas, la carte **Exporter les notes** produit un `.docx` structuré, un chapitre par
-enfant, filtrable par période, prêt à être repris dans vos rapports — et le bouton
-*Imprimer* de l'écran.
+**Exporter les notes**, en haut de l'écran, produit un `.docx` structuré, un chapitre par
+enfant, filtrable par période, prêt à être repris dans vos rapports.
 
 ---
 
